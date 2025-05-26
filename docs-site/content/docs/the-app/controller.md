@@ -15,14 +15,14 @@ top = false
 flair =[]
 +++
 
-`Loco` is a framework that wraps around [axum](https://crates.io/crates/axum), offering a straightforward approach to manage routes, middlewares, authentication, and more right out of the box. At any point, you can leverage the powerful axum Router and extend it with your custom middlewares and routes.
+`Loco`は[axum](https://crates.io/crates/axum)をラップしたフレームワークで、ルート、ミドルウェア、認証などを簡単に管理できる直接的なアプローチを開発箱で提供します。いつでも強力なaxum Routerを活用し、カスタムミドルウェアやルートで拡張することができます。
 
 # Controllers and Routing
 
 
 ## Adding a controller
 
-Provides a convenient code generator to simplify the creation of a starter controller connected to your project. Additionally, a test file is generated, enabling easy testing of your controller.
+プロジェクトに接続されたスターターコントローラーの作成を簡素化する便利なコードジェネレーターを提供します。さらに、テストファイルも生成され、コントローラーのテストを簡単に行うことができます。
 
 Generate a controller:
 
@@ -30,12 +30,12 @@ Generate a controller:
 $ cargo loco generate controller [OPTIONS] <CONTROLLER_NAME>
 ```
 
-After generating the controller, navigate to the created file in `src/controllers` to view the controller endpoints. You can also check the testing (in folder tests/requests) documentation for testing this controller.
+コントローラーを生成した後、`src/controllers`の作成されたファイルに移動してコントローラーエンドポイントを確認してください。このコントローラーのテストについては、テスト（tests/requestsフォルダ内）のドキュメントも確認できます。
 
 
 ### Displaying active routes
 
-To view a list of all your registered controllers, execute the following command:
+登録されているすべてのコントローラーのリストを表示するには、次のコマンドを実行してください：
 
 ```sh
 $ cargo loco routes
@@ -50,23 +50,23 @@ $ cargo loco routes
 [GET] /auth/current
 ```
 
-This command will provide you with a comprehensive overview of the controllers currently registered in your system.
+このコマンドは、システムに現在登録されているコントローラーの包括的な概要を提供します。
 
 ## AppRoutes
 
-`AppRoutes` is a core component of the `Loco` framework that helps you manage and organize your application's routes. It provides a convenient way to add, prefix, and collect routes from different controllers.
+`AppRoutes`は`Loco`フレームワークの中核コンポーネントで、アプリケーションのルートを管理・整理するのに役立ちます。異なるコントローラーからルートを追加、プレフィックス付与、収集する便利な方法を提供します。
 
 ### Features
 
-- **Add Routes**: Easily add routes from different controllers.
-- **Prefix Routes**: Apply a common prefix to a group of routes.
-- **Collect Routes**: Gather all routes into a single collection for further processing.
+- **ルートの追加**: 異なるコントローラーからルートを簡単に追加できます。
+- **ルートのプレフィックス**: ルートのグループに共通のプレフィックスを適用できます。
+- **ルートの収集**: すべてのルートを単一のコレクションに集めて、さらなる処理を行えます。
 
 ### Examples
 
 #### Adding Routes
 
-You can add routes from different controllers to `AppRoutes`:
+異なるコントローラーから`AppRoutes`にルートを追加できます：
 
 ```rust
 use loco_rs::controller::AppRoutes;
@@ -82,7 +82,7 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 
 ### Prefixing Routes
 
-Apply a common prefix to a group of routes:
+ルートのグループに共通のプレフィックスを適用する：
 
 ```rust
 use loco_rs::controller::AppRoutes;
@@ -99,8 +99,8 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 
 ### Nesting Routes
 
-AppRoutes allows you to nest routes, making it easier to organize and manage complex route hierarchies. 
-This is particularly useful when you have a set of related routes that share a common prefix.
+AppRoutesはルートのネストを可能にし、複雑なルート階層の整理と管理を簡単にします。
+共通のプレフィックスを共有する関連ルートのセットがある場合に特に便利です。
 
 ```rust
  use loco_rs::controller::AppRoutes;
@@ -119,12 +119,12 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 
 ## Adding state
 
-Your app context and state is held in `AppContext` and is what Loco provides and sets up for you. There are cases where you'd want to load custom data,
-logic, or entities when the app starts and be available to use in all controllers.
+アプリのコンテキストと状態は`AppContext`に保持され、これはLocoが提供し設定するものです。アプリが起動するときにカスタムデータ、
+ロジック、またはエンティティをロードして、すべてのコントローラーで利用できるようにしたい場合があります。
 
-You could do that by using Axum's `Extension`. Here's an example for loading an LLM model, which is a time consuming task, and then providing it to a controller endpoint, where its already loaded, and fresh for use.
+これはAxumの`Extension`を使用して実現できます。以下は時間のかかるタスクであるLLMモデルをロードし、それをコントローラーエンドポイントに提供する例で、モデルは既にロードされて使用可能な状態になっています。
 
-First, add a lifecycle hook in `src/app.rs`:
+まず、`src/app.rs`にライフサイクルフックを追加します：
 
 ```rust
     // in src/app.rs, in your Hooks trait impl override the `after_routes` hook:
@@ -143,7 +143,7 @@ First, add a lifecycle hook in `src/app.rs`:
     }
 ```
 
-Next, consume this state extension anywhere you like. Here's an example controller endpoint:
+次に、好きな場所でこの状態拡張を使用します。以下はコントローラーエンドポイントの例です：
 
 ```rust
 async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoResponse {
@@ -155,33 +155,33 @@ async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoRes
 
 ## Global app-wide state
 
-Sometimes you might want state that can be shared between controllers, workers, and other areas of your app.
+コントローラー、ワーカー、アプリの他の領域間で共有できる状態が必要な場合があります。
 
-You can review the example [shared-global-state](https://github.com/loco-rs/shared-global-state) app to see how to integrate `libvips`, which is a C based image manipulation library. `libvips` requires an odd thing from the developer: to keep a single instance of it loaded per app process. We do this by keeping a [single `lazy_static` field](https://github.com/loco-rs/shared-global-state/blob/main/src/app.rs#L27-L34), and referring to it from different places in the app.
+[shared-global-state](https://github.com/loco-rs/shared-global-state)アプリの例を参照して、C言語ベースの画像操作ライブラリである`libvips`を統合する方法を確認できます。`libvips`は開発者に奇妙な要求をします：アプリプロセス毎に単一のインスタンスをロードしたままにすることです。これは[単一の`lazy_static`フィールド](https://github.com/loco-rs/shared-global-state/blob/main/src/app.rs#L27-L34)を保持し、アプリの異なる場所から参照することで実現しています。
 
-Read the following to see how it's done in each individual part of the app.
+アプリの個々の部分でそれがどのように行われるかを以下を読んで確認してください。
 
 ### Shared state in controllers
 
-You can use the solution provided in this document. A live example [is here](https://github.com/loco-rs/loco/blob/master/examples/llm-candle-inference/src/app.rs#L41).
+この文書で提供されているソリューションを使用できます。実際の例は[こちら](https://github.com/loco-rs/loco/blob/master/examples/llm-candle-inference/src/app.rs#L41)にあります。
 
 ### Shared state in workers
 
-Workers are intentionally verbatim initialized in [app hooks](https://github.com/loco-rs/loco/blob/master/starters/saas/src/app.rs#L59).
+ワーカーは[アプリフック](https://github.com/loco-rs/loco/blob/master/starters/saas/src/app.rs#L59)で意図的にそのまま初期化されます。
 
-This means you can shape them as a "regular" Rust struct that takes a state as a field. Then refer to that field in perform.
+これは、状態をフィールドとして受け取る「通常の」Rustの構造体として形作ることができることを意味します。そして、performでそのフィールドを参照します。
 
-[Here's how the worker is initialized](https://github.com/loco-rs/shared-global-state/blob/main/src/workers/downloader.rs#L19) with the global `vips` instance in the `shared-global-state` example.
+`shared-global-state`例でグローバル`vips`インスタンスを使用して[ワーカーがどのように初期化される](https://github.com/loco-rs/shared-global-state/blob/main/src/workers/downloader.rs#L19)かを示しています。
 
-Note that by-design _sharing state between controllers and workers have no meaning_, because even though you may choose to run workers in the same process as controllers initially (and share state) -- you'd want to quickly switch to proper workers backed by queue and running in a standalone workers process as you scale horizontally, and so workers should by-design have no shared state with controllers, for your own good.
+設計上、_コントローラーとワーカー間での状態共有は意味を持たない_ことに注意してください。なぜなら、最初は同じプロセスでワーカーとコントローラーを実行することを選択する（そして状態を共有する）かもしれませんが、水平スケールする際にはキューに支えられた適切なワーカーに素早く切り替え、独立したワーカープロセスで実行したくなるからです。したがって、あなた自身のためにも、ワーカーは設計上コントローラーと共有状態を持つべきではありません。
 
 ### Shared state in tasks
 
-Tasks don't really have a value for shared state, as they have a similar life as any exec'd binary. The process fires up, boots, creates all resources needed (connects to db, etc.), performs the task logic, and then the 
+タスクは、実行されるバイナリと同様のライフサイクルを持つため、共有状態に対して実際の価値を持ちません。プロセスが起動し、ブートし、必要なすべてのリソースを作成し（データベースへの接続など）、タスクロジックを実行してから終了します。 
 
 ## Routes in Controllers
 
-Controllers define Loco routes capabilities. In the example below, a controller creates one GET endpoint and one POST endpoint:
+コントローラーはLocoのルート機能を定義します。以下の例では、コントローラーが1つのGETエンドポイントと1つのPOSTエンドポイントを作成しています：
 
 ```rust
 use axum::routing::{get, post};
@@ -190,11 +190,11 @@ Routes::new()
     .add("/echo", post(echo))
 ```
 
-You can also define a `prefix` for all routes in a controller using the `prefix` function.
+`prefix`関数を使用してコントローラー内のすべてのルートに`prefix`を定義することもできます。
 
 ## Sending Responses
 
-Response senders are in the `format` module. Here are a few ways to send responses from your routes:
+レスポンス送信者は`format`モジュールにあります。ルートからレスポンスを送信するいくつかの方法を以下に示します：
 
 ```rust
 
@@ -214,10 +214,10 @@ format::render()
 
 ### Content type aware responses
 
-You can opt-in into the responders mechanism, where a format type is detected
-and handed to you.
+フォーマットタイプが検出されて渡される
+レスポンダーメカニズムにオプトインできます。
 
-Use the `Format` extractor for this:
+これには`Format`エクストラクターを使用します：
 
 ```rust
 pub async fn get_one(
@@ -235,8 +235,8 @@ pub async fn get_one(
 
 ### Custom errors
 
-Here is a case where you might want to both render differently based on
-different formats AND ALSO, render differently based on kinds of errors you got.
+異なるフォーマットに基づいて異なるレンダリングを行い、さらに
+受け取ったエラーの種類に基づいて異なるレンダリングを行いたい場合の例です。
 
 
 ```rust
@@ -278,28 +278,28 @@ pub async fn get_one(
 }
 ```
 
-Here, we also "centralize" our error handling by first wrapping the workflow in a function, and grabbing the result type.
+ここでは、ワークフローをまず関数でラップし、結果タイプを取得することでエラーハンドリングも「集中化」しています。
 
-Next we create a 2 level match to:
+次に、2レベルのマッチを作成します：
 
-1. Match the result type
-2. Match the format type
+1. 結果タイプをマッチ
+2. フォーマットタイプをマッチ
 
-Where we lack the knowledge for handling, we just return the error as-is and let the framework render out default errors.
+処理の知識が不足している場所では、エラーをそのまま返し、フレームワークにデフォルトエラーをレンダリングさせます。
 
 ## Creating a Controller Manually
 
-#### 1. Create a Controller File
+#### 1. コントローラーファイルの作成
 
-Start by creating a new file under the path `src/controllers`. For example, let's create a file named `example.rs`.
+`src/controllers`パスの下に新しいファイルを作成することから始めます。例えば、`example.rs`という名前のファイルを作成しましょう。
 
-#### 2. Load the File in mod.rs
+#### 2. mod.rsでファイルをロード
 
-Ensure that you load the newly created controller file in the `mod.rs` file within the `src/controllers` folder.
+`src/controllers`フォルダー内の`mod.rs`ファイルで新しく作成したコントローラーファイルをロードすることを確認してください。
 
-#### 3. Register the Controller in App Hooks
+#### 3. App Hooksでコントローラーを登録
 
-In your App hook implementation (e.g., App struct), add your controller's `Routes` to `AppRoutes`:
+Appフックの実装（例：App構造体）で、コントローラーの`Routes`を`AppRoutes`に追加します：
 
 ```rust
 // src/app.rs
@@ -318,18 +318,18 @@ impl Hooks for App {
 
 # Middleware
 
-Loco comes with a set of built-in middleware out of the box. Some are enabled by default, while others need to be configured. Middleware registration is flexible and can be managed either through the `*.yaml` environment configuration or directly in the code.
+Locoは箱から出してすぐに使えるビルトインミドルウェアのセットが付属しています。一部はデフォルトで有効になっていますが、他は設定が必要です。ミドルウェアの登録は柔軟で、`*.yaml`環境設定またはコード内で直接管理できます。
 
 ## The default stack
 
-You get all the enabled middlewares run the following command
+有効なすべてのミドルウェアを取得するには以下のコマンドを実行します
 <!-- <snip id="cli-middleware-list" inject_from="yaml" template="sh"> -->
 ```sh
 cargo loco middleware --config
 ```
 <!-- </snip> -->
 
-This is the stack in `development` mode:
+これは`development`モードでのスタックです：
 
 ```sh
 $ cargo loco middleware --config
@@ -351,9 +351,9 @@ static_assets          (disabled)
 secure_headers         (disabled)
 ```
 
-### Example: disable all middleware
+### 例：すべてのミドルウェアを無効化
 
-Take what ever is enabled, and use `enable: false` with the relevant field. If `middlewares:` section in `server` is missing, add it.
+有効になっているものを取り、関連するフィールドで`enable: false`を使用します。`server`内の`middlewares:`セクションがない場合は、追加してください。
 
 ```yaml
 server:
@@ -372,7 +372,7 @@ server:
       enable: false
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config
@@ -392,16 +392,16 @@ request_id             (disabled)
 fallback               (disabled)
 ```
 
-You can control the `powered_by` middleware by changing the value for `server.ident`:
+`server.ident`の値を変更することで`powered_by`ミドルウェアを制御できます：
 
 ```yaml
 server:
     ident: my-server #(or empty string to disable)
 ```
 
-### Example: add a non-default middleware
+### 例：デフォルト以外のミドルウェアを追加
 
-Lets add the _Remote IP_ middleware to the stack. This is done just by configuration:
+_Remote IP_ミドルウェアをスタックに追加しましょう。これは設定だけで行えます：
 
 ```yaml
 server:
@@ -426,9 +426,9 @@ fallback               {"enable":true,"code":200,"file":null,"not_found":null}
 powered_by             {"ident":"loco.rs"}
 ```
 
-### Example: change a configuration for an enabled middleware
+### 例：有効なミドルウェアの設定を変更
 
-Let's change the request body limit to `5mb`. When overriding a middleware configuration, rememeber to keep an `enable: true`:
+リクエストボディの制限を`5mb`に変更しましょう。ミドルウェアの設定をオーバーライドするときは、`enable: true`を保持することを忘れないでください：
 
 ```yaml
   middlewares:
@@ -436,7 +436,7 @@ Let's change the request body limit to `5mb`. When overriding a middleware confi
       body_limit: 5mb
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config

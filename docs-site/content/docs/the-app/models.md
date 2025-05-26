@@ -16,15 +16,15 @@ flair =[]
 +++
 
 
-Models in `loco` mean entity classes that allow for easy database querying and writes, but also migrations and seeding.
+`loco`のモデルは、データベースのクエリと書き込みを簡単に行うためのエンティティクラスを意味しますが、マイグレーションやシーディングも含みます。
 
 ## Sqlite vs Postgres 
 
-You might have selected `sqlite` which is the default when you created your new app. Loco allows you to _seamlessly_ move between `sqlite` and `postgres`.
+新しいアプリを作成するときにデフォルトである`sqlite`を選択した可能性があります。Locoは`sqlite`と`postgres`間で_シームレス_に移行することができます。
 
-It is typical that you could use `sqlite` for development, and `postgres` for production. Some people prefer `postgres` all the way for both development and production because they use `pg` specific features. Some people use `sqlite` for production too, these days. Either way -- all valid choices.
+開発には`sqlite`を使用し、本番には`postgres`を使用するのが一般的です。`pg`固有の機能を使用するため、開発と本番の両方で`postgres`を一貫して好む人もいます。最近では本番でも`sqlite`を使用する人もいます。いずれにしても、すべて有効な選択です。
 
-To configure `postgres` instead of `sqlite`, go into your `config/development.yaml` (or `production.yaml`) and set this, assuming your app is named `myapp`:
+`sqlite`の代わりに`postgres`を設定するには、`config/development.yaml`（または`production.yaml`）に移動し、アプリ名が`myapp`であると仮定して、以下を設定します：
 
 ```yaml
 database:
@@ -35,7 +35,7 @@ database:
 Your local postgres database should be with <code>loco:loco</code> and a db named <code>myapp_development</code>. For test and production, your DB should be named <code>myapp_test</code> and <code>myapp_production</code> respectively.
 </div>
 
-For your convenience, here is a docker command to start up a Postgresql database server:
+便宜上、PostgreSQLデータベースサーバーを起動するdockerコマンドを以下に示します：
 
 <!-- <snip id="postgres-run-docker-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -49,7 +49,7 @@ docker run -d -p 5432:5432 \
 
 
 
-Finally you can also use the doctor command to validate your connection:
+最後に、doctorコマンドを使用して接続を検証することもできます：
 
 <!-- <snip id="doctor-command" inject_from="yaml template="sh"> -->
 ```sh
@@ -64,25 +64,25 @@ $ cargo loco doctor
 
 ## Fat models, slim controllers
 
-`loco` models **are designed after active record**. This means they're a central point in your universe, and every logic or operation your app has should be there.
+`loco`のモデルは**active recordに倣って設計されています**。これは、モデルがあなたの世界の中心点であり、アプリが持つすべてのロジックや操作がそこにあるべきことを意味します。
 
-It means that `User::create` creates a user **but also** `user.buy(product)` will buy a product.
+これは`User::create`がユーザーを作成することを意味しますが、**同時に**`user.buy(product)`が商品を購入することも意味します。
 
-If you agree with that direction you'll get these for free:
+この方向性に同意する場合、以下のメリットを無料で得ることができます：
 
-- **Time-effective testing**, because testing your model tests most if not all of your logic and moving parts.
-- Ability to run complete app workflows **from _tasks_, or from workers and other places**.
-- Effectively **compose features** and use cases by combining models, and nothing else.
-- Essentially, **models become your app** and controllers are just one way to expose your app to the world.
+- **時間効率的なテスト**：モデルをテストすることで、ロジックと可動部分のほとんど、またはすべてをテストできるため。
+- **_タスク_、ワーカー、その他の場所から**完全なアプリワークフローを実行する能力。
+- モデルを組み合わせることで、機能とユースケースを効果的に**組み合わせる**ことができ、他には何も必要ありません。
+- 本質的に、**モデルがあなたのアプリになり**、コントローラーはアプリを世界に公開する単なる一つの方法です。
 
-We use [`SeaORM`](https://www.sea-ql.org/SeaORM/) as the main ORM behind our ActiveRecord abstraction.
+ActiveRecord抽象化の背後にあるメインのORMとして[`SeaORM`](https://www.sea-ql.org/SeaORM/)を使用しています。
 
-- _Why not Diesel?_ - although Diesel has better performance, its macros, and general approach felt incompatible with what we were trying to do
-- _Why not sqlx_ - SeaORM uses sqlx under the hood, so the plumbing is there for you to use `sqlx` raw if you wish.
+- _なぜDieselではないのか？_ - Dieselはより優れたパフォーマンスを持っていますが、そのマクロと一般的なアプローチは、私たちが実現しようとしていることと互換性がないと感じました
+- _なぜsqlxではないのか_ - SeaORMは内部でsqlxを使用しているため、必要に応じて生の`sqlx`を使用するための配管はそこにあります。
 
 ## Example model
 
-The life of a `loco` model starts with a _migration_, then an _entity_ Rust code is generated for you automatically from the database structure:
+`loco`モデルのライフサイクルは_migration_から始まり、その後データベース構造から_entity_ Rustコードが自動的に生成されます：
 
 ```
 src/
@@ -92,9 +92,9 @@ src/
     users.rs  <--- your custom activerecord code
 ```
 
-Using the `users` activerecord would be just as you use it under SeaORM [see examples here](https://www.sea-ql.org/SeaORM/docs/next/basic-crud/select/)
+`users` activerecordの使用は、SeaORMで使用するのと同じです[例はこちらを参照](https://www.sea-ql.org/SeaORM/docs/next/basic-crud/select/)
 
-Adding functionality to the `users` activerecord is by _extension_:
+`users` activerecordに機能を追加するには_拡張_を使用します：
 
 ```rust
 impl super::_entities::users::ActiveModel {
@@ -113,32 +113,32 @@ impl super::_entities::users::ActiveModel {
 
 ## The model generator
 
-To add a new model the model generator creates a migration, runs it, and then triggers an entities sync from your database schema which will hydrate and create your model entities.
+新しいモデルを追加するために、モデルジェネレーターはマイグレーションを作成し、それを実行し、その後データベーススキーマからエンティティ同期をトリガーして、モデルエンティティを作成し構築します。
 
 ```
 $ cargo loco generate model posts title:string! content:text user:references
 ```
 
-When a model is added via migration, the following default fields are provided:
+マイグレーション経由でモデルが追加されると、以下のデフォルトフィールドが提供されます：
 
-- `created_at` (ts!): This is a timestamp indicating when your model was created.
-- `updated_at` (ts!): This is a timestamp indicating when your model was updated.
+- `created_at` (ts!): これはモデルが作成された時刻を示すタイムスタンプです。
+- `updated_at` (ts!): これはモデルが更新された時刻を示すタイムスタンプです。
 
-These fields are ignored if you provide them in your migration command.
+これらのフィールドは、マイグレーションコマンドで提供した場合は無視されます。
 
 ### Field syntax
 
-Each field type may include either the `!` or `^` suffix:
+各フィールドタイプには`!`または`^`のサフィックスを含めることができます：
 
-- `!` indicates that the field is **required** (i.e. `NOT NULL` in the database),
-- `^` indicates that the field must be **unique**.
+- `!`はフィールドが**必須**であることを示します（つまり、データベースで`NOT NULL`）
+- `^`はフィールドが**ユニーク**でなければならないことを示します。
 
-If no suffix is used, then the field can be null.
+サフィックスが使用されない場合、フィールドはnullにできます。
 
 
 ### Data types
 
-For schema data types, you can use the following mapping to understand the schema:
+スキーマデータタイプについて、スキーマを理解するために以下のマッピングを使用できます：
 
 ```rust
 ("uuid^", "uuid_uniq"),
@@ -210,37 +210,37 @@ For schema data types, you can use the following mapping to understand the schem
 (" array^", "array"),
 ```
 
-Loco makes used of `references` type to define foreign-key relations between the model being generated and the model we wish to refer to. Do note, however, that there are two ways to use this special type:
+Locoは、生成されるモデルと参照したいモデルの間の外部キー関係を定義するために`references`タイプを使用します。ただし、この特別なタイプを使用する方法は2つあることに注意してください：
 
 1. `<other_model>:references`
 2. `<other_model>:references:<column_name>`
 
-The first one (`<other_model>:references`) is used to, as already clear by the semantics, create a foreign-key relation to an already existing model (`other_model` in this case). However, the **field name is implied**.
+最初のもの（`<other_model>:references`）は、セマンティクスから既に明らかなように、既存のモデル（この場合は`other_model`）への外部キー関係を作成するために使用されます。ただし、**フィールド名は暗黙的**です。
 
-e.g. If we wish to create a new model named `post`, and it must have a field/column referring to the `users` table which already exists (in new loco project with migrations applied), we will use the following command:
+例えば、`post`という名前の新しいモデルを作成し、既に存在する`users`テーブル（マイグレーションが適用された新しいlocoプロジェクト内）を参照するフィールド/カラムを持たせたい場合、以下のコマンドを使用します：
 
 ```
 cargo loco g model post title:string user:references
 ```
 
-Using `user:references` uses the special `<other_model>:references` type, which will create a relationship between the `post` (our new model) and a `user` (pre-existing model), adding a `user_id` (implied field name) reference field to the `posts` table.
+`user:references`を使用すると、特別な`<other_model>:references`タイプを使用し、`post`（新しいモデル）と`user`（既存のモデル）の間に関係を作成し、`posts`テーブルに`user_id`（暗黙的フィールド名）参照フィールドを追加します。
 
-On the other hand, using the second approach (`<other_model>:references:<column_name>`) gives us the luxury of being able to name the field/column as per our liking. Therefore, taking the previous example itself, if we wish to create a `post` table having a title, and a foreign key that points to, perhaps the author, we will use the same previous command, but with a nimble modification:
+一方、2番目のアプローチ（`<other_model>:references:<column_name>`）を使用すると、好みに応じてフィールド/カラムに名前を付けることができる贅沢を得られます。したがって、前の例を取り上げて、タイトルとおそらく著者を指す外部キーを持つ`post`テーブルを作成したい場合、同じ前のコマンドを使用しますが、少し変更します：
 
 ```
 cargo loco g model post title:string user:references:authored_by
 ```
 
-Using `user:references:authored_by` uses the special `<other_model>:references:<column_name>` type, which will create a relationship between the `post` and the `user`, adding an `authored_by` (explicit field name) reference field to the `posts` table, instead of `user_id`.
+`user:references:authored_by`を使用すると、特別な`<other_model>:references:<column_name>`タイプを使用し、`post`と`user`の間に関係を作成し、`user_id`の代わりに`authored_by`（明示的フィールド名）参照フィールドを`posts`テーブルに追加します。
 
-You can generate an empty model:
+空のモデルを生成できます：
 
 ```
 $ cargo loco generate model posts
 ```
 
 
-Or a data model, without any references:
+または、参照のないデータモデル：
 
 ```
 $ cargo loco generate model posts title:string! content:text
@@ -248,82 +248,82 @@ $ cargo loco generate model posts title:string! content:text
 
 ## Migrations
 
-Other than using the model generator, you drive your schema by *creating migrations*.
+モデルジェネレーターを使用する以外に、*マイグレーションを作成*することでスキーマを駆動します。
 
 ```
 $ cargo loco generate migration <name of migration> [name:type, name:type ...]
 ```
 
-This creates a migration in the root of your project in `migration/`.
+これはプロジェクトのルートの`migration/`にマイグレーションを作成します。
 
-You can apply it:
+適用できます：
 
 ```
 $ cargo loco db migrate
 ```
 
-And generate back entities (Rust code) from it:
+そしてそこからエンティティ（Rustコード）を生成し直します：
 
 ```
 $ cargo loco db entities
 ```
 
-Loco is a migration-first framework, similar to Rails. Which means that when you want to add models, data fields, or model oriented changes - you start with a migration that describes it, and then you apply the migration to get back generated entities in `model/_entities`.
+LocoはRailsと同様にマイグレーションファーストのフレームワークです。これは、モデル、データフィールド、またはモデル指向の変更を追加したいときに、それを説明するマイグレーションから始め、その後マイグレーションを適用して`model/_entities`で生成されたエンティティを取得することを意味します。
 
-This enforces _everything-as-code_, _reproducibility_ and _atomicity_, where no knowledge of the schema goes missing. 
+これは_everything-as-code_、_再現性_、_原子性_を強制し、スキーマの知識が失われることがありません。 
 
-**Naming the migration is important**, the type of migration that is being generated is inferred from the migration name.
+**マイグレーションの命名は重要**で、生成されるマイグレーションのタイプはマイグレーション名から推測されます。
 
-### Create a new table
+### 新しいテーブルを作成
 
-* Name template: `Create___`
-* Example: `CreatePosts`
+* 名前テンプレート: `Create___`
+* 例: `CreatePosts`
 
 ```
 $ cargo loco g migration CreatePosts title:string content:string
 ```
 
-### Add columns
+### カラムを追加
 
-* Name template: `Add___To___`
-* Example: `AddNameAndAgeToUsers` (the string `NameAndAge` does not matter, you specify columns individually, however `Users` does matter because this will be the name of the table)
+* 名前テンプレート: `Add___To___`
+* 例: `AddNameAndAgeToUsers`（文字列`NameAndAge`は関係ありません、カラムは個別に指定しますが、`Users`はテーブル名になるため重要です）
 
 ```
 $ cargo loco g migration AddNameAndAgeToUsers name:string age:int
 ```
 
-### Remove columns
+### カラムを削除
 
-* Name template: `Remove___From___`
-* Example: `RemoveNameAndAgeFromUsers` (same note exists as in _add columns_)
+* 名前テンプレート: `Remove___From___`
+* 例: `RemoveNameAndAgeFromUsers`（_カラム追加_と同じ注意があります）
 
 ```
 $ cargo logo g migration RemoveNameAndAgeFromUsers name:string age:int
 ```
 
-### Add references
+### 参照を追加
 
-* Name template: `Add___RefTo___`
-* Example: `AddUserRefToPosts` (`User` does not matter, as you specify one or many references individually, `Posts` does matter as it will be the table name in the migration)
+* 名前テンプレート: `Add___RefTo___`
+* 例: `AddUserRefToPosts`（`User`は関係ありません、参照は個別に1つまたは複数指定します。`Posts`はマイグレーションでテーブル名になるため重要です）
 
 ```
 $ cargo loco g migration AddUserRefToPosts user:references
 ```
 
-### Create a join table
+### 結合テーブルを作成
 
-* Name template: `CreateJoinTable___And___` (supported between 2 tables)
-* Example: `CreateJoinTableUsersAndGroups`
+* 名前テンプレート: `CreateJoinTable___And___`（2つのテーブル間でサポート）
+* 例: `CreateJoinTableUsersAndGroups`
 
 ```
 $ cargo loco g migration CreateJoinTableUsersAndGroups count:int
 ```
 
-You can also add some state columns regarding the relationship (such as `count` here).
+関係に関するいくつかの状態カラム（ここでは`count`など）を追加することもできます。
 
-### Create an empty migration
+### 空のマイグレーションを作成
 
-Use any descriptive name for a migration that does not fall into one of the above patterns to create an empty migration.
+上記のパターンのいずれにも当てはまらないマイグレーションには、説明的な名前を使用して空のマイグレーションを作成します。
 
 ```
 $ cargo loco g migration FixUsersTable
