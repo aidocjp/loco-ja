@@ -1,5 +1,5 @@
 +++
-title = "Resources"
+title = "リソース"
 description = ""
 template = "docs/section.html"
 sort_by = "weight"

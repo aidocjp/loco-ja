@@ -1,5 +1,5 @@
 +++
-title = "The App"
+title = "アプリ"
 description = ""
 template = "docs/section.html"
 sort_by = "weight"

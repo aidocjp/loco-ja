@@ -1,5 +1,5 @@
 +++
-title = "Extras"
+title = "エクストラ"
 description = ""
 template = "docs/section.html"
 sort_by = "weight"
