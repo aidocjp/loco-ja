@@ -4,51 +4,51 @@ title = "Loco"
 
 # The homepage contents
 [extra]
-lead = 'The <em>one-person framework</em> for Rust for side-projects and startups'
+lead = 'サイドプロジェクトやスタートアップのための<em>一人フレームワーク</em> for Rust'
 url = "/docs/getting-started/tour/"
-url_button = "Get started"
+url_button = "始める"
 
 # Menu items
 [[extra.menu.main]]
-name = "Docs"
+name = "ドキュメント"
 section = "docs"
 url = "/docs/getting-started/tour/"
 weight = 10
 
 [[extra.menu.main]]
-name = "Blog"
+name = "ブログ"
 section = "blog"
 url = "/blog/"
 weight = 20
 
 [[extra.menu.main]]
-name = "Casts"
+name = "キャスト"
 section = "casts"
 url = "/casts/"
 
 weight = 20
 [[extra.list]]
-title = "🔋 Batteries included"
-content = 'Empower the 1-person team. Service, data, emails, background jobs, tasks, CLI to drive it, everything is included.'
+title = "🔋 バッテリー内蔵"
+content = '一人チームを強化。サービス、データ、メール、バックグラウンドジョブ、タスク、それらを駆動するCLI、すべてが含まれています。'
 
 [[extra.list]]
-title = "🔮 Rails is great"
-content = 'Loco follows Rails. There, I said it. Rails concepts are carefully adapted to modern Rust development.'
+title = "🔮 Railsは素晴らしい"
+content = 'LocoはRailsに従います。言ってしまいました。Railsのコンセプトは慎重に現代のRust開発に適応されています。'
 
 [[extra.list]]
-title = "🏅 Deliver with confidence"
-content = "Unapologetically optimized for the solo developer. Complexity and heavylifting is tucked away."
+title = "🏅 自信を持って納品"
+content = "謝らずにソロ開発者のために最適化。複雑さと重労働は隠されています。"
 
 [[extra.list]]
-title = "⚡️ Scale when needed"
-content = "Split, reconfigure, or use only parts of Loco when you need to. Build and grow without pain."
+title = "⚡️ 必要時にスケール"
+content = "必要な時にLocoを分割、再構成、または一部のみ使用。痛みなく構築・成長。"
 
 [[extra.list]]
-title = "🚀️ Build incrementally"
-content = "Use what you need. Just a service, a service with a database, a background job worker, or a task."
+title = "🚀️ 段階的な構築"
+content = "必要なものを使用。サービスだけ、データベース付きサービス、バックグラウンドジョブワーカー、またはタスク。"
 
 [[extra.list]]
-title = "🚦Test driven everything"
-content = "Test your app with very little effort. Models, controllers, background jobs and more. Ship fast with confidence."
+title = "🚦テスト駆動すべて"
+content = "最小限の労力でアプリをテスト。モデル、コントローラー、バックグラウンドジョブなど。自信を持って高速出荷。"
 
 +++
