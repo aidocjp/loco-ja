@@ -122,10 +122,9 @@ Then you have to hand-wire this connection
             }))
 ```
 
-### Moving to Loco
+### Locoへの移行
 
-In Loco you just set your values for the pool in your `config/` folder. We already pick up best effort default values so you don't have to do it, but if you want to, this is how it looks like:
-
+Locoでは、`config/`フォルダでプールの値を設定するだけです。デフォルトで最適な値が自動的に設定されるため、特に指定しなくても問題ありませんが、必要に応じて以下のように設定できます：
 
 ```yaml
 database:
@@ -136,10 +135,10 @@ database:
   max_connections: 1
 ```
 
-### Verdict
+### 判定
 
-* **No code to write** - save yourself the dangers of picking the right values for your db pool, or misconfiguring it
-* **Change is easy** - often you want to try different values under different loads in production, with Axum only, you have to recompile, redeploy. With Loco you can set a config and restart the process.
+* **書くコードなし** - DBプールの値選択や設定ミスのリスクから解放されます
+* **変更が簡単** - 本番環境で負荷に応じて値を変えたい場合も、Axumのみだと再コンパイル・再デプロイが必要ですが、Locoなら設定を変えてプロセスを再起動するだけです。
 
 
 ## ロギング
@@ -202,29 +201,28 @@ AxumからLocoへのルート移行は実際にドロップインです。Loco�
 ルートリストや情報などの機能が必要な場合、Axumルーターに変換されるネイティブのLocoルーターを使用するか、独自のAxumルーターを使用できます。
 
 
-### Moving to Loco
+### Locoへの移行
 
-If you want 1:1 complete copy-paste experience, just copy your Axum routes, and plug your router in Loco's `after_routes()` hook:
+1:1でそのままコピーペーストしたい場合は、Axumのルートをそのままコピーし、Locoの`after_routes()`フックにルーターを差し込むだけです：
 
 ```rust
   async fn after_routes(router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
-      // use AxumRouter to mount your routes and return an AxumRouter
+      // AxumRouterを使ってルートをマウントし、AxumRouterを返す
   }
 
 ```
 
-If you want Loco to understand the metadata information about your routes (which can come in handy later), write your `routes()` function in each of your controllers in this way:
-
+Locoにルートのメタデータ情報を認識させたい場合（後で役立つことがあります）、各コントローラーで`routes()`関数を次のように記述します：
 
 ```rust
-// this is what people usually do using Axum only
+// Axumのみを使う場合の一般的な例
 pub fn router() -> Router {
   Router::new()
         .route("/auth/register", post(create_user))
         .route("/auth/login", post(login_user))
 }
 
-// this is how it looks like using Loco (notice we use `Routes` and `add`)
+// Locoでの記述例（`Routes`と`add`を使う点に注目）
 pub fn routes() -> Routes {
   Routes::new()
       .add("/auth/register", post(create_user))
@@ -232,7 +230,7 @@ pub fn routes() -> Routes {
 }
 ```
 
-### Verdict
+### 判定
 
-* **A drop-in compatibility** - Loco uses Axum and keeps all of its building blocks intact so that you can just use your own existing Axum code with no efforts.
-* **Route metadata for free** - one gap that Axum routers has is the ability to describe the currently configured routes, which can be used for listing or automatic OpenAPI schema generation. Loco has a small metadata layer to support this. If you use `Routes` you get it for free, while all of the different signatures remain compatible with Axum router.
+* **ドロップイン互換** - LocoはAxumをベースにしており、すべての構成要素をそのまま活かせるため、既存のAxumコードをそのまま利用できます。
+* **ルートメタデータも無料で取得** - Axumルーターの弱点である「現在設定されているルートの一覧化や自動OpenAPIスキーマ生成」も、Locoの小さなメタデータレイヤーでサポート。`Routes`を使えば自動的にメタデータが付与され、Axumルーターとの互換性も維持されます。
