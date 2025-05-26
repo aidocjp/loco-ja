@@ -114,7 +114,7 @@ Axumのみを使用する場合、通常、接続、プール、ルートで使�
         .context("could not connect to database_url")?;
 ```
 
-Then you have to hand-wire this connection
+そして、この接続を手動で配線する必要があります：
 ```rust
  .layer(AddExtensionLayer::new(ApiContext {
                 config: Arc::new(config),
@@ -145,40 +145,40 @@ database:
 
 アプリ全体で、ロギングストーリーを手動でコーディングする必要があります。どれを選びますか？`tracing`か`slog`か？ロギングかトレーシングか？どちらが良いのでしょうか？
 
-Here's what exists in the real-world-axum project. In serving:
+real-world-axumプロジェクトに存在するもの。サービング部分で：
 
 ```rust
   // Enables logging. Use `RUST_LOG=tower_http=debug`
   .layer(TraceLayer::new_for_http()),
 ```
 
-And in `main`:
+そして`main`で：
 
 ```rust
     // Initialize the logger.
     env_logger::init();
 ```
 
-And ad-hoc logging in various points:
+そして様々な箇所でアドホックなログ記録：
 
 ```rust
   log::error!("SQLx error: {:?}", e);
 ```
 
-### Moving to Loco
+### Locoへの移行
 
-In Loco, we've already answered these hard questions and provide multi-tier logging and tracing:
+Locoでは、これらの難しい質問にすでに答えを出し、多層のログ記録とトレーシングを提供しています：
 
-* Inside the framework, internally
-* Configured in the router
-* Low level DB logging and tracing
-* All of Loco's components such as tasks, background jobs, etc. all use the same facility
+* フレームワーク内部で
+* ルーターで設定
+* 低レベルのDBログ記録とトレーシング
+* タスク、バックグラウンドジョブなど、Locoのすべてのコンポーネントが同じ機能を使用
 
-And we picked `tracing` so that any and every Rust library can "stream" into your log uniformly. 
+そして私たちは`tracing`を選択したので、あらゆるRustライブラリがログに統一的に「ストリーム」できます。
 
-But we also made sure to create smart filters so you don't get bombarded with libraries you don't know, by default.
+また、デフォルトでは知らないライブラリに圧倒されないよう、スマートフィルターを作成しました。
 
-You can configure your logger in `config/`
+`config/`でロガーを設定できます：
 
 ```yaml
 logger:
@@ -188,11 +188,11 @@ logger:
   format: compact
 ```
 
-### Verdict
+### 判定
 
-* **No code to write** - no set up code, no decision to make. We made the best decision for you so you can write more code for your app.
-* **Build faster** - you get traces for only what you want. You get error backtraces which are colorful, contextual, and with zero noise which makes it easier to debug stuff. You can change formats and levels for production.
-* **Change is easy** - often you want to try different values under different loads in production, with Axum only, you have to recompile, redeploy. With Loco you can set a config and restart the process.
+* **書くコードなし** - セットアップコードなし、決断する必要なし。あなたのアプリのためにより多くのコードを書けるよう、私たちが最良の決断をしました。
+* **より高速にビルド** - 必要なもののみトレースを取得。カラフルで文脈に富み、ノイズゼロのエラーバックトレースが得られ、デバッグが容易になります。本番環境でフォーマットとレベルを変更できます。
+* **変更が簡単** - 本番環境で異なる負荷の下で異なる値を試したいことがよくありますが、Axumのみでは再コンパイル・再デプロイが必要。Locoでは設定を変更してプロセスを再起動するだけです。
 
 ## ルーティング
 
