@@ -285,8 +285,8 @@ $
 ```
 
 <div class="infobox">
-The <em>SaaS Starter</em> keeps routes under <code>/api</code> because it is client-side ready and we are using the <code>--api</code> option in scaffolding. <br/>
-When using client-side routing like React Router, we want to separate backend routes from client routes: the browser will use <code>/home</code> but not <code>/api/home</code> which is the backend route, and you can call <code>/api/home</code> from the client with no worries. Nevertheless, the routes: <code>/_health</code> and <code>/_ping</code> are exceptions, they stay at the root.
+<em>SaaSスターター</em>は、クライアントサイド対応のため、ルートを<code>/api</code>配下にまとめています。これはスキャフォールディング時に<code>--api</code>オプションを使用しているためです。<br/>
+React Routerのようなクライアントサイドルーティングを使う場合、バックエンドのルートとクライアントのルートを分離したいので、ブラウザは<code>/home</code>を利用しますが、<code>/api/home</code>（バックエンドルート）は利用しません。クライアントからは安心して<code>/api/home</code>を呼び出せます。ただし、<code>/_health</code>や<code>/_ping</code>のようなルートは例外で、ルート直下に配置されます。
 </div>
 
 ## MVCとあなた
@@ -318,7 +318,7 @@ src/
 **This is an important _cognitive_ principle**. And the principle claims that you can only create safe, compatible API responses if you treat those as a separate, independently governed _thing_ -- hence the 'V' in MVC, in Loco.
 
 <div class="infobox">
-Models in Loco carry the same semantics as in Rails: <b>fat models, slim controllers</b>. This means that every time you want to build something -- <em>you reach out to a model</em>.
+LocoのモデルはRailsと同じ意味合いを持っています。<b>ファットモデル、スリムコントローラー</b>です。つまり、何かを作りたいときは<em>まずモデルにアクセスする</em>ということです。
 </div>
 
 ### モデルの生成
@@ -598,7 +598,7 @@ A few items to note:
 
 
 <div class="infobox">
-The order of the extractors is important, as changing the order of them can lead to compilation errors. Adding the <code>#[debug_handler]</code> macro to handlers can help by printing out better error messages. More information about extractors can be found in the <a href="https://docs.rs/axum/latest/axum/extract/index.html#the-order-of-extractors">axum documentation</a>.
+エクストラクタの順序は重要です。順序を変えるとコンパイルエラーになることがあります。ハンドラに<code>#[debug_handler]</code>マクロを付けると、より分かりやすいエラーメッセージが表示されます。エクストラクタの詳細は<a href="https://docs.rs/axum/latest/axum/extract/index.html#the-order-of-extractors">axumのドキュメント</a>を参照してください。
 </div>
 
 
@@ -638,7 +638,7 @@ $ cargo loco generate scaffold comment content:text article:references --api
 ```
 
 <div class="infobox">
-The special <code>&lt;other_model&gt;:references:&lt;column_name&gt;</code> is also available. For when you want to have a different name for your column.
+特別な<code>&lt;other_model&gt;:references:&lt;column_name&gt;</code>も利用できます。カラム名を別の名前にしたい場合に使えます。
 </div>
 
 If you peek into the new migration, you'll discover a new database relation in the articles table:
@@ -726,7 +726,7 @@ pub async fn comments(
 ```
 
 <div class="infobox">
-This is called "lazy loading", where we fetch the item first and later its associated relation. Don't worry - there is also a way to eagerly load comments along with an article.
+これは「遅延読み込み（lazy loading）」と呼ばれる方法で、まずアイテムを取得し、その後に関連するリレーションを取得します。なお、記事と一緒にコメントを一括で取得する「イーガーロード（eager loading）」の方法もありますのでご安心ください。
 </div>
 
 Now start the app again:
