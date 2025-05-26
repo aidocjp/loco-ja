@@ -1,6 +1,6 @@
 +++
 title = "Axum vs Loco"
-description = "Shows how to move from Axum to Loco"
+description = "AxumからLocoへの移行方法を示します"
 date = 2023-12-01T19:30:00+00:00
 updated = 2023-12-01T19:30:00+00:00
 draft = false
@@ -15,63 +15,63 @@ flair =[]
 +++
 
 <div class="infobox">
-<b>NOTE: Loco is based on Axum, it is "Axum with batteries included"</b>, and is very easy to move your Axum code to Loco.
+<b>注意：LocoはAxumベースで、「バッテリー同梱のAxum」です</b>。AxumコードをLocoに移行するのは非常に簡単です。
 </div>
 
-We will study [realworld-axum-sqlx](https://github.com/launchbadge/realworld-axum-sqlx) which is an Axum based app, that attempts to describe a real world project, using API, real database, and real world scenarios as well as real world operability requirements such as configuration and logging.
+API、実際のデータベース、実際のシナリオ、および設定やロギングなどの実際の運用要件を使用した実世界のプロジェクトを記述しようとするAxumベースのアプリである[realworld-axum-sqlx](https://github.com/launchbadge/realworld-axum-sqlx)を研究します。
 
-Picking `realworld-axum-sqlx` apart piece by piece **we will show that by moving it from Axum to Loco, most of the code is already written for you**, you get better best practices, better dev experience, integrated testing, code generation, and build apps faster.
+`realworld-axum-sqlx`を一つずつ分解することで、**AxumからLocoに移行することで、コードの大部分がすでにあなたのために書かれていることを示します**。より良いベストプラクティス、より良い開発体験、統合テスト、コード生成、そしてより高速なアプリ構築を得ることができます。
 
-**You can use this breakdown** to understand how to move your own Axum based app to Loco as well. For any questions, reach out [in discussions](https://github.com/loco-rs/loco/discussions) or join our [discord by clicking the green invite button](https://github.com/loco-rs/loco)
+**この分解を使用して**、独自のAxumベースアプリをLocoに移行する方法も理解できます。質問がある場合は、[ディスカッション](https://github.com/loco-rs/loco/discussions)に連絡するか、[緑の招待ボタンをクリックしてdiscord](https://github.com/loco-rs/loco)に参加してください。
 
 ## `main`
 
-When working with Axum, you have to have your own `main` function which sets up every component of your app, gets your routers, adds middleware, sets context, and finally, eventually, goes and sets up a `listen` on a socket.
+Axumを使用する際、アプリのすべてのコンポーネントをセットアップし、ルーターを取得し、ミドルウェアを追加し、コンテキストを設定し、最終的にソケットで`listen`をセットアップする独自の`main`関数が必要です。
 
-This is a lot of manual, error prone work. 
+これは多くの手動で、エラーが起こりやすい作業です。
 
-In Loco you:
+Locoでは以下ができます：
 
-* Toggle on/off your desired middleware in configuration
-* Use `cargo loco start`, no need for a `main` file at all
-* In production, you get a compiled binary named `your_app` which you run
+* 設定で必要なミドルウェアのオン/オフを切り替え
+* `cargo loco start`を使用、`main`ファイルは一切不要
+* 本番環境では、実行する`your_app`という名前のコンパイル済みバイナリが得られます
 
 
-### Moving to Loco
+### Locoへの移行
 
-* Set up your required middleware in Loco `config/`
+* Loco `config/`で必要なミドルウェアをセットアップ
 
 ```yaml
 server:
   middlewares:
     limit_payload:
       body_limit: 5mb
-  # .. more middleware below ..
+  # .. 以下にさらにミドルウェア ..
 ```
 
-* Set your serving port in Loco `config/`
+* Loco `config/`でサーバーポートを設定
 
 ```yaml
 server:
   port: 5150
 ```
 
-### Verdict
+### 判定
 
-* **No code to write**, you don't need to hand-code a main function unless you have to
-* **Best practices off the shelf**, you get a main file best practices uniform, shared across all your Loco apps
-* **Easy to change**, if you want to remove/add middleware to test things out, you can just flip a switch in configuration, no rebuild
+* **書くコードなし**、必要でない限りmain関数を手動でコーディングする必要がありません
+* **すぐに使えるベストプラクティス**、すべてのLocoアプリで共有される統一されたmainファイルのベストプラクティスが得られます
+* **変更が簡単**、テストのためにミドルウェアを削除/追加したい場合、設定でスイッチを切り替えるだけで、リビルドは不要です
 
 
-## Env
+## 環境変数
 
-The realworld axum codebase uses [dotenv](https://github.com/launchbadge/realworld-axum-sqlx/blob/main/.env.sample), which needs explicit loading in `main`:
+realworld axumコードベースは[dotenv](https://github.com/launchbadge/realworld-axum-sqlx/blob/main/.env.sample)を使用しており、`main`で明示的な読み込みが必要です：
 
 ```rust
  dotenv::dotenv().ok();
 ```
 
-And a `.env` file to be available, maintained and loaded:
+また、`.env`ファイルが利用可能で、保守され、読み込まれる必要があります：
 
 ```
 DATABASE_URL=postgresql://postgres:{password}@localhost/realworld_axum_sqlx
@@ -79,32 +79,32 @@ HMAC_KEY={random-string}
 RUST_LOG=realworld_axum_sqlx=debug,tower_http=debug
 ```
 
-This is a **sample** file which you get with the project, which you have to manually copy and edit, which is more often than not very error prone.
+これはプロジェクトで提供される**サンプル**ファイルで、手動でコピーして編集する必要があり、多くの場合非常にエラーが起こりやすいものです。
 
-### Moving to Loco
+### Locoへの移行
 
-Loco: use your standard `config/[stage].yaml` configuration, and load specific values from environment using `get_env`
+Loco：標準の`config/[stage].yaml`設定を使用し、`get_env`を使って環境から特定の値を読み込みます
 
 
 ```yaml
 # config/development.yaml
 
-# Web server configuration
+# Webサーバー設定
 server:
-  # Port on which the server will listen. the server binding is 0.0.0.0:{PORT}
+  # サーバーがリッスンするポート。サーバーバインディングは0.0.0.0:{PORT}
   port:  {{/* get_env(name="NODE_PORT", default=5150) */}}
 ```
 
-This configuration is strongly typed, contains most-used values like database URL, logger levels and filtering and more. No need to guess or reinvent the wheel.
+この設定は強く型付けされており、データベースURL、ロガーレベルとフィルタリングなど、最もよく使われる値が含まれています。推測したり車輪の再発明をする必要はありません。
 
-### Verdict
+### 判定
 
-* **No coding needed**, when moving to Loco you write less code
-* **Less moving parts**, when using Axum only, you have to have configuration in addition to env vars, this is something you get for free with Loco
+* **コーディング不要**、Locoに移行する際に書くコードが減ります
+* **可動部分が少ない**、Axumのみを使用する場合、環境変数に加えて設定を用意する必要がありますが、これはLocoで無料で得られるものです
 
-## Database
+## データベース
 
-Using Axum only, you typically have to set up your connection, pool, and set it up to be available for your routes, here's the code which you put in your `main.rs` typically:
+Axumのみを使用する場合、通常、接続、プール、ルートで使用できるようにセットアップする必要があります。以下は、通常`main.rs`に記述するコードです：
 
 ```rust
     let db = PgPoolOptions::new()
@@ -142,9 +142,9 @@ database:
 * **Change is easy** - often you want to try different values under different loads in production, with Axum only, you have to recompile, redeploy. With Loco you can set a config and restart the process.
 
 
-## Logging
+## ロギング
 
-All around your app, you'll have to manually code a logging story. Which do you pick? `tracing` or `slog`? Is it logging or tracing? What is better?
+アプリ全体で、ロギングストーリーを手動でコーディングする必要があります。どれを選びますか？`tracing`か`slog`か？ロギングかトレーシングか？どちらが良いのでしょうか？
 
 Here's what exists in the real-world-axum project. In serving:
 
@@ -195,11 +195,11 @@ logger:
 * **Build faster** - you get traces for only what you want. You get error backtraces which are colorful, contextual, and with zero noise which makes it easier to debug stuff. You can change formats and levels for production.
 * **Change is easy** - often you want to try different values under different loads in production, with Axum only, you have to recompile, redeploy. With Loco you can set a config and restart the process.
 
-## Routing
+## ルーティング
 
-Moving routes from Axum to Loco is actually drop-in. Loco uses the native Axum router.
+AxumからLocoへのルート移行は実際にドロップインです。LocoはネイティブのAxumルーターを使用します。
 
-If you want to have facilities like route listing and information, you can use the native Loco router, which translates to an Axum router, or you can use your own Axum router.
+ルートリストや情報などの機能が必要な場合、Axumルーターに変換されるネイティブのLocoルーターを使用するか、独自のAxumルーターを使用できます。
 
 
 ### Moving to Loco

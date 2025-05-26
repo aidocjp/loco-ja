@@ -1,5 +1,5 @@
 +++
-title = "Starters"
+title = "スターター"
 date = 2021-12-19T08:00:00+00:00
 updated = 2021-12-19T08:00:00+00:00
 draft = false
@@ -13,16 +13,16 @@ top = false
 flair =[]
 +++
 
-Simplify your project setup with Loco's predefined boilerplates, designed to make your development journey smoother. To get started, install our CLI and choose the template that suits your needs.
+開発体験をよりスムーズにするために設計されたLocoの事前定義されたボイラープレートで、プロジェクトのセットアップを簡素化します。開始するには、CLIをインストールして、ニーズに合ったテンプレートを選択してください。
 
 <!-- <snip id="quick-installation-command" inject_from="yaml" template="sh"> -->
 ```sh
 cargo install loco
-cargo install sea-orm-cli # Only when DB is needed
+cargo install sea-orm-cli # DBが必要な場合のみ
 ```
 <!-- </snip> -->
 
-Create a starter:
+スターターを作成：
 
 <!-- <snip id="loco-cli-new-from-template" inject_from="yaml" template="sh"> -->
 ```sh
@@ -43,31 +43,31 @@ Next step, build your frontend:
 ```
 <!-- </snip> -->
 
-## Available Starters
+## 利用可能なスターター
 
-### SaaS Starter
+### SaaSスターター
 
-The SaaS starter is an all-included set up for projects requiring both a UI and a REST API. For the UI this starter supports a client-side app or classic server-side templates (or a combination).
+SaaSスターターは、UIとREST APIの両方を必要とするプロジェクト向けの全て込みのセットアップです。UIについては、このスターターはクライアントサイドアプリまたは従来のサーバーサイドテンプレート（またはその組み合わせ）をサポートします。
 
 **UI**
 
-- Frontend starter built on React and Vite (easy to replace with your preferred framework).
-- Static middleware that point on your frontend build and includes a fallback index. Alternatively you can configure it for static assets for server-side templates.
-- The Tera view engine configured for server-side templates, including i18n configuration. Templates and i18n assets live in `assets/`.
+- ReactとViteで構築されたフロントエンドスターター（お好みのフレームワークに簡単に置き換え可能）。
+- フロントエンドビルドを指してフォールバックインデックスを含む静的ミドルウェア。またはサーバーサイドテンプレート用の静的アセット用に設定することもできます。
+- i18n設定を含む、サーバーサイドテンプレート用に設定されたTeraビューエンジン。テンプレートとi18nアセットは`assets/`にあります。
 
 **Rest API**
 
-- `ping` and `health` endpoints to check service health. See all endpoint with the following command `cargo loco routes`
-- Users table and authentication middleware.
-- User model with authentication logic and user registration.
-- Forgot password API flow.
-- Mailer that sends welcome emails and handles forgot password requests.
+- サービスの健全性をチェックする`ping`と`health`エンドポイント。すべてのエンドポイントを確認するには`cargo loco routes`コマンドを使用
+- ユーザーテーブルと認証ミドルウェア。
+- 認証ロジックとユーザー登録を持つユーザーモデル。
+- パスワード忘れAPIフロー。
+- ウェルカムメールを送信し、パスワード忘れリクエストを処理するメーラー。
 
-#### Configuring assets for serverside templates
+#### サーバーサイドテンプレート用のアセット設定
 
-The SaaS starter comes preconfigured for frontend client-side assets. If you want to use server-side template rendering which includes assets such as pictures and styles, you can configure the asset middleware for it:
+SaaSスターターはフロントエンドクライアントサイドアセット用に事前設定されています。画像やスタイルなどのアセットを含むサーバーサイドテンプレートレンダリングを使用したい場合は、そのためのアセットミドルウェアを設定できます：
 
-In your `config/development.yaml`, uncomment the server-side config, and comment the client-side config.
+`config/development.yaml`で、サーバーサイド設定のコメントを外し、クライアントサイド設定をコメントアウトしてください。
 
 ```yaml
     # server-side static assets config
@@ -97,10 +97,10 @@ In your `config/development.yaml`, uncomment the server-side config, and comment
 ```
 
 
-### Rest API Starter
+### Rest APIスターター
 
-Choose the Rest API starter if you only need a REST API without a frontend. If you change your mind later and decide to serve a frontend, simply enable the `static` middleware and point the configuration to your `frontend` distribution folder.
+フロントエンドなしでREST APIのみが必要な場合は、Rest APIスターターを選択してください。後でフロントエンドを提供することに決めた場合は、`static`ミドルウェアを有効にして、設定を`frontend`配布フォルダーに向けるだけです。
 
-### Lightweight Service Starter
+### 軽量サービススターター
 
-Focused on controllers and views (response schema), the Lightweight Service starter is minimalistic. If you require a REST API service without a database, frontend, workers, or other features that Loco provides, this is the ideal choice for you!
+コントローラーとビュー（レスポンススキーマ）に焦点を当てた軽量サービススターターはミニマリスティックです。データベース、フロントエンド、ワーカー、またはLocoが提供するその他の機能なしでREST APIサービスが必要な場合、これが理想的な選択です！

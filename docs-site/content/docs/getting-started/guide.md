@@ -1,5 +1,5 @@
 +++
-title = "The Loco Guide"
+title = "Locoガイド"
 date = 2021-05-01T08:00:00+00:00
 updated = 2021-05-01T08:00:00+00:00
 draft = false
@@ -13,53 +13,53 @@ top = false
 flair =[]
 +++
 
-## Guide Assumptions
+## ガイドの前提条件
 
-This is a "long way round" tutorial. It is long and indepth on purpose, it shows you how to build things manually **and** automatically using generators, so that you learn the skills to build and also how things work.
-
-
-### What's with the name?
-
-The name `Loco` comes from **loco**motive, as a tribute to Rails, and `loco` is easier to type than `locomotive` :-). Also, in some languages it means "crazy" but that was not the original intention (or, is it crazy to build a Rails on Rust? only time will tell!).
-
-### How much Rust do I need to know?
-
-You need to be familiar with Rust to a beginner but not more than moderate-beginner level. You need to know how to build, test, and run Rust projects, have used some popular libraries such as `clap`, `regex`, `tokio`, `axum` or other web framework, nothing too fancy. There are no crazy lifetime twisters or complex / too magical, macros in Loco that you need to know how they work.
+これは「長い道のり」のチュートリアルです。意図的に長く詳細にしており、手動でのビルド方法**と**ジェネレーターを使った自動ビルド方法の両方を学習できるように、構築スキルと仕組みの理解の両方を身につけられるようになっています。
 
 
-### What is Loco?
+### 名前の由来は？
 
-Loco is strongly inspired by Rails. If you know Rails _and_ Rust, you'll feel at home. If you only know Rails and new to Rust, you'll find Loco refreshing. We do not assume you know Rails.
+`Loco`という名前は**loco**motiveから来ており、Railsへの敬意を表したもので、`loco`の方が`locomotive`より入力しやすいからです :-) また、いくつかの言語では「クレイジー」を意味しますが、それは本来の意図ではありません（あるいは、RustでRailsを構築するのはクレイジーなのでしょうか？時が教えてくれるでしょう！）。
+
+### どの程度のRustの知識が必要ですか？
+
+初心者レベルのRustに精通している必要がありますが、中級初心者レベル以上は必要ありません。Rustプロジェクトのビルド、テスト、実行方法を知っていて、`clap`、`regex`、`tokio`、`axum`などの人気ライブラリやその他のWebフレームワークを使ったことがある程度で十分です。特に高度なものは必要ありません。Locoには、動作原理を理解する必要があるような複雑なライフタイムやあまりにも魔法的なマクロはありません。
+
+
+### Locoとは？
+
+LocoはRailsに強くインスパイアされています。RailsとRustの両方を知っていれば、馴染みやすく感じるでしょう。Railsしか知らなくてRustが初めての場合、Locoを新鮮に感じるでしょう。Railsの知識は前提としていません。
 
 <div class="infobox">
-We think Rails is so great, that this guide is strongly inspired from the <a href="https://guides.rubyonrails.org/getting_started.html">Rails guide, too</a>
+Railsはとても素晴らしいので、このガイドも<a href="https://guides.rubyonrails.org/getting_started.html">Railsガイド</a>に強くインスパイアされています
 </div>
 
-Loco is a Web or API framework for Rust. It's also a productivity suite for developers: it contains everything you need while building a hobby or your next startup. It's also strongly inspired by Rails.
+LocoはRust向けのWebまたはAPIフレームワークです。また、開発者向けの生産性スイートでもあります：趣味のプロジェクトや次のスタートアップを構築する際に必要なものがすべて含まれています。Railsに強くインスパイアされています。
 
-- **You have a variant of the MVC model**, which removes the paradox of option. You deal with building your app, not making academic decisions for what abstractions to use.
-- **Fat models, slim controllers**. Models should contain most of your logic and business implementation, controllers should just be a lightweight router that understands HTTP and moves parameters around.
-- **Command line driven** to keep your momentum and flow. Generate stuff over copying and pasting or coding from scratch.
-- **Every task is "infrastructure-ready"**, just plug in your code and wire it in: controllers, models, views, tasks, background jobs, mailers, and more.
-- **Convention over configuration**: decisions are already done for you -- the folder structure matter, configuration shape and values matter, and the way an app is wired matter to how an app operates and for you to be the most effective.
+- **MVCモデルのバリエーション**により、選択肢のパラドックスを排除します。アプリの構築に集中でき、どの抽象化を使うかといった学術的な決定を行う必要がありません。
+- **ファットモデル、スリムコントローラー**。モデルにはロジックとビジネス実装の大部分を含み、コントローラーはHTTPを理解してパラメーターを移動させる軽量ルーターに留めるべきです。
+- **コマンドライン駆動**により、勢いとフローを維持します。コピー&ペーストやゼロからのコーディングよりも、生成機能を活用します。
+- **すべてのタスクが「インフラ対応」**、コードをプラグインして配線するだけです：コントローラー、モデル、ビュー、タスク、バックグラウンドジョブ、メーラーなど。
+- **設定より規約**：決定はすでに行われています -- フォルダー構造、設定の形式と値、アプリの配線方法がアプリの動作と最も効果的な開発方法に影響します。
 
-## Creating a New Loco App
+## 新しいLocoアプリの作成
 
-You can follow this guide for a step-by-step "bottom up" learning, or you can jump and go with the [tour](@/docs/getting-started/tour/index.md) instead for a quicker "top down" intro.
+このガイドに従ってステップバイステップの「ボトムアップ」学習を行うか、より早い「トップダウン」の紹介として[ツアー](@/docs/getting-started/tour/index.md)に進むこともできます。
 
-### Installing
+### インストール
 
 <!-- <snip id="quick-installation-command" inject_from="yaml" template="sh"> -->
 ```sh
 cargo install loco
-cargo install sea-orm-cli # Only when DB is needed
+cargo install sea-orm-cli # DBが必要な場合のみ
 ```
 <!-- </snip> -->
 
 
-### Creating a new Loco app
+### 新しいLocoアプリの作成
 
-Now you can create your new app (choose "SaaS app" for built-in authentication).
+これで新しいアプリを作成できます（組み込み認証のために「SaaS app」を選択してください）。
 
 <!-- <snip id="loco-cli-new-from-template" inject_from="yaml" template="sh"> -->
 ```sh
@@ -82,35 +82,35 @@ Next step, build your frontend:
 
 
 
-Here's a rundown of what Loco creates for you by default:
+Locoがデフォルトで作成するもの一覧：
 
-| File/Folder    | Purpose                                                                                                                                                           |
+| ファイル/フォルダ | 目的                                                                                                                                                           |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/`         | Contains controllers, models, views, tasks and more                                                                                                               |
-| `app.rs`       | Main component registration point. Wire the important bits here.                                                                                                  |
-| `lib.rs`       | Various rust-specific exports of your components.                                                                                                                 |
-| `bin/`         | Has your `main.rs` file, you don't need to worry about it                                                                                                         |
-| `controllers/` | Contains controllers, all controllers are exported via `mod.rs`                                                                                                   |
-| `models/`      | Contains models, `models/_entities` contains auto-generated SeaORM models, and `models/*.rs` contains your model extension logic, which are exported via `mod.rs` |
-| `views/`       | Contains JSON-based views. Structs which can `serde` and output as JSON through the API.                                                                          |
-| `workers/`     | Has your background workers.                                                                                                                                      |
-| `mailers/`     | Mailer logic and templates, for sending emails.                                                                                                                   |
-| `fixtures/`    | Contains data and automatic fixture loading logic.                                                                                                                |
-| `tasks/`       | Contains your day to day business-oriented tasks such as sending emails, producing business reports, db maintenance, etc.                                         |
-| `tests/`       | Your app-wide tests: models, requests, etc.                                                                                                                       |
-| `config/`      | A stage-based configuration folder: development, test, production                                                                                                 |
+| `src/`         | コントローラー、モデル、ビュー、タスクなどが含まれています                                                                                                               |
+| `app.rs`       | メインコンポーネント登録ポイント。重要な部分をここで配線します。                                                                                                  |
+| `lib.rs`       | コンポーネントの様々なRust固有のエクスポート。                                                                                                                 |
+| `bin/`         | `main.rs`ファイルがあります、これについて心配する必要はありません                                                                                                         |
+| `controllers/` | コントローラーが含まれ、すべてのコントローラーは`mod.rs`経由でエクスポートされます                                                                                                   |
+| `models/`      | モデルが含まれ、`models/_entities`には自動生成されたSeaORMモデル、`models/*.rs`にはモデル拡張ロジックが含まれ、`mod.rs`経由でエクスポートされます |
+| `views/`       | JSONベースのビュー。API経由でJSONとして`serde`でシリアライズして出力できる構造体。                                                                          |
+| `workers/`     | バックグラウンドワーカーがあります。                                                                                                                                      |
+| `mailers/`     | メール送信用のメーラーロジックとテンプレート。                                                                                                                   |
+| `fixtures/`    | データと自動フィクスチャ読み込みロジックが含まれています。                                                                                                                |
+| `tasks/`       | メール送信、ビジネスレポート作成、DB メンテナンスなどの日常的なビジネス指向タスクが含まれています。                                         |
+| `tests/`       | アプリ全体のテスト：モデル、リクエストなど。                                                                                                                       |
+| `config/`      | ステージベースの設定フォルダ：development、test、production                                                                                                 |
 
 ## Hello, Loco!
 
-Let's get some responses quickly. For this, we need to start up the server.
+いくつかのレスポンスを素早く取得してみましょう。そのためには、サーバーを起動する必要があります。
 
-You can now switch to `myapp`:
+`myapp`に移動できます：
 
 ```sh
 $ cd myapp
 ```
 
-### Starting the server
+### サーバーの起動
 
 <!-- <snip id="starting-the-server-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -118,16 +118,16 @@ cargo loco start
 ```
 <!-- </snip> -->
 
-And now, let's see that it's alive:
+そして、動作していることを確認しましょう：
 
 ```sh
 $ curl localhost:5150/_ping
 {"ok":true}
 ```
 
-The built in `_ping` route will tell your load balancer everything is up.
+組み込みの`_ping`ルートはロードバランサーにすべてが正常であることを知らせます。
 
-Let's see that all services that are required are up:
+必要なサービスがすべて稼働していることを確認しましょう：
 
 ```sh
 $ curl localhost:5150/_health
@@ -135,12 +135,12 @@ $ curl localhost:5150/_health
 ```
 
 <div class="infobox">
-The built in <code>_health</code> route will tell you that you have configured your app properly: it can establish a connection to your Database and Redis instances successfully.
+組み込みの<code>_health</code>ルートは、アプリが正しく設定されていることを確認します：データベースとRedisインスタンスへの接続を正常に確立できることを示します。
 </div>
 
-### Say "Hello", Loco
+### "Hello", Loco
 
-Let's add a quick _hello_ response to our service.
+サービスに素早い_hello_レスポンスを追加してみましょう。
 
 ```sh
 $ cargo loco generate controller guide --api
@@ -289,13 +289,13 @@ The <em>SaaS Starter</em> keeps routes under <code>/api</code> because it is cli
 When using client-side routing like React Router, we want to separate backend routes from client routes: the browser will use <code>/home</code> but not <code>/api/home</code> which is the backend route, and you can call <code>/api/home</code> from the client with no worries. Nevertheless, the routes: <code>/_health</code> and <code>/_ping</code> are exceptions, they stay at the root.
 </div>
 
-## MVC and You
+## MVCとあなた
 
-**Traditional MVC (Model-View-Controller) originated in desktop UI programming paradigms.** However, its applicability to web services led to its rapid adoption. MVC's golden era was around the early 2010s, and since then, many other paradigms and architectures have emerged.
+**従来のMVC（Model-View-Controller）はデスクトップUIプログラミングパラダイムから生まれました。** しかし、Webサービスへの適用性により急速に採用されました。MVCの黄金時代は2010年代初頭で、その後多くの他のパラダイムやアーキテクチャが登場しました。
 
-**MVC is still a very strong principle and architecture to follow for simplifying projects**, and this is what Loco follows too.
+**MVCはプロジェクトを簡素化するための非常に強力な原則とアーキテクチャであり**、Locoもこれに従っています。
 
-Although web services and APIs don't have a concept of a _view_ because they do not generate HTML or UI responses, **we claim _stable_, _safe_ services and APIs indeed has a notion of a view** -- and that is the serialized data, its shape, its compatibility and its version.
+WebサービスやAPIはHTMLやUIレスポンスを生成しないため_ビュー_の概念を持たないものの、**_安定した_、_安全な_サービスやAPIには確実にビューの概念がある**と私たちは主張します -- それはシリアライズされたデータ、その形状、互換性、バージョンです。
 
 ```
 // a typical loco app contains all parts of MVC
@@ -321,11 +321,11 @@ src/
 Models in Loco carry the same semantics as in Rails: <b>fat models, slim controllers</b>. This means that every time you want to build something -- <em>you reach out to a model</em>.
 </div>
 
-### Generating a model
+### モデルの生成
 
-A model in Loco represents data *and* functionality. Typically the data is stored in your database. Most, if not all, business processes of your applications would be coded on the model (as an Active Record) or as an orchestration of a few models.
+Locoのモデルはデータ*と*機能を表します。通常、データはデータベースに保存されます。アプリケーションのビジネスプロセスのほとんど、もしくはすべてがモデル（Active Recordとして）または複数のモデルのオーケストレーションとしてコーディングされます。
 
-Let's create a new model called `Article`:
+`Article`という新しいモデルを作成してみましょう：
 
 ```sh
 $ cargo loco generate model article title:string content:text
@@ -337,9 +337,9 @@ added: "tests/models/articles.rs"
 injected: "tests/models/mod.rs"
 ```
 
-### Database migrations
+### データベースマイグレーション
 
-**Keeping your schema honest is done with migrations**. A migration is a singular change to your database structure: it can contain complete table additions, modifications, or index creation.
+**スキーマの整合性を保つにはマイグレーションを使用します**。マイグレーションはデータベース構造への単一の変更です：完全なテーブル追加、変更、またはインデックス作成を含むことができます。
 
 ```rust
 // this was generated into `migrations/` from the command:
@@ -512,9 +512,9 @@ $ curl localhost:5150/api/articles
 [{"created_at":"...","updated_at":"...","id":1,"title":"how to build apps in 3 steps","content":"use Loco: https://loco.rs"}]
 ```
 
-## Building a CRUD API
+## CRUD APIの構築
 
-Next we'll see how to get a single article, delete, and edit a single article. Getting an article by ID is done using the `Path` extractor from `axum`.
+次に、単一の記事の取得、削除、編集方法を見ていきます。IDによる記事の取得は`axum`の`Path`エクストラクターを使用して行います。
 
 Replace the contents of `articles.rs` with this:
 
@@ -627,9 +627,9 @@ $ curl localhost:5150/api/articles
 [{"created_at":"...","updated_at":"...","id":1,"title":"how to build apps in 3 steps","content":"use Loco: https://loco.rs"},{"created_at":"...","updated_at":"...","id":2,"title":"Your Title","content":"Your Content xxx"}
 ```
 
-### Adding a second model
+### 2つ目のモデルの追加
 
-Let's add another model, this time: `Comment`. We want to create a relation - a comment belongs to a post, and each post can have multiple comments.
+別のモデルを追加しましょう。今度は`Comment`です。リレーションを作成したいと思います - コメントは投稿に属し、各投稿は複数のコメントを持つことができます。
 
 Instead of coding the model and controller by hand, we're going to create a **comment scaffold** which will generate a fully working CRUD API comments. We're also going to use the special `references` type:
 
@@ -756,9 +756,9 @@ $ curl localhost:5150/api/articles/1/comments
 
 This ends our comprehensive _Guide to Loco_. If you made it this far, hurray!.
 
-## Tasks: export data report
+## タスク：データレポートのエクスポート
 
-Real world apps require handling real world situations. Say some of your users or customers require some kind of a report.
+実世界のアプリは実世界の状況を処理する必要があります。例えば、ユーザーや顧客が何らかのレポートを必要とする場合があります。
 
 You can:
 
@@ -846,10 +846,10 @@ To add a user check out chapter [Registering a New User](/docs/getting-started/t
 
 Remember: this is environmental, so you write the task once, and then execute in development or production as you wish. Tasks are compiled into the main app binary.
 
-## Authentication: authenticating your requests
+## 認証：リクエストの認証
 
-If you chose the `SaaS App` starter, you should have a fully configured authentication module baked into the app.
-Let's see how to require authentication when **adding comments**.
+`SaaS App`スターターを選択した場合、完全に設定された認証モジュールがアプリに組み込まれているはずです。
+**コメントの追加**時に認証を要求する方法を見てみましょう。
 
 Go back to `src/controllers/comments.rs` and take a look at the `add` function:
 
