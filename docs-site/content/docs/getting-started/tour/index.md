@@ -52,7 +52,7 @@ Next step, build your frontend:
 以下のような構成になります：
 
 * データベースには`sqlite`を使用。データベースプロバイダについては、_models_セクションの[Sqlite vs Postgres](@/docs/the-app/models.md#sqlite-vs-postgres)で詳しく学べます。
-* バックグラウンドワーカーには`async`を使用。ワーカー設定については、_workers_セクションの[async vs queue](@/docs/processing/workers.md#async-vs-queue)で詳しく学べます。
+* バックグラウンドワーカーには`async`を使用。ワーカー設定については、_workers_セクションで詳しく学べます。
 * クライアントサイドアセット配信設定。つまり、バックエンドがAPIとして機能し、静的なクライアントサイドコンテンツも配信します。
 
 

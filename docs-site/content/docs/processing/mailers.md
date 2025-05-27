@@ -191,31 +191,31 @@ cargo loco start --worker
 cargo loco start --server-and-worker
 ```
 
-# Testing
+# テスト
 
-Testing emails sent as part of your workflow can be a complex task, requiring validation of various scenarios such as email verification during user registration and checking user password emails. The primary goal is to streamline the testing process by examining the number of emails sent in the workflow, reviewing email content, and allowing for data snapshots.
+ワークフローの一部として送信されるメールのテストは複雑なタスクになる可能性があり、ユーザー登録時のメール認証やユーザーパスワードメールの確認など、様々なシナリオの検証が必要です。主な目標は、ワークフローで送信されたメールの数を調べ、メールの内容を確認し、データのスナップショットを可能にすることで、テストプロセスを効率化することです。
 
-In `Loco`, we have introduced a stub test email feature. Essentially, emails are not actually sent; instead, we collect information on the number of emails and their contents as part of the testing context.
+`Loco`では、スタブテストメール機能を導入しました。基本的に、メールは実際には送信されず、代わりにテストコンテキストの一部として、メールの数とその内容に関する情報を収集します。
 
-## Configuration
+## 設定
 
-To enable the stub in your tests, add the following field to the configuration under the mailer section in your YAML file:
+テストでスタブを有効にするには、YAMLファイルのメーラーセクションの設定に以下のフィールドを追加します：
 
 ```yaml
 mailer:
   stub: true
 ```
 
-Note: If your email sender operates within a [worker](@/docs/processing/workers.md) process, ensure that the worker mode is set to ForegroundBlocking.
+注意：メール送信者が[ワーカー](@/docs/processing/workers.md)プロセス内で動作する場合は、ワーカーモードがForegroundBlockingに設定されていることを確認してください。
 
-Once you have configured the stub, proceed to your unit tests and follow the example below:
+スタブを設定したら、ユニットテストに進み、以下の例に従ってください：
 
-## Writing a test
+## テストの作成
 
-Test Description:
+テストの説明：
 
-- Create an HTTP request to the endpoint responsible for sending emails as part of your code.
-- Retrieve the mailer instance from the context and call the deliveries() function, which contains information about the number of sent emails and their content.
+- コードの一部としてメール送信を担当するエンドポイントにHTTPリクエストを作成します。
+- コンテキストからメーラーインスタンスを取得し、送信されたメールの数とその内容に関する情報を含むdeliveries()関数を呼び出します。
 
 ```rust
 use loco_rs::testing::prelude::*;

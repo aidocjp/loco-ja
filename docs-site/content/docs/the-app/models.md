@@ -777,7 +777,7 @@ settings:
 
 
 
-この[イニシャライザー](@/docs/extras/pluggability.md#initializers)を`initializers`フックにこの例のようにロードします
+この[イニシャライザー](@/docs/extras/pluggability.md)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -831,7 +831,7 @@ settings:
       dangerously_recreate: false
 ```
 
-次に、この[イニシャライザー](@/docs/extras/pluggability.md#initializers)を`initializers`フックにこの例のようにロードします
+次に、この[イニシャライザー](@/docs/extras/pluggability.md)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {

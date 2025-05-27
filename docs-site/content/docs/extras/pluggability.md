@@ -24,18 +24,18 @@ flair =[]
 <!-- <snip id="configuration-logger" inject_from="code" template="yaml"> -->
 
 ```yaml
-# Application logging configuration
+# アプリケーションのロギング設定
 logger:
-  # Enable or disable logging.
+  # ロギングの有効化または無効化
   enable: true
-  # Enable pretty backtrace (sets RUST_BACKTRACE=1)
+  # pretty backtraceを有効化（RUST_BACKTRACE=1に設定）
   pretty_backtrace: true
-  # Log level, options: trace, debug, info, warn or error.
+  # ログレベル、オプション：trace、debug、info、warn、error
   level: debug
-  # Define the logging format. options: compact, pretty or json
+  # ロギング形式の定義。オプション：compact、pretty、json
   format: compact
-  # By default the logger has filtering only logs that came from your code or logs that came from `loco` framework. to see all third party libraries
-  # Uncomment the line below to override to see all third party libraries you can enable this config and override the logger filters.
+  # デフォルトでは、ロガーはあなたのコードまたは`loco`フレームワークからのログのみをフィルタリングします。すべてのサードパーティライブラリを表示するには
+  # 以下の行をコメント解除して、すべてのサードパーティライブラリを表示するためにこの設定を有効にし、ロガーフィルターをオーバーライドできます。
   # override_filter: trace
 ```
 
@@ -56,9 +56,9 @@ server:
     #
     # ...
     #
-    # Generating a unique request ID and enhancing logging with additional information such as the start and completion of request processing, latency, status code, and other request details.
+    # 一意のリクエストIDを生成し、リクエスト処理の開始と完了、レイテンシ、ステータスコード、その他のリクエスト詳細などの追加情報でロギングを強化します。
     logger:
-      # Enable/Disable the middleware.
+      # ミドルウェアの有効化/無効化
       enable: true
 ```
 
@@ -70,11 +70,11 @@ server:
 
 ```yaml
 database:
-  # When enabled, the sql query will be logged.
+  # 有効にすると、SQLクエリがログに記録されます。
   enable_logging: false
 ```
 
-### エラーの操作
+### エラーの扱い方
 
 アプリの開発中は主にターミナルでエラーを確認することになります。以下のように表示されます：
 
@@ -95,20 +95,20 @@ database:
 - _エラーチェーン_が実験されましたが、実際にはあまり価値がありません。
 - エンドユーザーが目にするエラーは完全に別物です。ユーザーがエラーに対して何もできないことがわかっている場合（例：「データベースオフラインエラー」）、エンドユーザーにはエラーに関する**最小限の内部詳細**を提供するよう努めています。ほとんどの場合、セキュリティ上の理由から、意図的に一般的な「Internal Server Error」になります。
 
-### エラーの生成
+### エラーの作成
 
 コントローラーを構築する際、ハンドラーは`Result<impl IntoResponse>`を返すように記述します。ここでの`Result`はLocoの`Result`であり、Locoの`Error`型も関連付けられています。
 
 Locoの`Error`型を使用する場合、以下のいずれかをレスポンスとして使用できます：
 
 ```rust
-Err(Error::string("some custom message"));
-Err(Error::msg(other_error)); // turns other_error to its string representation
+Err(Error::string("カスタムメッセージ"));
+Err(Error::msg(other_error)); // other_errorをその文字列表現に変換
 Err(Error::wrap(other_error));
-Err(Error::Unauthorized("some message"))
+Err(Error::Unauthorized("メッセージ"))
 
-// or through controller helpers:
-unauthorized("some message") // create a full response object, calling Err on a created error
+// またはコントローラーヘルパー経由で：
+unauthorized("メッセージ") // 完全なレスポンスオブジェクトを作成し、作成されたエラーに対してErrを呼び出す
 ```
 
 ## イニシャライザー
@@ -123,19 +123,17 @@ unauthorized("some message") // create a full response object, calling Err on a 
 
 ```rust
 pub trait Initializer: Sync + Send {
-    /// The initializer name or identifier
+    /// イニシャライザーの名前または識別子
     fn name(&self) -> String;
 
-    /// Occurs after the app's `before_run`.
-    /// Use this to for one-time initializations, load caches, perform web
-    /// hooks, etc.
+    /// アプリの`before_run`の後に発生します。
+    /// これを使用して、一度だけの初期化、キャッシュの読み込み、Webフックの実行などを行います。
     async fn before_run(&self, _app_context: &AppContext) -> Result<()> {
         Ok(())
     }
 
-    /// Occurs after the app's `after_routes`.
-    /// Use this to compose additional functionality and wire it into an Axum
-    /// Router
+    /// アプリの`after_routes`の後に発生します。
+    /// これを使用して、追加の機能を構成し、Axumルーターに配線します
     async fn after_routes(&self, router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
         Ok(router)
     }
@@ -151,7 +149,7 @@ pub trait Initializer: Sync + Send {
 統合を_イニシャライザー_としてコーディングすれば、この再利用を簡単に実現できます：
 
 ```rust
-// place this in `src/initializers/axum_session.rs`
+// これを`src/initializers/axum_session.rs`に配置します
 #[async_trait]
 impl Initializer for AxumSessionInitializer {
     fn name(&self) -> String {
@@ -179,12 +177,12 @@ src/
  controllers/
     :
     :
- initializers/       <--- a new folder
-   mod.rs            <--- a new module
-   axum_session.rs   <--- your new initializer
+ initializers/       <--- 新しいフォルダ
+   mod.rs            <--- 新しいモジュール
+   axum_session.rs   <--- 新しいイニシャライザー
     :
     :
-  app.rs   <--- register initializers here
+  app.rs   <--- ここでイニシャライザーを登録
 ```
 
 ### イニシャライザーの使用
@@ -238,10 +236,10 @@ Locoでは、ユーザーに_イニシャライザーの完全なVec_を提供�
 このため、独自のロギングスタック初期化を提供するために使用できる`init_logger`という新しい_アプリレベルフック_を追加しました。
 
 ```rust
-// in src/app.rs
+// src/app.rs内
 impl Hooks for App {
-    // return `Ok(true)` if you took over initializing logger
-    // otherwise, return `Ok(false)` to use the Loco logging stack.
+    // ロガーの初期化を引き継いだ場合は`Ok(true)`を返す
+    // それ以外の場合は、Locoのロギングスタックを使用するために`Ok(false)`を返す。
     fn init_logger(_config: &config::Config, _env: &Environment) -> Result<bool> {
         Ok(false)
     }
@@ -290,9 +288,9 @@ impl Routes {
 }
 ```
 
-### Basic Middleware
+### 基本的なミドルウェア
 
-In this example, we will create a basic middleware that will log the request method and path.
+この例では、リクエストメソッドとパスをログに記録する基本的なミドルウェアを作成します。
 
 ```rust
 // src/controllers/middleware/log.rs
@@ -375,96 +373,67 @@ impl<S, B> Service<Request<B>> for LogService<S>
 }
 ```
 
-At the first glance, this middleware is a bit overwhelming. Let's break it down.
+一見すると、このミドルウェアは少し圧倒的かもしれません。分解してみましょう。
 
-The `LogLayer` is a [`tower::Layer`](https://docs.rs/tower/latest/tower/trait.Layer.html) that wraps around the inner
-service.
+`LogLayer`は内部サービスをラップする[`tower::Layer`](https://docs.rs/tower/latest/tower/trait.Layer.html)です。
 
-The `LogService` is a [`tower::Service`](https://docs.rs/tower/latest/tower/trait.Service.html) that implements
-the `Service` trait for the request.
+`LogService`はリクエストに対して`Service`トレイトを実装する[`tower::Service`](https://docs.rs/tower/latest/tower/trait.Service.html)です。
 
-### Generics Explanation
+### ジェネリクスの説明
 
 **`Layer`**
 
-In the `Layer` trait, `S` represents the inner service, which in this case is the `/auth/register` handler. The `layer`
-function takes this inner service and returns a new service that wraps around it.
+`Layer`トレイトでは、`S`は内部サービスを表し、この場合は`/auth/register`ハンドラーです。`layer`関数はこの内部サービスを受け取り、それをラップする新しいサービスを返します。
 
 **`Service`**
 
-`S` is the inner service, in this case, it is the `/auth/register` handler. If we have a look about
-the [`get`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.get.html), [`post`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.post.html), [`put`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.put.html), [`delete`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.delete.html)
-functions which we use for handlers, they all return
-a [`MethodRoute<S, Infallible>`(Which is a service)](https://docs.rs/axum/latest/axum/routing/method_routing/struct.MethodRouter.html).
+`S`は内部サービスで、この場合は`/auth/register`ハンドラーです。ハンドラーに使用する[`get`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.get.html)、[`post`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.post.html)、[`put`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.put.html)、[`delete`](https://docs.rs/axum/latest/axum/routing/method_routing/fn.delete.html)関数を見ると、これらはすべて[`MethodRoute<S, Infallible>`（これはサービスです）](https://docs.rs/axum/latest/axum/routing/method_routing/struct.MethodRouter.html)を返します。
 
-Therefore, `S: Service<Request<B>, Response = Response<Body>, Error = Infallible>` means it takes in a `Request<B>`(
-Request with a body) and returns a `Response<Body>`. The `Error` is `Infallible` which means the handler never errors.
+したがって、`S: Service<Request<B>, Response = Response<Body>, Error = Infallible>`は、`Request<B>`（ボディを持つリクエスト）を受け取り、`Response<Body>`を返すことを意味します。`Error`は`Infallible`で、ハンドラーがエラーを発生させないことを意味します。
 
-`S::Future: Send + 'static` means the future of the inner service must implement `Send` trait and `'static`.
+`S::Future: Send + 'static`は、内部サービスのフューチャーが`Send`トレイトと`'static`を実装する必要があることを意味します。
 
-`type Response = S::Response` means the response type of the middleware is the same as the inner service.
+`type Response = S::Response`は、ミドルウェアのレスポンス型が内部サービスと同じであることを意味します。
 
-`type Error = S::Error` means the error type of the middleware is the same as the inner service.
+`type Error = S::Error`は、ミドルウェアのエラー型が内部サービスと同じであることを意味します。
 
-`type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>` means the future type of the middleware is the
-same as the inner service.
+`type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>`は、ミドルウェアのフューチャー型が内部サービスと同じであることを意味します。
 
-`B: Send + 'static` means the request body type must implement the `Send` trait and `'static`.
+`B: Send + 'static`は、リクエストボディ型が`Send`トレイトと`'static`を実装する必要があることを意味します。
 
-### Function Explanation
+### 関数の説明
 
 **`LogLayer`**
 
-The `LogLayer::new` function is used to create a new instance of the `LogLayer`.
+`LogLayer::new`関数は、`LogLayer`の新しいインスタンスを作成するために使用されます。
 
 **`LogService`**
 
-The `LogService::poll_ready` function is used to check if the service is ready to process a request. It can be used for
-backpressure, for more information see
-the [`tower::Service` documentation](https://docs.rs/tower/latest/tower/trait.Service.html)
-and [Tokio tutorial](https://tokio.rs/blog/2021-05-14-inventing-the-service-trait#backpressure).
+`LogService::poll_ready`関数は、サービスがリクエストを処理する準備ができているかどうかを確認するために使用されます。これはバックプレッシャーに使用できます。詳細については、[`tower::Service`のドキュメント](https://docs.rs/tower/latest/tower/trait.Service.html)と[Tokioチュートリアル](https://tokio.rs/blog/2021-05-14-inventing-the-service-trait#backpressure)を参照してください。
 
-The `LogService::call` function is used to process the request. In this case, we are logging the request method and
-path. Then we are calling the inner service with the request.
+`LogService::call`関数は、リクエストを処理するために使用されます。この場合、リクエストメソッドとパスをログに記録し、次に内部サービスをリクエストと共に呼び出しています。
 
-**Importance of `poll_ready`:**
+**`poll_ready`の重要性：**
 
-In the Tower framework, before a service can be used to handle a request, it must be
-checked for readiness
-using the
-`poll_ready` method. This method returns `Poll::Ready(Ok(()))` when the service is ready to process a request. If a
-service is not ready, it may return `Poll::Pending`, indicating that the caller should wait before sending a request.
-This mechanism ensures that the service has the necessary resources or state to process the request efficiently and
-correctly.
+Towerフレームワークでは、サービスがリクエストを処理するために使用される前に、`poll_ready`メソッドを使用して準備状況を確認する必要があります。このメソッドは、サービスがリクエストを処理する準備ができているときに`Poll::Ready(Ok(()))`を返します。サービスの準備ができていない場合、`Poll::Pending`を返すことがあり、呼び出し元はリクエストを送信する前に待機する必要があることを示します。このメカニズムにより、サービスがリクエストを効率的かつ正確に処理するために必要なリソースまたは状態を持っていることが保証されます。
 
-**Cloning and Readiness**
+**クローニングと準備状況**
 
-When cloning a service, particularly to move it into a boxed future or similar context, it's crucial to understand that
-the clone does not inherit the readiness state of the original service. Each clone of a service maintains its own state.
-This means that even if the original service was ready `(Poll::Ready(Ok(())))`, the cloned service might not be in the
-same state immediately after cloning. This can lead to issues where a cloned service is used before it is ready,
-potentially causing panics or other failures.
+サービスをクローンする場合、特にボックス化されたフューチャーや同様のコンテキストに移動する場合、クローンが元のサービスの準備状況を継承しないことを理解することが重要です。サービスの各クローンは独自の状態を維持します。これは、元のサービスが準備完了（`Poll::Ready(Ok(()))`）であっても、クローンされたサービスがクローン直後に同じ状態にない可能性があることを意味します。これは、準備ができる前にクローンされたサービスが使用される問題につながり、パニックやその他の障害を引き起こす可能性があります。
 
-**Correct approach to cloning services using `std::mem::replace`**
-To handle cloning correctly, it's recommended to use `std::mem::replace` to swap the ready service with its clone in a
-controlled manner. This approach ensures that the service being used to handle the request is the one that has been
-verified as ready. Here's how it works:
+**`std::mem::replace`を使用したサービスのクローニングの正しいアプローチ**
+クローニングを正しく処理するには、準備完了のサービスをそのクローンと制御された方法で交換するために`std::mem::replace`を使用することをお勧めします。このアプローチにより、リクエストを処理するために使用されるサービスが、準備完了として確認されたものであることが保証されます。動作は次のとおりです：
 
-- Clone the service: First, create a clone of the service. This clone will eventually replace the original service in
-  the service handler.
-- Replace the original with the clone: Use `std::mem::replace` to swap the original service with the clone. This
-  operation ensures that the service handler continues to hold a service instance.
-- Use the original service to handle the request: Since the original service was already checked for readiness (via
-  `poll_ready`), it's safe to use it to handle the incoming request. The clone, now in the handler, will be the one
-  checked for readiness next time.
+- サービスをクローンする：まず、サービスのクローンを作成します。このクローンは最終的にサービスハンドラー内の元のサービスを置き換えます。
+- 元のサービスをクローンと置き換える：`std::mem::replace`を使用して、元のサービスをクローンと交換します。この操作により、サービスハンドラーが引き続きサービスインスタンスを保持することが保証されます。
+- 元のサービスを使用してリクエストを処理する：元のサービスは既に準備状況が確認されている（`poll_ready`経由）ため、着信リクエストを処理するために安全に使用できます。ハンドラー内のクローンは、次回準備状況が確認されるものになります。
 
-This method ensures that each service instance used to handle requests is always the one that has been explicitly
-checked for readiness, thus maintaining the integrity and reliability of the service handling process.
+この方法により、リクエストを処理するために使用される各サービスインスタンスが、常に明示的に準備状況が確認されたものであることが保証され、サービス処理プロセスの整合性と信頼性が維持されます。
 
-Here is a simplified example to illustrate this pattern:
+このパターンを説明する簡単な例を以下に示します：
 
 ```rust
-// Wrong
+// 間違い
 fn call(&mut self, req: Request<B>) -> Self::Future {
     let mut inner = self.inner.clone();
     Box::pin(async move {
@@ -473,10 +442,10 @@ fn call(&mut self, req: Request<B>) -> Self::Future {
     })
 }
 
-// Correct
+// 正しい
 fn call(&mut self, req: Request<B>) -> Self::Future {
     let clone = self.inner.clone();
-    // take the service that was ready
+    // 準備ができていたサービスを取得
     let mut inner = std::mem::replace(&mut self.inner, clone);
     Box::pin(async move {
         /* ... */
@@ -485,15 +454,13 @@ fn call(&mut self, req: Request<B>) -> Self::Future {
 }
 ```
 
-In this example, `inner` is the service that was ready, and after handling the request, `self.inner` now holds the
-clone, which will be checked for readiness in the next cycle. This careful management of service readiness and cloning
-is essential for maintaining robust and error-free service operations in asynchronous Rust applications using Tower.
+この例では、`inner`は準備ができていたサービスであり、リクエストを処理した後、`self.inner`はクローンを保持し、次のサイクルで準備状況が確認されます。このサービスの準備状況とクローニングの慎重な管理は、Towerを使用する非同期Rustアプリケーションで堅牢でエラーのないサービス操作を維持するために不可欠です。
 
-[Tower Service Cloning Documentation](https://docs.rs/tower/latest/tower/trait.Service.html#be-careful-when-cloning-inner-services)
+[Towerサービスクローニングのドキュメント](https://docs.rs/tower/latest/tower/trait.Service.html#be-careful-when-cloning-inner-services)
 
-### Adding Middleware to Handler
+### ハンドラーへのミドルウェアの追加
 
-Add the middleware to the `auth::register` handler.
+`auth::register`ハンドラーにミドルウェアを追加します。
 
 ```rust
 // src/controllers/auth.rs
@@ -504,15 +471,15 @@ pub fn routes() -> Routes {
 }
 ```
 
-Now when you make a request to the `auth::register` handler, you will see the request method and path logged.
+これで`auth::register`ハンドラーにリクエストを送信すると、リクエストメソッドとパスがログに記録されます。
 
 ```shell
 2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log Request: POST "/auth/register" http.method=POST http.uri=/auth/register http.version=HTTP/1.1  environment=development request_id=xxxxx
 ```
 
-## Adding Middleware to Route
+## ルートへのミドルウェアの追加
 
-Add the middleware to the `auth` route.
+`auth`ルートにミドルウェアを追加します。
 
 ```rust
 // src/main.rs
@@ -530,20 +497,17 @@ impl Hooks for App {
 }
 ```
 
-Now when you make a request to any handler in the `auth` route, you will see the request method and path logged.
+これで`auth`ルート内の任意のハンドラーにリクエストを送信すると、リクエストメソッドとパスがログに記録されます。
 
 ```shell
 2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log Request: POST "/auth/register" http.method=POST http.uri=/auth/register http.version=HTTP/1.1  environment=development request_id=xxxxx
 ```
 
-### Advanced Middleware (With AppContext)
+### 高度なミドルウェア（AppContextを使用）
 
-There will be times when you need to access the `AppContext` in your middleware. For example, you might want to access
-the database connection to perform some authorization checks. To do this, you can add the `AppContext` to
-the `Layer` and `Service`.
+ミドルウェア内で`AppContext`にアクセスする必要がある場合があります。例えば、いくつかの認証チェックを実行するためにデータベース接続にアクセスしたい場合があります。これを行うには、`Layer`と`Service`に`AppContext`を追加できます。
 
-Here we will create a middleware that checks the JWT token and gets the user from the database then prints the user's
-name
+ここでは、JWTトークンをチェックし、データベースからユーザーを取得してユーザー名を出力するミドルウェアを作成します
 
 ```rust
 // src/controllers/middleware/log.rs
@@ -593,15 +557,15 @@ pub struct LogService<S> {
 
 impl<S, B> Service<Request<B>> for LogService<S>
     where
-        S: Service<Request<B>, Response=Response<Body>, Error=Infallible> + Clone + Send + 'static, /* Inner Service must return Response<Body> and never error */
+        S: Service<Request<B>, Response=Response<Body>, Error=Infallible> + Clone + Send + 'static, /* 内部サービスはResponse<Body>を返し、エラーを発生させない必要があります */
         S::Future: Send + 'static,
         B: Send + 'static,
 {
-    // Response type is the same as the inner service / handler
+    // レスポンス型は内部サービス/ハンドラーと同じ
     type Response = S::Response;
-    // Error type is the same as the inner service / handler
+    // エラー型は内部サービス/ハンドラーと同じ
     type Error = S::Error;
-    // Future type is the same as the inner service / handler
+    // フューチャー型は内部サービス/ハンドラーと同じ
     type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.inner.poll_ready(cx)
@@ -610,23 +574,23 @@ impl<S, B> Service<Request<B>> for LogService<S>
     fn call(&mut self, req: Request<B>) -> Self::Future {
         let state = self.state.clone();
         let clone = self.inner.clone();
-        // take the service that was ready
+        // 準備ができていたサービスを取得
         let mut inner = std::mem::replace(&mut self.inner, clone);
         Box::pin(async move {
-            // Example of extracting JWT token from the request
+            // リクエストからJWTトークンを抽出する例
             let (mut parts, body) = req.into_parts();
             let auth = JWTWithUser::<users::Model>::from_request_parts(&mut parts, &state).await;
 
             match auth {
                 Ok(auth) => {
-                    // Example of getting user from the database
+                    // データベースからユーザーを取得する例
                     let user = users::Model::find_by_email(&state.db, &auth.user.email).await.unwrap();
-                    tracing::info!("User: {}", user.name);
+                    tracing::info!("ユーザー: {}", user.name);
                     let req = Request::from_parts(parts, body);
                     inner.call(req).await
                 }
                 Err(_) => {
-                    // Handle error, e.g., return an unauthorized response
+                    // エラーの処理、例：未認証レスポンスを返す
                     Ok(Response::builder()
                         .status(401)
                         .body(Body::empty())
@@ -639,12 +603,11 @@ impl<S, B> Service<Request<B>> for LogService<S>
 }
 ```
 
-In this example, we have added the `AppContext` to the `LogLayer` and `LogService`. We are using the `AppContext` to get
-the database connection and the JWT token for pre-processing.
+この例では、`LogLayer`と`LogService`に`AppContext`を追加しました。前処理のためにデータベース接続とJWTトークンを取得するために`AppContext`を使用しています。
 
-### Adding Middleware to Route (advanced)
+### ルートへのミドルウェアの追加（高度）
 
-Add the middleware to the `notes` route.
+`notes`ルートにミドルウェアを追加します。
 
 ```rust
 // src/app.rs
@@ -659,16 +622,15 @@ impl Hooks for App {
 }
 ```
 
-Now when you make a request to any handler in the `notes` route, you will see the user's name logged.
+これで`notes`ルート内の任意のハンドラーにリクエストを送信すると、ユーザー名がログに記録されます。
 
 ```shell
-2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log User: John Doe  environment=development request_id=xxxxx
+2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log ユーザー: John Doe  environment=development request_id=xxxxx
 ```
 
-### Adding Middleware to Handler (advanced)
+### ハンドラーへのミドルウェアの追加（高度）
 
-In order to add the middleware to the handler, you need to add the `AppContext` to the `routes` function
-in `src/app.rs`.
+ハンドラーにミドルウェアを追加するには、`src/app.rs`の`routes`関数に`AppContext`を追加する必要があります。
 
 ```rust
 // src/app.rs
@@ -685,7 +647,7 @@ impl Hooks for App {
 }
 ```
 
-Then add the middleware to the `notes::create` handler.
+次に、`notes::create`ハンドラーにミドルウェアを追加します。
 
 ```rust
 // src/controllers/notes.rs
@@ -696,65 +658,65 @@ pub fn routes(ctx: &AppContext) -> Routes {
 }
 ```
 
-Now when you make a request to the `notes::create` handler, you will see the user's name logged.
+これで`notes::create`ハンドラーにリクエストを送信すると、ユーザー名がログに記録されます。
 
 ```shell
-2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log User: John Doe  environment=development request_id=xxxxx
+2024-XX-XXTXX:XX:XX.XXXXXZ  INFO http-request: xx::controllers::middleware::log ユーザー: John Doe  environment=development request_id=xxxxx
 ```
 
-## Application SharedStore
+## アプリケーションSharedStore
 
-Loco provides a flexible mechanism called `SharedStore` within the `AppContext` to store and share arbitrary custom data or services across your application. This feature allows you to inject your own types into the application context without modifying Loco's core structures, enhancing pluggability and customization.
+Locoは、アプリケーション全体で任意のカスタムデータやサービスを保存および共有するための`SharedStore`と呼ばれる柔軟なメカニズムを`AppContext`内に提供します。この機能により、Locoのコア構造を変更することなく、独自の型をアプリケーションコンテキストに注入でき、プラグイン性とカスタマイズが向上します。
 
-`AppContext.shared_store` is a type-safe, thread-safe heterogeneous storage. You can store any type that implements `'static + Send + Sync`.
+`AppContext.shared_store`は、タイプセーフでスレッドセーフな異種ストレージです。`'static + Send + Sync`を実装する任意の型を保存できます。
 
-### Why Use SharedStore?
+### SharedStoreを使用する理由
 
-- **Sharing Custom Services:** Inject your own service clients (e.g., a custom API client) and access them from controllers or background workers.
-- **Storing Configuration:** Keep application-specific configuration objects accessible globally.
-- **Shared State:** Manage state needed by different parts of your application.
+- **カスタムサービスの共有：** 独自のサービスクライアント（例：カスタムAPIクライアント）を注入し、コントローラーやバックグラウンドワーカーからアクセスします。
+- **設定の保存：** アプリケーション固有の設定オブジェクトをグローバルにアクセス可能な状態で保持します。
+- **共有状態：** アプリケーションの異なる部分で必要な状態を管理します。
 
-### How to Use SharedStore
+### SharedStoreの使用方法
 
-You typically insert your custom data into the `shared_store` during application startup (e.g., in `src/app.rs`) and then retrieve it within your controllers or other components.
+通常、アプリケーションの起動時（例：`src/app.rs`内）にカスタムデータを`shared_store`に挿入し、コントローラーやその他のコンポーネント内で取得します。
 
-**1. Define Your Data Structures:**
+**1. データ構造の定義：**
 
-Create the structs for the data or services you want to share. Note whether they implement `Clone`.
+共有したいデータやサービスの構造体を作成します。`Clone`を実装しているかどうかに注意してください。
 
 ```rust
-// In src/app.rs or a dedicated module (e.g., src/services.rs)
+// src/app.rs内、または専用のモジュール（例：src/services.rs）内
 
-// This service can be cloned
+// このサービスはクローン可能
 #[derive(Clone, Debug)]
 pub struct MyClonableService {
     pub api_key: String,
 }
 
-// This service cannot (or should not) be cloned
+// このサービスはクローンできない（またはすべきでない）
 #[derive(Debug)]
 pub struct MyNonClonableService {
     pub api_key: String,
 }
 ```
 
-**2. Insert into SharedStore (in `src/app.rs`):**
+**2. SharedStoreへの挿入（`src/app.rs`内）：**
 
-A good place to insert your shared data is the `after_context` hook in your `App`'s `Hooks` implementation.
+共有データを挿入する良い場所は、`App`の`Hooks`実装内の`after_context`フックです。
 
 ```rust
-// In src/app.rs
+// src/app.rs内
 
-use crate::MyClonableService; // Import your structs
+use crate::MyClonableService; // 構造体をインポート
 use crate::MyNonClonableService;
 
 pub struct App;
 #[async_trait]
 impl Hooks for App {
-    // ... other Hooks methods (app_name, boot, etc.) ...
+    // ... その他のHooksメソッド（app_name、bootなど）...
 
     async fn after_context(mut ctx: AppContext) -> Result<AppContext> {
-        // Create instances of your services/data
+        // サービス/データのインスタンスを作成
         let clonable_service = MyClonableService {
             api_key: "key-cloned-12345".to_string(),
         };
@@ -762,67 +724,67 @@ impl Hooks for App {
             api_key: "key-ref-67890".to_string(),
         };
 
-        // Insert them into the shared store
+        // 共有ストアに挿入
         ctx.shared_store.insert(clonable_service);
         ctx.shared_store.insert(non_clonable_service);
 
         Ok(ctx)
     }
 
-    // ... rest of Hooks implementation ...
+    // ... Hooks実装の残りの部分...
 }
 ```
 
-**3. Retrieve from SharedStore (in Controllers):**
+**3. SharedStoreからの取得（コントローラー内）：**
 
-You have two main ways to retrieve data in your controllers:
+コントローラー内でデータを取得する主な方法は2つあります：
 
-- **Using the `SharedStore(var)` Extractor (for `Clone`-able types):**
-  This is the most convenient way if your type implements `Clone`. The extractor retrieves and _clones_ the data for you.
+- **`SharedStore(var)`エクストラクターの使用（`Clone`可能な型の場合）：**
+  型が`Clone`を実装している場合、これが最も便利な方法です。エクストラクターがデータを取得して_クローン_します。
 
   ```rust
-  // In src/controllers/some_controller.rs
+  // src/controllers/some_controller.rs内
   use loco_rs::prelude::*;
-  use crate::app::MyClonableService; // Or wherever it's defined
+  use crate::app::MyClonableService; // または定義された場所
 
   #[axum::debug_handler]
   pub async fn index(
-      // Extracts and clones MyClonableService into `service`
+      // MyClonableServiceを`service`に抽出してクローン
       SharedStore(service): SharedStore<MyClonableService>,
   ) -> impl IntoResponse {
-      tracing::info!("Using Cloned Service API Key: {}", service.api_key);
+      tracing::info!("クローンされたサービスAPIキーを使用: {}", service.api_key);
       format::empty()
   }
   ```
 
-- **Using `ctx.shared_store.get_ref()` (for Non-`Clone`-able types or avoiding clones):**
-  Use this method when your type doesn't implement `Clone` or when you want to avoid the performance cost of cloning. It gives you a reference (`RefGuard<T>`) to the data.
+- **`ctx.shared_store.get_ref()`の使用（`Clone`不可能な型またはクローンを避ける場合）：**
+  型が`Clone`を実装していない場合、またはクローンのパフォーマンスコストを避けたい場合にこのメソッドを使用します。データへの参照（`RefGuard<T>`）を提供します。
 
   ```rust
-  // In src/controllers/some_controller.rs
+  // src/controllers/some_controller.rs内
   use loco_rs::prelude::*;
-  use crate::app::MyNonClonableService; // Or wherever it's defined
+  use crate::app::MyNonClonableService; // または定義された場所
 
   #[axum::debug_handler]
   pub async fn index(
-      State(ctx): State<AppContext>, // Need the AppContext state
+      State(ctx): State<AppContext>, // AppContext状態が必要
   ) -> Result<impl IntoResponse> {
-      // Get a reference to the non-clonable service
+      // クローン不可能なサービスへの参照を取得
       let service_ref = ctx.shared_store.get_ref::<MyNonClonableService>()
           .ok_or_else(|| {
-              tracing::error!("MyNonClonableService not found in shared store");
-              Error::InternalServerError // Or a more specific error
+              tracing::error!("共有ストアにMyNonClonableServiceが見つかりません");
+              Error::InternalServerError // またはより具体的なエラー
           })?;
 
-      // Access fields via the reference guard
-      tracing::info!("Using Non-Cloned Service API Key: {}", service_ref.api_key);
+      // 参照ガード経由でフィールドにアクセス
+      tracing::info!("クローンされていないサービスAPIキーを使用: {}", service_ref.api_key);
       format::empty()
   }
   ```
 
-**Summary:**
+**まとめ：**
 
-- Use `SharedStore` in `AppContext` to share custom services or data.
-- Insert data during app setup (e.g., `after_context` in `src/app.rs`).
-- Use the `SharedStore(var)` extractor for convenient access to `Clone`-able types (clones the data).
-- Use `ctx.shared_store.get_ref::<T>()` to get a reference to non-`Clone`-able types or to avoid cloning for performance reasons.
+- カスタムサービスやデータを共有するために`AppContext`の`SharedStore`を使用します。
+- アプリのセットアップ中（例：`src/app.rs`の`after_context`）にデータを挿入します。
+- `Clone`可能な型への便利なアクセスのために`SharedStore(var)`エクストラクターを使用します（データをクローンします）。
+- `Clone`不可能な型への参照を取得する場合、またはパフォーマンス上の理由でクローンを避けたい場合は`ctx.shared_store.get_ref::<T>()`を使用します。
