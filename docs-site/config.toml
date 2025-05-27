@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "https://loco.rs"
+base_url = "https://loco-ja.netlify.app"
 title = "Loco.rs - Rustで本格的なWebアプリを素早く構築できるフルスタックフレームワーク"
 description = "Loco.rsはRust版のRuby on Railsのような存在です。ゼロから本番環境まで、Rust製アプリを素早く構築・デプロイできます。"
 
