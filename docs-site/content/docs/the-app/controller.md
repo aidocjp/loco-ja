@@ -843,7 +843,7 @@ pub struct DataParams {
     pub email: String,
 }
 ```
-### Create a Handler with Validation
+### 検証付きハンドラーの作成
 ```rust
 use axum::debug_handler;
 use loco_rs::prelude::*;
@@ -856,12 +856,12 @@ pub async fn index(
     format::empty()
 }
 ```
-Using the `JsonValidate` extractor, Loco automatically performs validation on the DataParams struct:
-* If validation passes, the handler continues execution with params.
-* If validation fails, a 400 Bad Request response is returned.
+`JsonValidate`エクストラクターを使用すると、LocoはDataParams構造体に対して自動的に検証を実行します：
+* 検証に合格した場合、ハンドラーはparamsを使用して実行を継続します。
+* 検証に失敗した場合、400 Bad Requestレスポンスが返されます。
 
-### Returning Validation Errors as JSON
-If you'd like to return validation errors in a structured JSON format, use `JsonValidateWithMessage` instead of `JsonValidate`. The response format will look like this:
+### 検証エラーのJSONとして返却
+検証エラーを構造化されたJSON形式で返したい場合は、`JsonValidate`の代わりに`JsonValidateWithMessage`を使用します。レスポンス形式は次のようになります：
 
 ```json
 {
@@ -889,13 +889,13 @@ If you'd like to return validation errors in a structured JSON format, use `Json
 }
 ```  
 
-# Pagination
+# ページネーション
 
-In many scenarios, when querying data and returning responses to users, pagination is crucial. In `Loco`, we provide a straightforward method to paginate your data and maintain a consistent pagination response schema for your API responses.
+多くのシナリオでは、データをクエリしてユーザーにレスポンスを返す際、ページネーションが重要です。`Loco`では、データをページネートし、APIレスポンスに一貫したページネーションレスポンススキーマを維持する簡単な方法を提供します。
 
-We assume you have a `notes` entity and/or scaffold (replace this with any entity you like).
+`notes`エンティティおよび/またはスキャフォールドがあると仮定します（任意のエンティティに置き換えてください）。
 
-## Using pagination
+## ページネーションの使用
 
 ```rust
 use loco_rs::prelude::*;
@@ -904,7 +904,7 @@ let res = query::fetch_page(&ctx.db, notes::Entity::find(), &query::PaginationQu
 ```
 
 
-## Using pagination With Filter
+## フィルター付きページネーションの使用
 ```rust
 use loco_rs::prelude::*;
 
@@ -923,18 +923,18 @@ let paginated_notes = query::paginate(
 .await?;
 ```
 
-- Start by defining the entity you want to retrieve.
-- Create your query condition (in this case, filtering rows that contain "loco" in the title column).
-- Define the pagination parameters.
-- Call the paginate function.
+- 取得したいエンティティを定義することから始めます。
+- クエリ条件を作成します（この場合、タイトル列に「loco」を含む行をフィルタリング）。
+- ページネーションパラメータを定義します。
+- paginate関数を呼び出します。
 
-### Pagination view
-After creating getting the `paginated_notes` in the previous example, you can choose which fields from the model you want to return and keep the same pagination response in all your different data responses.
+### ページネーションビュー
+前の例で`paginated_notes`を取得した後、モデルから返したいフィールドを選択し、すべての異なるデータレスポンスで同じページネーションレスポンスを維持できます。
 
-Define the data you're returning to the user in Loco views. If you're not familiar with views, refer to the [documentation](@/docs/the-app/views.md) for more context.
+Locoビューでユーザーに返すデータを定義します。ビューに慣れていない場合は、詳細なコンテキストについて[ドキュメント](@/docs/the-app/views.md)を参照してください。
 
 
-Create a notes view file in `src/view/notes` with the following code:
+`src/view/notes`にノートビューファイルを作成し、次のコードを記述します：
 
 ```rust
 use loco_rs::{

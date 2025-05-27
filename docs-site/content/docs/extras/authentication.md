@@ -1,5 +1,5 @@
 +++
-title = "Authentication"
+title = "認証"
 description = ""
 date = 2021-05-01T18:20:00+00:00
 updated = 2021-05-01T18:20:00+00:00
@@ -15,15 +15,15 @@ top = false
 flair =[]
 +++
 
-## User Password Authentication
+## ユーザーパスワード認証
 
 `Loco`はユーザー認証プロセスを簡素化し、新しいWebサイトを素早くセットアップできるようにします。この機能は時間を節約するだけでなく、アプリケーションのコアロジックの作成に集中する柔軟性も提供します。
 
-### Authentication Configuration
+### 認証の設定
 
 `auth`機能はライブラリのデフォルトとして付属しています。必要に応じて、これをオフにして認証を手動で処理することもできます。
 
-### Getting Started with a SaaS App
+### SaaSアプリで始める
 
 [loco cli](/docs/getting-started/tour)を使用してアプリを作成し、`SaaS app (with DB and user auth)`オプションを選択します。
 
@@ -45,7 +45,7 @@ $ cargo loco routes
  .
 ```
 
-### Registering a New User
+### 新規ユーザーの登録
 
 `/api/auth/register`エンドポイントは、アカウント検証用の`email_verification_token`と共に新しいユーザーをデータベースに作成します。検証リンクを含むウェルカムメールがユーザーに送信されます。
 
@@ -63,7 +63,7 @@ curl --location '127.0.0.1:5150/api/auth/register' \
 
 セキュリティ上の理由から、ユーザーが既に登録されている場合、新しいユーザーは作成されず、ユーザーのメール詳細を公開することなく200ステータスが返されます。
 
-### Login
+### ログイン
 
 新しいユーザーを登録した後、以下のリクエストを使用してログインします：
 
@@ -94,7 +94,7 @@ curl --location '127.0.0.1:5150/api/auth/login' \
 - **Name** - アカウントに関連付けられたユーザーの名前。
 - **Is Verified** - ユーザーがアカウントを検証したかどうかを示すフラグ。
 
-### Account Verification
+### アカウントの検証
 
 ユーザー登録時に、検証リンク付きのメールが送信されます。このリンクを訪問すると、データベースの`email_verified_at`フィールドが更新され、ログインレスポンスの`is_verified`フラグがtrueに変更されます。
 
@@ -105,9 +105,9 @@ curl --location --request GET '127.0.0.1:5150/api/auth/verify/TOKEN' \
      --header 'Content-Type: application/json'
 ```
 
-### Reset Password Flow
+### パスワードリセットフロー
 
-#### Forgot Password
+#### パスワードを忘れた場合
 
 `forgot`エンドポイントは、ペイロードにユーザーのメールのみを必要とします。パスワードリセットリンク付きのメールが送信され、データベースに`reset_token`が設定されます。
 
@@ -121,7 +121,7 @@ curl --location '127.0.0.1:5150/api/auth/forgot' \
      }'
 ```
 
-#### Reset Password
+#### パスワードのリセット
 
 パスワードをリセットするには、`forgot`エンドポイントで生成されたトークンと新しいパスワードを送信します。
 
@@ -136,7 +136,7 @@ curl --location '127.0.0.1:5150/api/auth/reset' \
      }'
 ```
 
-### Get current user
+### 現在のユーザーを取得
 
 このエンドポイントは認証ミドルウェアによって保護されています。
 
@@ -146,7 +146,7 @@ curl --location --request GET '127.0.0.1:5150/api/auth/current' \
      --header 'Authorization: Bearer TOKEN'
 ```
 
-### Creating an Authenticated Endpoint
+### 認証されたエンドポイントの作成
 
 認証されたエンドポイントを設定するには、`loco_rs`ライブラリから`controller::middleware`をインポートし、関数エンドポイントパラメータに認証ミドルウェアを組み込みます。
 
@@ -170,9 +170,9 @@ async fn current(
 
 ```
 
-## API Authentication
+## API認証
 
-### Creating new app
+### 新しいアプリの作成
 
 今回は、[loco cli](/docs/getting-started/tour)を使用してRESTアプリを作成し、`Rest app`オプションを選択します。
 新しいアプリを作成するには、以下のコマンドを実行し、指示に従ってください：
@@ -199,7 +199,7 @@ $ cargo loco routes
  .
 ```
 
-### Registering new user
+### 新規ユーザーの登録
 
 `/api/auth/register`エンドポイントは、リクエスト認証用の`api_key`と共に新しいユーザーをデータベースに作成します。`api_key`は今後のリクエストでの認証に使用されます。
 
@@ -217,7 +217,7 @@ curl --location '127.0.0.1:5150/api/auth/register' \
 
 新しいユーザーを登録した後、データベースで新しいユーザーの`api_key`が表示されていることを確認してください。
 
-### Creating an Authenticated Endpoint with API Authentication
+### API認証を使用した認証エンドポイントの作成
 
 API認証エンドポイントを設定するには、loco_rsライブラリから`controller::middleware`をインポートし、`middleware::auth::ApiToken`を使用して関数エンドポイントパラメータに認証ミドルウェアを含めます。
 
@@ -242,7 +242,7 @@ pub fn routes() -> Routes {
 }
 ```
 
-### Requesting an API Authenticated Endpoint
+### API認証エンドポイントへのリクエスト
 
 認証されたエンドポイントにリクエストするには、`Authorization`ヘッダーに`API_KEY`を渡す必要があります。
 
