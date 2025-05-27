@@ -32,7 +32,7 @@ database:
 ```
 
 <div class="infobox">
-Your local postgres database should be with <code>loco:loco</code> and a db named <code>myapp_development</code>. For test and production, your DB should be named <code>myapp_test</code> and <code>myapp_production</code> respectively.
+ローカルのPostgresデータベースは <code>loco:loco</code> で、データベース名は <code>myapp_development</code> である必要があります。テストと本番環境では、データベース名はそれぞれ <code>myapp_test</code> と <code>myapp_production</code> である必要があります。
 </div>
 
 便宜上、PostgreSQLデータベースサーバーを起動するdockerコマンドを以下に示します：
@@ -329,9 +329,9 @@ $ cargo loco g migration CreateJoinTableUsersAndGroups count:int
 $ cargo loco g migration FixUsersTable
 ```
 
-### Down Migrations
+### ダウンマイグレーション
 
-If you realize that you made a mistake, you can always undo the migration. This will undo the changes made by the migration (assuming that you added the appropriate code for `down` in the migration).
+間違いを犯したことに気づいた場合、いつでもマイグレーションを元に戻すことができます。これはマイグレーションによって行われた変更を元に戻します（マイグレーションに`down`の適切なコードを追加したと仮定します）。
 
 <!-- <snip id="migrate-down-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -339,7 +339,7 @@ cargo loco db down
 ```
 <!-- </snip> -->
 
-The `down` command on its own will rollback only the last migration. If you want to rollback multiple migrations, you can specify the number of migrations to rollback.
+`down`コマンド単体では最後のマイグレーションのみをロールバックします。複数のマイグレーションをロールバックしたい場合は、ロールバックするマイグレーションの数を指定できます。
 
 <!-- <snip id="migrate-down-n-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -347,48 +347,48 @@ cargo loco db down 2
 ```
 <!-- </snip> -->
 
-### Verbs, singular and plural
+### 動詞、単数形と複数形
 
-- **references**: use **singular** for the table name, and a `<other_model>:references` type. `user:references` (references `Users`), `vote:references` (references `Votes`). `<other_model>:references:<column_name>` is also available `train:references:departing_train` (references `Trains`).
-- **column names**: anything you like. Prefer `snake_case`.
-- **table names**: **plural, snake case**. `users`, `draft_posts`.
-- **migration names**: anything that can be a file name, prefer snake case. `create_table_users`, `add_vote_id_to_movies`.
-- **model names**: generated automatically for you. Usually the generated name is pascal case, plural. `Users`, `UsersVotes`.
+- **references**: テーブル名には**単数形**を使用し、`<other_model>:references`タイプを使用します。`user:references`（`Users`を参照）、`vote:references`（`Votes`を参照）。`<other_model>:references:<column_name>`も利用可能です。`train:references:departing_train`（`Trains`を参照）。
+- **カラム名**: 任意の名前。`snake_case`を推奨します。
+- **テーブル名**: **複数形、スネークケース**。`users`、`draft_posts`。
+- **マイグレーション名**: ファイル名として使用できるもの、スネークケースを推奨。`create_table_users`、`add_vote_id_to_movies`。
+- **モデル名**: 自動的に生成されます。通常、生成される名前はパスカルケース、複数形です。`Users`、`UsersVotes`。
 
-Here are some examples showcasing the naming conventions:
+以下は命名規則を示す例です：
 
 ```sh
 $ cargo loco generate model movies long_title:string user:references:added_by director:references
 ```
 
-- model name in plural: `movies`
-- reference director is in singular: `director:references`
-- reference added_by is an explicit name in singular, the referenced model remains singular: `user:references:added_by`
-- column name in snake case: `long_title:string`
+- モデル名は複数形: `movies`
+- reference directorは単数形: `director:references`
+- reference added_byは単数形の明示的な名前、参照されるモデルは単数形のまま: `user:references:added_by`
+- カラム名はスネークケース: `long_title:string`
 
-### Authoring migrations
+### マイグレーションの作成
 
-To use the migrations DSL, make sure you have the following `loco_rs::schema::*` import and SeaORM `prelude`.
+マイグレーションDSLを使用するには、以下の`loco_rs::schema::*`インポートとSeaORMの`prelude`が必要です。
 
 ```rust
 use loco_rs::schema::*;
 use sea_orm_migration::prelude::*;
 ```
 
-Then, create a struct:
+次に、構造体を作成します：
 
 ```rust
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 ```
 
-And then implement your migration (see below).
+そして、マイグレーションを実装します（以下を参照）。
 
-**Create a table**
+**テーブルの作成**
 
-Create a table, provide two arrays: (1) columns (2) references.
+テーブルを作成する際は、2つの配列を提供します：(1) カラム (2) 参照。
 
-Leave references empty to not create any reference fields.
+参照フィールドを作成しない場合は、参照を空のままにします。
 
 ```rust
 impl MigrationTrait for Migration {
@@ -411,11 +411,11 @@ impl MigrationTrait for Migration {
 }
 ```
 
-**Create a join table**
+**結合テーブルの作成**
 
-Provide the references to the second array argument. Use an empty string `""` to indicate you want us to generate a reference column name for you (e.g. a `user` reference will imply connecting the `users` table through a `user_id` column in `group_users`).
+参照を2番目の配列引数に提供します。空の文字列`""`を使用して、参照カラム名を自動生成したいことを示します（例：`user`参照は、`group_users`内の`user_id`カラムを通じて`users`テーブルに接続することを意味します）。
 
-Provide a non-empty string to indicate a specific name for the reference column name.
+参照カラム名に特定の名前を指定したい場合は、空でない文字列を提供します。
 
 ```rust
 impl MigrationTrait for Migration {
@@ -429,9 +429,9 @@ impl MigrationTrait for Migration {
 }
 ```
 
-**Add a column**
+**カラムの追加**
 
-Add a single column. You can use as many such statements as you like in a single migration (to add multiple columns).
+単一のカラムを追加します。単一のマイグレーション内で、必要な数だけこのような文を使用できます（複数のカラムを追加するため）。
 
 
 ```rust
@@ -449,11 +449,11 @@ impl MigrationTrait for Migration {
 ```
 
 
-### Authoring advanced migrations
+### 高度なマイグレーションの作成
 
-Using the `manager` directly lets you access more advanced operations while authoring your migrations.
+`manager`を直接使用することで、マイグレーションを作成する際により高度な操作にアクセスできます。
 
-**Add a column**
+**カラムの追加**
 
 ```rust
   manager
@@ -466,7 +466,7 @@ Using the `manager` directly lets you access more advanced operations while auth
     .await
 ```
 
-**Drop a column**
+**カラムの削除**
 
 ```rust
   manager
@@ -479,9 +479,9 @@ Using the `manager` directly lets you access more advanced operations while auth
     .await
 ```
 
-**Add index**
+**インデックスの追加**
 
-You can copy some of this code for adding an index
+インデックスを追加するためのコードをコピーできます
 
 ```rust
   manager
@@ -495,9 +495,9 @@ You can copy some of this code for adding an index
     .await;
 ```
 
-**Create a data fix**
+**データ修正の作成**
 
-Creating a data fix in a migration is easy - just use SQL statements as you like:
+マイグレーション内でデータ修正を作成するのは簡単です - 好きなようにSQL文を使用してください：
 
 ```rust
   async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -511,16 +511,16 @@ Creating a data fix in a migration is easy - just use SQL statements as you like
   }
 ```
 
-Having said that, it's up to you to code your data fixes in:
+とはいえ、データ修正をコーディングする場所は以下から選択できます：
 
-* `task` - where you can use high level models
-* `migration` - where you can both change structure and fix data stemming from it with raw SQL
-* or an ad-hoc `playground` - where you can use high level models or experiment with things
+* `task` - 高レベルのモデルを使用できる場所
+* `migration` - 構造を変更し、生のSQLでそれに起因するデータを修正できる場所
+* またはアドホックな`playground` - 高レベルのモデルを使用したり、実験したりできる場所
 
 
-## Validation
+## バリデーション
 
-We use the [validator](https://docs.rs/validator) library under the hood. First, build your validator with the constraints you need, and then implement `Validatable` for your `ActiveModel`.
+内部では[validator](https://docs.rs/validator)ライブラリを使用しています。まず、必要な制約でバリデーターを構築し、次に`ActiveModel`に`Validatable`を実装します。
 
 
 <!-- <snip id="model-validation" inject_from="code" template="rust"> -->
@@ -545,35 +545,35 @@ impl Validatable for super::_entities::users::ActiveModel {
 <!-- </snip> -->
 
 
-Note that `Validatable` is how you instruct Loco which `Validator` to provide and how to build it from a model.
+`Validatable`は、Locoにどの`Validator`を提供し、モデルからそれを構築する方法を指示する方法であることに注意してください。
 
-Now you can use `user.validate()` seamlessly in your code, when it is `Ok` the model is valid, otherwise you'll find validation errors in `Err(...)` available for inspection.
+これで、コード内で`user.validate()`をシームレスに使用できます。`Ok`の場合、モデルは有効であり、そうでない場合は`Err(...)`に検査可能なバリデーションエラーが見つかります。
 
 
-## Relationships
+## リレーションシップ
 
-### One to many
+### 一対多
 
-Here is how to associate a `Company` with an existing `User` model.
+既存の`User`モデルに`Company`を関連付ける方法は次のとおりです。
 
 ```
 $ cargo loco generate model company name:string user:references
 ```
 
-This will create a migration with a `user_id` field in `Company` which will reference a `User`.
+これにより、`Company`に`User`を参照する`user_id`フィールドを持つマイグレーションが作成されます。
 
 
-### Many to many
+### 多対多
 
-Here is how to create a typical "votes" table, which links a `User` and a `Movie` with a many-to-many link table. Note that it uses the special `--link` flag in the model generator.
+ここでは、多対多リンクテーブルで`User`と`Movie`をリンクする典型的な「投票」テーブルを作成する方法を示します。モデルジェネレーターで特別な`--link`フラグを使用することに注意してください。
 
-Let's create a new `Movie` entity:
+新しい`Movie`エンティティを作成しましょう：
 
 ```
 $ cargo loco generate model movies title:string
 ```
 
-And now the link table between `User` (which we already have) and `Movie` (which we just generated) to record votes:
+そして今度は、投票を記録するために`User`（既にある）と`Movie`（今生成した）の間のリンクテーブルを作成します：
 
 ```
 $ cargo loco generate model --link users_votes user:references movie:references vote:int
@@ -586,7 +586,7 @@ Writing src/models/_entities/prelude.rs
 ... Done.
 ```
 
-This will create a many-to-many link table named `UsersVotes` with a composite primary key containing both `user_id` and `movie_id`. Because it has precisely 2 IDs, SeaORM will identify it as a many-to-many link table, and generate entities with the appropriate `via()` relationship:
+これにより、`user_id`と`movie_id`の両方を含む複合主キーを持つ`UsersVotes`という名前の多対多リンクテーブルが作成されます。正確に2つのIDを持つため、SeaORMはそれを多対多リンクテーブルとして識別し、適切な`via()`関係を持つエンティティを生成します：
 
 
 ```rust
@@ -603,14 +603,14 @@ impl Related<super::movies::Entity> for Entity {
 }
 ```
 
-Using `via()` will cause `find_related` to walk through the link table without you needing to know the details of the link table.
+`via()`を使用すると、リンクテーブルの詳細を知る必要なく、`find_related`がリンクテーブルを通過します。
 
 
 
 
-## Configuration
+## 設定
 
-Model configuration that's available to you is exciting because it controls all aspects of development, testing, and production, with a ton of goodies, coming from production experience.
+利用可能なモデル設定は、開発、テスト、本番のすべての側面を制御し、本番経験から得られた多くの便利な機能を提供するため、非常にエキサイティングです。
 
 <!-- <snip id="configuration-database" inject_from="code" template="yaml"> -->
 ```yaml
@@ -637,19 +637,19 @@ database:
 <!-- </snip>-->
 
 
-By combining these flags, you can create different experiences to help you be more productive.
+これらのフラグを組み合わせることで、生産性を向上させるための異なる体験を作成できます。
 
-You can truncate before an app starts -- which is useful for running tests, or you can recreate the entire DB when the app starts -- which is useful for integration tests or setting up a new environment. In production, you want these turned off (hence the "dangerously" part).
+アプリ起動前にトランケートできます -- これはテストの実行に役立ちます。または、アプリ起動時にDB全体を再作成できます -- これは統合テストや新しい環境のセットアップに役立ちます。本番環境では、これらをオフにしたいでしょう（そのため「dangerously」という部分があります）。
 
-# Seeding
+# シーディング
 
-`Loco` comes equipped with a convenient `seeds` feature, streamlining the process for quick and easy database reloading. This functionality proves especially invaluable during frequent resets in development and test environments. Let's explore how to get started with this feature:
+`Loco`には便利な`seeds`機能が搭載されており、素早く簡単なデータベースの再読み込みプロセスを効率化します。この機能は、開発環境やテスト環境での頻繁なリセット時に特に有用です。この機能の使い方を見てみましょう：
 
-## Creating a new seed
+## 新しいシードの作成
 
-### 1. Creating a new seed file
+### 1. 新しいシードファイルの作成
 
-Navigate to `src/fixtures` and create a new seed file. For instance:
+`src/fixtures`に移動し、新しいシードファイルを作成します。例えば：
 
 ```
 src/
@@ -657,7 +657,7 @@ src/
     users.yaml
 ```
 
-In this yaml file, enlist a set of database records for insertion. Each record should encompass the mandatory database fields, based on your database constraints. Optional values are at your discretion. Suppose you have a database DDL like this:
+このyamlファイルには、挿入するデータベースレコードのセットを記載します。各レコードは、データベースの制約に基づいて必須のデータベースフィールドを含む必要があります。オプションの値は任意です。次のようなデータベースDDLがあるとします：
 
 ```sql
 CREATE TABLE public.users (
@@ -671,7 +671,7 @@ CREATE TABLE public.users (
 );
 ```
 
-The mandatory fields include `id`, `password`, `email`, and `created_at`. The reset token can be left empty. Your migration content file should resemble the following:
+必須フィールドには`id`、`password`、`email`、`created_at`が含まれます。リセットトークンは空のままにできます。マイグレーションコンテンツファイルは次のようになります：
 
 ```yaml
 ---
@@ -687,12 +687,12 @@ The mandatory fields include `id`, `password`, `email`, and `created_at`. The re
   created_at: "2023-11-12T12:34:56.789"
 ```
 
-### Connect the seed
+### シードの接続
 
-Integrate your seed into the app's Hook implementations by following these steps:
+以下の手順に従って、シードをアプリのHook実装に統合します：
 
-1. Navigate to your app's Hook implementations.
-2. Add the seed within the seed function implementation. Here's an example in Rust:
+1. アプリのHook実装に移動します。
+2. seed関数の実装内にシードを追加します。Rustでの例は次のとおりです：
 
 ```rs
 impl Hooks for App {
@@ -706,7 +706,7 @@ impl Hooks for App {
 
 ```
 
-This implementation ensures that the seed is executed when the seed function is called. Adjust the specifics based on your application's structure and requirements.
+この実装により、seed関数が呼び出されたときにシードが実行されることが保証されます。アプリケーションの構造と要件に基づいて詳細を調整してください。
 
 ## Managing Seed via CLI
 
