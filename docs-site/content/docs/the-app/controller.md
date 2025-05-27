@@ -641,13 +641,13 @@ fallback:
 
 ## Remote IP
 
-When your app is under a proxy or a load balancer (e.g. Nginx, ELB, etc.), it does not face the internet directly, which is why if you want to find out the connecting client IP, you'll get a socket which indicates an IP that is actually your load balancer instead.
+アプリがプロキシやロードバランサー（Nginx、ELBなど）の背後にある場合、インターネットに直接面していません。そのため、接続しているクライアントIPを調べようとすると、実際にはロードバランサーのIPを示すソケットを取得することになります。
 
-The load balancer or proxy is responsible for doing the socket work against the real client IP, and then giving your app the load via the proxy back connection to your app.
+ロードバランサーまたはプロキシは、実際のクライアントIPに対してソケット作業を行い、プロキシバック接続を介してアプリに負荷を与える責任があります。
 
-This is why when your app has a concrete business need for getting the real client IP you need to use the de-facto standard proxies and load balancers use for handing you this information: the `X-Forwarded-For` header.
+そのため、アプリが実際のクライアントIPを取得する具体的なビジネスニーズがある場合、プロキシとロードバランサーがこの情報を提供するために使用するデファクトスタンダードである`X-Forwarded-For`ヘッダーを使用する必要があります。
 
-Loco provides the `remote_ip` section for configuring the `RemoteIP` middleware:
+Locoは`RemoteIP`ミドルウェアを設定するための`remote_ip`セクションを提供します：
 
 ```yaml
 server:
@@ -668,7 +668,7 @@ server:
     # Generating a unique request ID and enhancing logging with additional information such as the start and completion of request processing, latency, status code, and other request details.
 ```
 
-Then, use the `RemoteIP` extractor to get the IP:
+次に、`RemoteIP`エクストラクターを使用してIPを取得します：
 
 ```rust
 #[debug_handler]
@@ -678,16 +678,16 @@ pub async fn list(ip: RemoteIP, State(ctx): State<AppContext>) -> Result<Respons
 }
 ```
 
-When using the `RemoteIP` middleware, take note of the security implications vs. your current architecture (as noted in the documentation and in the configuration section): if your app is NOT under a proxy, you can be prone to IP spoofing vulnerability because anyone can set headers to arbitrary values, and specifically, anyone can set the `X-Forwarded-For` header.
+`RemoteIP`ミドルウェアを使用する際は、現在のアーキテクチャに対するセキュリティへの影響に注意してください（ドキュメントと設定セクションに記載されています）：アプリがプロキシの背後にない場合、誰でもヘッダーを任意の値に設定でき、特に`X-Forwarded-For`ヘッダーを設定できるため、IPスプーフィングの脆弱性の影響を受けやすくなります。
 
-This middleware is not enabled by default. Usually, you *will know* if you need this middleware and you will be aware of the security aspects of using it in the correct architecture. If you're not sure -- don't use it (keep `enable` to `false`).
+このミドルウェアはデフォルトでは有効になっていません。通常、このミドルウェアが必要かどうかは*わかる*はずで、正しいアーキテクチャで使用する際のセキュリティ面も認識しているはずです。確信が持てない場合は使用しないでください（`enable`を`false`のままにしてください）。
 
 
 ## Secure Headers
 
-Loco comes with default secure headers applied by the `secure_headers` middleware. This is similar to what is done in the Rails ecosystem with [secure_headers](https://github.com/github/secure_headers).
+Locoには、`secure_headers`ミドルウェアによって適用されるデフォルトの安全なヘッダーが付属しています。これは、Railsエコシステムで[secure_headers](https://github.com/github/secure_headers)を使用して行われることと同様です。
 
-In your `server.middleware` YAML section you will find the `github` preset by default (which is what Github and Twitter recommend for secure headers).
+`server.middleware`のYAMLセクションには、デフォルトで`github`プリセットがあります（これはGithubとTwitterが安全なヘッダーとして推奨するものです）。
 
 ```yaml
 server:
@@ -697,7 +697,7 @@ server:
       preset: github
 ```
 
-You can also override select headers:
+特定のヘッダーをオーバーライドすることもできます：
 
 ```yaml
 server:
@@ -709,7 +709,7 @@ server:
         foo: bar
 ```
 
-Or start from scratch:
+またはゼロから始めることもできます：
 
 ```yaml
 server:
@@ -721,7 +721,7 @@ server:
         foo: bar
 ```
 
-To support `htmx`, You can add the following override, to allow some inline running of scripts:
+`htmx`をサポートするために、次のオーバーライドを追加して、一部のスクリプトのインライン実行を許可できます：
 
 ```yaml
 secure_headers:
@@ -733,9 +733,9 @@ secure_headers:
 
 ## Compression
 
-`Loco` leverages [CompressionLayer](https://docs.rs/tower-http/0.5.0/tower_http/compression/index.html) to enable a `one click` solution.
+`Loco`は[CompressionLayer](https://docs.rs/tower-http/0.5.0/tower_http/compression/index.html)を活用して、`ワンクリック`ソリューションを可能にします。
 
-To enable response compression, based on `accept-encoding` request header, simply edit the configuration as follows:
+`accept-encoding`リクエストヘッダーに基づいてレスポンス圧縮を有効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -744,14 +744,14 @@ To enable response compression, based on `accept-encoding` request header, simpl
       enable: true
 ```
 
-Doing so will compress each response and set `content-encoding` response header accordingly.
+これにより、各レスポンスが圧縮され、それに応じて`content-encoding`レスポンスヘッダーが設定されます。
 
-## Precompressed assets
+## 事前圧縮されたアセット
 
 
-`Loco` leverages [ServeDir::precompressed_gzip](https://docs.rs/tower-http/latest/tower_http/services/struct.ServeDir.html#method.precompressed_gzip) to enable a `one click` solution of serving pre compressed assets.
+`Loco`は[ServeDir::precompressed_gzip](https://docs.rs/tower-http/latest/tower_http/services/struct.ServeDir.html#method.precompressed_gzip)を活用して、事前圧縮されたアセットを提供する`ワンクリック`ソリューションを可能にします。
 
-If a static assets exists on the disk as a `.gz` file, `Loco` will serve it instead of compressing it on the fly.
+静的アセットがディスク上に`.gz`ファイルとして存在する場合、`Loco`はその場で圧縮する代わりにそれを提供します。
 
 ```yaml
 #...
@@ -763,8 +763,8 @@ middlewares:
 ```
 
 ## CORS
-This middleware enables Cross-Origin Resource Sharing (CORS) by allowing configurable origins, methods, and headers in HTTP requests. 
-It can be tailored to fit various application requirements, supporting permissive CORS or specific rules as defined in the middleware configuration.
+このミドルウェアは、HTTPリクエストで設定可能なオリジン、メソッド、ヘッダーを許可することで、Cross-Origin Resource Sharing（CORS）を有効にします。
+ミドルウェア設定で定義されているように、寛容なCORSまたは特定のルールをサポートし、様々なアプリケーション要件に合わせて調整できます。
 
 ```yaml
 #...
@@ -786,17 +786,15 @@ middlewares:
 
 ```
 
-## Handler and Route based middleware
+## ハンドラーとルートベースのミドルウェア
 
-`Loco` also allow us to apply [layers](https://docs.rs/tower/latest/tower/trait.Layer.html) to specific handlers or
-routes.
-For more information on handler and route based middleware, refer to the [middleware](/docs/the-app/controller/#middleware)
-documentation.
+`Loco`では、特定のハンドラーやルートに[レイヤー](https://docs.rs/tower/latest/tower/trait.Layer.html)を適用することもできます。
+ハンドラーとルートベースのミドルウェアの詳細については、[ミドルウェア](/docs/the-app/controller/#middleware)のドキュメントを参照してください。
 
 
-### Handler based middleware:
+### ハンドラーベースのミドルウェア：
 
-Apply a layer to a specific handler using `layer` method.
+`layer`メソッドを使用して特定のハンドラーにレイヤーを適用します。
 
 ```rust
 // src/controllers/auth.rs
@@ -807,9 +805,9 @@ pub fn routes() -> Routes {
 }
 ```
 
-### Route based middleware:
+### ルートベースのミドルウェア：
 
-Apply a layer to a specific route using `layer` method.
+`layer`メソッドを使用して特定のルートにレイヤーを適用します。
 
 ```rust
 // src/main.rs
@@ -827,10 +825,10 @@ impl Hooks for App {
 }
 ```
 
-# Request Validation
-`JsonValidate` extractor simplifies input [validation](https://github.com/Keats/validator) by integrating with the validator crate. Here's an example of how to validate incoming request data:
+# リクエスト検証
+`JsonValidate`エクストラクターは、validatorクレートと統合することで入力[検証](https://github.com/Keats/validator)を簡素化します。受信リクエストデータを検証する方法の例を示します：
 
-### Define Your Validation Rules
+### 検証ルールの定義
 ```rust
 use axum::debug_handler;
 use loco_rs::prelude::*;

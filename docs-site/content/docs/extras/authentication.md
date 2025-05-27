@@ -27,7 +27,7 @@ flair =[]
 
 [loco cli](/docs/getting-started/tour)を使用してアプリを作成し、`SaaS app (with DB and user auth)`オプションを選択します。
 
-To explore the out-of-the-box auth controllers, run the following command:
+組み込みの認証コントローラーを確認するには、以下のコマンドを実行します：
 
 ```sh
 $ cargo loco routes
@@ -47,7 +47,7 @@ $ cargo loco routes
 
 ### Registering a New User
 
-The `/api/auth/register` endpoint creates a new user in the database with an `email_verification_token` for account verification. A welcome email is sent to the user with a verification link.
+`/api/auth/register`エンドポイントは、アカウント検証用の`email_verification_token`と共に新しいユーザーをデータベースに作成します。検証リンクを含むウェルカムメールがユーザーに送信されます。
 
 ##### Example Curl Request:
 
@@ -61,11 +61,11 @@ curl --location '127.0.0.1:5150/api/auth/register' \
      }'
 ```
 
-For security reasons, if the user is already registered, no new user is created, and a 200 status is returned without exposing user email details.
+セキュリティ上の理由から、ユーザーが既に登録されている場合、新しいユーザーは作成されず、ユーザーのメール詳細を公開することなく200ステータスが返されます。
 
 ### Login
 
-After registering a new user, use the following request to log in:
+新しいユーザーを登録した後、以下のリクエストを使用してログインします：
 
 ##### Example Curl Request:
 
@@ -78,7 +78,7 @@ curl --location '127.0.0.1:5150/api/auth/login' \
      }'
 ```
 
-The response includes a JWT token for authentication, user ID, name, and verification status.
+レスポンスには、認証用のJWTトークン、ユーザーID、名前、検証ステータスが含まれます。
 
 ```sh
 {
@@ -89,14 +89,14 @@ The response includes a JWT token for authentication, user ID, name, and verific
 }
 ```
 
-- **Token**: A JWT token enabling requests to authentication endpoints. Refer to the [configuration documentation](@/docs/the-app/your-project.md) to customize the default token expiration and ensure that the secret differs between environments.
-- **pid** - A unique identifier generated when creating a new user.
-- **Name** - The user's name associated with the account.
-- **Is Verified** - A flag indicating whether the user has verified their account.
+- **Token**: 認証エンドポイントへのリクエストを可能にするJWTトークン。デフォルトのトークン有効期限をカスタマイズし、環境間でシークレットが異なることを確認するには、[設定ドキュメント](@/docs/the-app/your-project.md)を参照してください。
+- **pid** - 新しいユーザーを作成する際に生成される一意の識別子。
+- **Name** - アカウントに関連付けられたユーザーの名前。
+- **Is Verified** - ユーザーがアカウントを検証したかどうかを示すフラグ。
 
 ### Account Verification
 
-Upon user registration, an email with a verification link is sent. Visiting this link updates the `email_verified_at` field in the database, changing the `is_verified` flag in the login response to true.
+ユーザー登録時に、検証リンク付きのメールが送信されます。このリンクを訪問すると、データベースの`email_verified_at`フィールドが更新され、ログインレスポンスの`is_verified`フラグがtrueに変更されます。
 
 #### Example Curl request:
 
@@ -109,7 +109,7 @@ curl --location --request GET '127.0.0.1:5150/api/auth/verify/TOKEN' \
 
 #### Forgot Password
 
-The `forgot` endpoint requires only the user's email in the payload. An email is sent with a reset password link, and a `reset_token` is set in the database.
+`forgot`エンドポイントは、ペイロードにユーザーのメールのみを必要とします。パスワードリセットリンク付きのメールが送信され、データベースに`reset_token`が設定されます。
 
 ##### Example Curl request:
 
@@ -123,7 +123,7 @@ curl --location '127.0.0.1:5150/api/auth/forgot' \
 
 #### Reset Password
 
-To reset the password, send the token generated in the `forgot` endpoint along with the new password.
+パスワードをリセットするには、`forgot`エンドポイントで生成されたトークンと新しいパスワードを送信します。
 
 ##### Example Curl request:
 
@@ -138,7 +138,7 @@ curl --location '127.0.0.1:5150/api/auth/reset' \
 
 ### Get current user
 
-This endpoint is protected by auth middleware.
+このエンドポイントは認証ミドルウェアによって保護されています。
 
 ```sh
 curl --location --request GET '127.0.0.1:5150/api/auth/current' \
@@ -148,9 +148,9 @@ curl --location --request GET '127.0.0.1:5150/api/auth/current' \
 
 ### Creating an Authenticated Endpoint
 
-To establish an authenticated endpoint, import `controller::middleware` from the `loco_rs` library and incorporate the auth middleware into the function endpoint parameters.
+認証されたエンドポイントを設定するには、`loco_rs`ライブラリから`controller::middleware`をインポートし、関数エンドポイントパラメータに認証ミドルウェアを組み込みます。
 
-Consider the following example in Rust:
+Rustでの以下の例を検討してください：
 
 ```rust
 use axum::{extract::State, Json};
@@ -174,14 +174,14 @@ async fn current(
 
 ### Creating new app
 
-For this time, let create your rest app using the [loco cli](/docs/getting-started/tour) and select the `Rest app` option.
-To create new app, run the following command and follow the instructions:
+今回は、[loco cli](/docs/getting-started/tour)を使用してRESTアプリを作成し、`Rest app`オプションを選択します。
+新しいアプリを作成するには、以下のコマンドを実行し、指示に従ってください：
 
 ```sh
 $ loco new
 ```
 
-To explore the out-of-the-box auth controllers, run the following command:
+組み込みの認証コントローラーを確認するには、以下のコマンドを実行します：
 
 ```sh
 $ cargo loco routes
@@ -201,7 +201,7 @@ $ cargo loco routes
 
 ### Registering new user
 
-The `/api/auth/register` endpoint creates a new user in the database with an `api_key` for request authentication. `api_key` will be used for authentication in the future requests.
+`/api/auth/register`エンドポイントは、リクエスト認証用の`api_key`と共に新しいユーザーをデータベースに作成します。`api_key`は今後のリクエストでの認証に使用されます。
 
 #### Example Curl Request:
 
@@ -215,13 +215,13 @@ curl --location '127.0.0.1:5150/api/auth/register' \
      }'
 ```
 
-After registering a new user, make sure you see the `api_key` in the database for the new user.
+新しいユーザーを登録した後、データベースで新しいユーザーの`api_key`が表示されていることを確認してください。
 
 ### Creating an Authenticated Endpoint with API Authentication
 
-To set up an API-authenticated endpoint, import `controller::middleware` from the loco_rs library and include the auth middleware in the function endpoint parameters using `middleware::auth::ApiToken`.
+API認証エンドポイントを設定するには、loco_rsライブラリから`controller::middleware`をインポートし、`middleware::auth::ApiToken`を使用して関数エンドポイントパラメータに認証ミドルウェアを含めます。
 
-Consider the following example in Rust:
+Rustでの以下の例を検討してください：
 
 ```rust
 use loco_rs::prelude::*;
@@ -244,7 +244,7 @@ pub fn routes() -> Routes {
 
 ### Requesting an API Authenticated Endpoint
 
-To request an authenticated endpoint, you need to pass the `API_KEY` in the `Authorization` header.
+認証されたエンドポイントにリクエストするには、`Authorization`ヘッダーに`API_KEY`を渡す必要があります。
 
 #### Example Curl Request:
 
@@ -254,4 +254,4 @@ curl --location '127.0.0.1:5150/api/user/current-api' \
      --header 'Authorization: Bearer API_KEY'
 ```
 
-If the `API_KEY` is valid, you will get the response with the user details.
+`API_KEY`が有効な場合、ユーザーの詳細を含むレスポンスが得られます。
