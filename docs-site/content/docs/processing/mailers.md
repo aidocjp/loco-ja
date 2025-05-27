@@ -15,91 +15,91 @@ top = false
 flair =[]
 +++
 
-A mailer will deliver emails in the background using the existing `loco` background worker infrastructure. It will all be seamless for you.
+メーラーは既存の`loco`バックグラウンドワーカーインフラストラクチャを使用して、バックグラウンドでメールを配信します。すべてがシームレスに動作します。
 
-# Sending email
+# メールの送信
 
-To use an existing mailer, mostly in your controller:
+既存のメーラーを使用するには、主にコントローラーで：
 
 ```rust
 use crate::{
     mailers::auth::AuthMailer,
 }
 
-// in your controllers/auth.rs
+// controllers/auth.rsで
 async fn register(
     State(ctx): State<AppContext>,
     Json(params): Json<RegisterParams>,
 ) -> Result<Response> {
-    // .. register a user ..
+    // .. ユーザーを登録 ..
     AuthMailer::send_welcome(&ctx, &user.email).await.unwrap();
 }
 ```
 
-This will enqueue a mail delivery job. The action is instant because the delivery will be performed later in the background.
+これによりメール配信ジョブがキューに追加されます。配信は後でバックグラウンドで実行されるため、アクションは即座に完了します。
 
-## Configuration
+## 設定
 
-Configuration for mailers is done in the `config/[stage].yaml` file. Here is the default configuration:
+メーラーの設定は`config/[stage].yaml`ファイルで行います。デフォルトの設定は以下の通りです：
 
 ```yaml
-# Mailer Configuration.
+# メーラー設定
 mailer:
-  # SMTP mailer configuration.
+  # SMTPメーラー設定
   smtp:
-    # Enable/Disable smtp mailer.
+    # SMTPメーラーを有効/無効化
     enable: true
-    # SMTP server host. e.x localhost, smtp.gmail.com
+    # SMTPサーバーホスト。例：localhost、smtp.gmail.com
     host: {{/* get_env(name="MAILER_HOST", default="localhost") */}}
-    # SMTP server port
+    # SMTPサーバーポート
     port: 1025
-    # Use secure connection (SSL/TLS).
+    # セキュア接続（SSL/TLS）を使用
     secure: false
     # auth:
     #   user:
     #   password:
 ```
 
-Mailer is done by sending emails to a SMTP server. An example configuration for using sendgrid (choosing the SMTP relay option):
+メーラーはSMTPサーバーにメールを送信することで動作します。SendGrid（SMTPリレーオプションを選択）を使用する設定例：
 
 ```yaml
-# Mailer Configuration.
+# メーラー設定
 mailer:
-  # SMTP mailer configuration.
+  # SMTPメーラー設定
   smtp:
-    # Enable/Disable smtp mailer.
+    # SMTPメーラーを有効/無効化
     enable: true
-    # SMTP server host. e.x localhost, smtp.gmail.com
+    # SMTPサーバーホスト。例：localhost、smtp.gmail.com
     host: {{/* get_env(name="MAILER_HOST", default="smtp.sendgrid.net") */}}
-    # SMTP server port
+    # SMTPサーバーポート
     port: 587
-    # Use secure connection (SSL/TLS).
+    # セキュア接続（SSL/TLS）を使用
     secure: true
     auth:
       user: "apikey"
       password: "your-sendgrid-api-key"
 ```
 
-### Default Email Address
+### デフォルトのメールアドレス
 
-Other than specifying email addresses for every email sending task, you can override a default email address per-mailer.
+すべてのメール送信タスクでメールアドレスを指定する以外に、メーラーごとにデフォルトのメールアドレスをオーバーライドできます。
 
-First, override the `opts` function in the `Mailer` trait, in this example for an `AuthMailer`:
+まず、`Mailer`トレイトの`opts`関数をオーバーライドします。この例では`AuthMailer`用です：
 
 ```rust
 impl Mailer for AuthMailer {
     fn opts() -> MailerOpts {
         MailerOpts {
-            from: // set your from email,
+            from: // 送信元メールを設定,
             ..Default::default()
         }
     }
 }
 ```
 
-### Using a mail catcher in development
+### 開発環境でのメールキャッチャーの使用
 
-You can use an app like `MailHog` or `mailtutan` (written in Rust):
+`MailHog`や`mailtutan`（Rustで書かれています）のようなアプリを使用できます：
 
 ```
 $ cargo install mailtutan
@@ -108,45 +108,45 @@ listening on smtp://0.0.0.0:1025
 listening on http://0.0.0.0:1080
 ```
 
-This will bring up a local smtp server and a nice UI on `http://localhost:1080` that "catches" and shows emails as they are received.
+これにより、ローカルのSMTPサーバーと、メールを受信時に「キャッチ」して表示する優れたUIが`http://localhost:1080`で起動します。
 
-And then put this in your `development.yaml`:
+そして、`development.yaml`に以下を追加します：
 
 ```yaml
-# Mailer Configuration.
+# メーラー設定
 mailer:
-  # SMTP mailer configuration.
+  # SMTPメーラー設定
   smtp:
-    # Enable/Disable smtp mailer.
+    # SMTPメーラーを有効/無効化
     enable: true
-    # SMTP server host. e.x localhost, smtp.gmail.com
+    # SMTPサーバーホスト。例：localhost、smtp.gmail.com
     host: localhost
-    # SMTP server port
+    # SMTPサーバーポート
     port: 1025
-    # Use secure connection (SSL/TLS).
+    # セキュア接続（SSL/TLS）を使用
     secure: false
 ```
 
-Now your mailer workers will send email to the SMTP server at `localhost`.
+これで、メーラーワーカーは`localhost`のSMTPサーバーにメールを送信するようになります。
 
-## Adding a mailer
+## メーラーの追加
 
-You can generate a mailer:
+メーラーを生成できます：
 
 ```sh
 cargo loco generate mailer <mailer name>
 ```
 
-Or, you can define it manually if you like to see how things work. In `mailers/auth.rs`, add:
+または、動作の仕組みを理解したい場合は手動で定義することもできます。`mailers/auth.rs`に以下を追加します：
 
 ```rust
 static welcome: Dir<'_> = include_dir!("src/mailers/auth/welcome");
 impl AuthMailer {
-    /// Sending welcome email the the given user
+    /// 指定されたユーザーにウェルカムメールを送信
     ///
-    /// # Errors
+    /// # エラー
     ///
-    /// When email sending is failed
+    /// メール送信が失敗した場合
     pub async fn send_welcome(ctx: &AppContext, _user_id: &str) -> Result<()> {
         Self::mail_template(
             ctx,
@@ -165,28 +165,28 @@ impl AuthMailer {
 }
 ```
 
-Each mailer has an opinionated, predefined folder structure:
+各メーラーには決まったフォルダ構造があります：
 
 ```
 src/
   mailers/
     auth/
-      welcome/      <-- all the parts of an email, all templates
+      welcome/      <-- メールのすべての部分、すべてのテンプレート
         subject.t
         html.t
         text.t
-    auth.rs         <-- mailer definition
+    auth.rs         <-- メーラー定義
 ```
 
-### Running a mailer
-The mailer operates as a background worker, which means you need to run the worker separately to process the jobs. The default startup command `cargo loco start` does not initiate the worker, so you need to run it separately:
+### メーラーの実行
+メーラーはバックグラウンドワーカーとして動作するため、ジョブを処理するには別途ワーカーを実行する必要があります。デフォルトの起動コマンド`cargo loco start`はワーカーを起動しないため、別途実行する必要があります：
 
-To run the worker, use the following command:
+ワーカーを実行するには、以下のコマンドを使用します：
 ```bash
 cargo loco start --worker
 ```
 
-To run both the server and the worker simultaneously, use the following command:
+サーバーとワーカーを同時に実行するには、以下のコマンドを使用します：
 ```bash
 cargo loco start --server-and-worker
 ```

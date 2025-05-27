@@ -31,93 +31,93 @@ cargo build --release
 ```
 <!-- </snip>-->
 
-And copy your binary along with your `config/` folder to the server. You can then run `myapp start` on your server.
+そして、バイナリを`config/`フォルダと一緒にサーバーにコピーします。その後、サーバー上で`myapp start`を実行できます。
 
 ```sh
-# The binary is located in ./target/release/ after building
+# ビルド後、バイナリは./target/release/に配置されます
 ./target/release/myapp start
 ```
 
-That's it!
+以上です！
 
-We took special care that **all of your work** is embbedded in a **single** binary, so you need nothing on the server other than that.
+**すべての作業内容**が**単一の**バイナリに埋め込まれるよう特別な配慮をしているため、サーバー上にはそのバイナリ以外何も必要ありません。
 
-## Review your production config
+## 本番設定の確認
 
-There are a few configuration sections that are important to review and set accordingly when deploying to production:
+本番環境へのデプロイ時に確認し、適切に設定することが重要な設定セクションがいくつかあります：
 
-- Logger:
+- ロガー：
 
 <!-- <snip id="configuration-logger" inject_from="code" template="yaml"> -->
 ```yaml
-# Application logging configuration
+# アプリケーションのロギング設定
 logger:
-  # Enable or disable logging.
+  # ロギングを有効化または無効化
   enable: true
-  # Enable pretty backtrace (sets RUST_BACKTRACE=1)
+  # きれいなバックトレースを有効化（RUST_BACKTRACE=1を設定）
   pretty_backtrace: true
-  # Log level, options: trace, debug, info, warn or error.
+  # ログレベル、オプション：trace、debug、info、warn、error
   level: debug
-  # Define the logging format. options: compact, pretty or json
+  # ロギング形式を定義。オプション：compact、pretty、json
   format: compact
-  # By default the logger has filtering only logs that came from your code or logs that came from `loco` framework. to see all third party libraries
-  # Uncomment the line below to override to see all third party libraries you can enable this config and override the logger filters.
+  # デフォルトでは、ロガーはあなたのコードまたは`loco`フレームワークからのログのみをフィルタリングします。すべてのサードパーティライブラリを表示するには
+  # 以下の行のコメントを解除して、この設定を有効にしてロガーフィルターをオーバーライドできます。
   # override_filter: trace
 ```
 <!-- </snip>-->
  
 
-- Server:
+- サーバー：
 <!-- <snip id="configuration-server" inject_from="code" template="yaml"> -->
 ```yaml
 server:
-  # Port on which the server will listen. the server binding is 0.0.0.0:{PORT}
+  # サーバーがリッスンするポート。サーバーのバインディングは0.0.0.0:{PORT}
   port: {{ get_env(name="NODE_PORT", default=5150) }}
-  # The UI hostname or IP address that mailers will point to.
+  # メーラーが参照するUIのホスト名またはIPアドレス
   host: http://localhost
 ```
 <!-- </snip>-->
 
 
-- Database:
+- データベース：
 <!-- <snip id="configuration-database" inject_from="code" template="yaml"> -->
 ```yaml
 database:
-  # Database connection URI
+  # データベース接続URI
   uri: {{get_env(name="DATABASE_URL", default="postgres://loco:loco@localhost:5432/loco_app")}}
-  # When enabled, the sql query will be logged.
+  # 有効にすると、SQLクエリがログに記録されます
   enable_logging: false
-  # Set the timeout duration when acquiring a connection.
+  # 接続取得時のタイムアウト期間を設定
   connect_timeout: 500
-  # Set the idle duration before closing a connection.
+  # 接続を閉じるまでのアイドル期間を設定
   idle_timeout: 500
-  # Minimum number of connections for a pool.
+  # プールの最小接続数
   min_connections: 1
-  # Maximum number of connections for a pool.
+  # プールの最大接続数
   max_connections: 1
-  # Run migration up when application loaded
+  # アプリケーションロード時にマイグレーションを実行
   auto_migrate: true
-  # Truncate database when application loaded. This is a dangerous operation, make sure that you using this flag only on dev environments or test mode
+  # アプリケーションロード時にデータベースを切り詰めます。これは危険な操作です。開発環境またはテストモードでのみこのフラグを使用してください
   dangerously_truncate: false
-  # Recreating schema when application loaded.  This is a dangerous operation, make sure that you using this flag only on dev environments or test mode
+  # アプリケーションロード時にスキーマを再作成します。これは危険な操作です。開発環境またはテストモードでのみこのフラグを使用してください
   dangerously_recreate: false
 ```
 <!-- </snip>-->
 
 
-- Mailer:
+- メーラー：
 <!-- <snip id="configuration-mailer" inject_from="code" template="yaml"> -->
 ```yaml
 mailer:
-  # SMTP mailer configuration.
+  # SMTPメーラー設定
   smtp:
-    # Enable/Disable smtp mailer.
+    # SMTPメーラーを有効/無効化
     enable: true
-    # SMTP server host. e.x localhost, smtp.gmail.com
+    # SMTPサーバーホスト。例：localhost、smtp.gmail.com
     host: {{ get_env(name="MAILER_HOST", default="localhost") }}
-    # SMTP server port
+    # SMTPサーバーポート
     port: 1025
-    # Use secure connection (SSL/TLS).
+    # セキュア接続（SSL/TLS）を使用
     secure: false
     # auth:
     #   user:
@@ -125,51 +125,51 @@ mailer:
 ```
 <!-- </snip>-->
 
-- Queue:
+- キュー：
 <!-- <snip id="configuration-queue" inject_from="code" template="yaml"> -->
 ```yaml
 queue:
   kind: Redis
-  # Redis connection URI
+  # Redis接続URI
   uri: {{ get_env(name="REDIS_URL", default="redis://127.0.0.1") }}
-  # Dangerously flush all data in Redis on startup. dangerous operation, make sure that you using this flag only on dev environments or test mode
+  # 起動時にRedisのすべてのデータを危険にフラッシュします。危険な操作です。開発環境またはテストモードでのみこのフラグを使用してください
   dangerously_flush: false
 ```
 <!-- </snip>-->
 
-- JWT secret:
+- JWTシークレット：
 <!-- <snip id="configuration-auth" inject_from="code" template="yaml"> -->
 ```yaml
 auth:
-  # JWT authentication
+  # JWT認証
   jwt:
-    # Secret key for token generation and verification
+    # トークン生成と検証用のシークレットキー
     secret: PqRwLF2rhHe8J22oBeHy
-    # Token expiration time in seconds
-    expiration: 604800 # 7 days
+    # トークンの有効期限（秒単位）
+    expiration: 604800 # 7日間
 ```
 <!-- </snip>-->
 
-## Running `loco doctor`
+## `loco doctor`の実行
 
-You can run `loco doctor` in your server to check the connection health of your environment. 
+サーバー上で`loco doctor`を実行して、環境の接続状態を確認できます。 
 
 ```sh
 $ myapp doctor --production
 ```
 
-## Generate
+## 生成
 
-Loco offers a deployment template enabling the creation of a deployment infrastructure.
+Locoはデプロイメントインフラストラクチャの作成を可能にするデプロイメントテンプレートを提供しています。
 
 ```sh
 $ cargo loco generate deployment --help
-Generate a deployment infrastructure
+デプロイメントインフラストラクチャを生成
 
-Usage: myapp-cli generate deployment [OPTIONS] <KIND>
+使用方法: myapp-cli generate deployment [OPTIONS] <KIND>
 
-Arguments:
-  <KIND>  [possible values: docker, shuttle, nginx]
+引数:
+  <KIND>  [使用可能な値: docker, shuttle, nginx]
 ```
 
 <!-- <snip id="generate-deployment-command" inject_from="yaml" template="sh"> -->
@@ -177,31 +177,31 @@ Arguments:
 ```sh
 cargo loco generate deployment docker
 
-added: "dockerfile"
-added: ".dockerignore"
-* Dockerfile generated successfully.
-* Dockerignore generated successfully
+追加: "dockerfile"
+追加: ".dockerignore"
+* Dockerfileが正常に生成されました。
+* Dockerignoreが正常に生成されました
 ```
 
 <!-- </snip>-->
 
-Deployment Options:
+デプロイメントオプション：
 
-1. Docker:
+1. Docker：
 
-- Generates a Dockerfile ready for building and deploying.
-- Creates a .dockerignore file.
+- ビルドとデプロイに対応したDockerfileを生成します。
+- .dockerignoreファイルを作成します。
 
-2. Shuttle:
+2. Shuttle：
 
-- Generates a shuttle main function.
-- Adds `shuttle-runtime` and `shuttle-axum` as dependencies.
-- Adds a bin entrypoint for the deployment.
+- shuttleメイン関数を生成します。
+- `shuttle-runtime`と`shuttle-axum`を依存関係として追加します。
+- デプロイメント用のbinエントリポイントを追加します。
 
-3. Nginx:
+3. Nginx：
 
-- Generates a nginx configuration file for reverse proxying.
+- リバースプロキシ用のnginx設定ファイルを生成します。
 
-Choose the option that best fits your deployment needs. Happy deploying!
+デプロイメントのニーズに最適なオプションを選択してください。楽しいデプロイを！
 
-If you have a preference for deploying on a different cloud, feel free to open a pull request. Your contributions are more than welcome!
+別のクラウドでのデプロイをご希望の場合は、プルリクエストをお気軽に開いてください。あなたの貢献を大歓迎します！

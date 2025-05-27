@@ -15,24 +15,24 @@ top = false
 flair =[]
 +++
 
-`Loco` provides a simple static data loader facility. This can be useful for the following cases:
+`Loco`はシンプルな静的データローダー機能を提供します。これは以下のようなケースで便利です：
 
-* You need access to read-only data that has to be loaded from a JSON file
-* You download data from external sources periodically, and want to use it in your process (to refresh you typically restart the process or read from disk directly)
+* JSONファイルから読み込む必要がある読み取り専用データへのアクセスが必要な場合
+* 外部ソースから定期的にデータをダウンロードし、プロセスで使用したい場合（更新するには通常、プロセスを再起動するか、ディスクから直接読み取ります）
 
 
-Examples:
+例：
 
-* Machine learning model hyperparameters (that are updated from time to time)
-* IP banlist
-* Calendar-related events
-* Stock data
-* Security policies
-* Per-container policies or configuration
+* 機械学習モデルのハイパーパラメータ（時々更新されるもの）
+* IPバンリスト
+* カレンダー関連のイベント
+* 株式データ
+* セキュリティポリシー
+* コンテナごとのポリシーまたは設定
 
-## Creating a new data loader
+## 新しいデータローダーの作成
 
-Use the `data` generator:
+`data`ジェネレーターを使用します：
 
 ```
 $ cargo loco g data stocks
@@ -42,15 +42,15 @@ injected: "src/data/mod.rs"
 * Data loader `Stocks` was added successfully.
 ```
 
-The actual data should be placed in the new `data/` folder (next to `src/`). Similar to how configuration is placed in `config/`. Here, the JSON data file is named `data/stocks/data.json`.
+実際のデータは、新しい`data/`フォルダー（`src/`の隣）に配置する必要があります。これは設定が`config/`に配置されるのと同様です。ここでは、JSONデータファイルは`data/stocks/data.json`という名前になっています。
 
-The data _module_ is in the `src/data/stocks.rs` module that was added, and creates a new `crate::data::stocks` namespace available statically from anywhere in your code.
+データ_モジュール_は追加された`src/data/stocks.rs`モジュール内にあり、コードのどこからでも静的に利用できる新しい`crate::data::stocks`名前空間を作成します。
 
-Remember, to load the data your app _binary_ needs to see a `data/` folder next to it. If you want to customize the name of this folder you can set the `LOCO_DATA` environment variable.
+データを読み込むには、アプリの_バイナリ_がその隣に`data/`フォルダーを見つける必要があることに注意してください。このフォルダーの名前をカスタマイズしたい場合は、`LOCO_DATA`環境変数を設定できます。
 
-## Shape your data structure
+## データ構造の定義
 
-Your `src/data/stocks.rs` file contains an initial definition for the data which was automatically generated:
+`src/data/stocks.rs`ファイルには、自動生成されたデータの初期定義が含まれています：
 
 ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -59,21 +59,21 @@ pub struct Stocks {
 }
 ```
 
-When you put your real data in `data/stocks/data.json` you should define the _shape_ of your data in the `Stocks` struct to match (you can do this automatically with a tool like [quicktype](https://quicktype.io/)). You can use any `serde`-friendly data type.
+実際のデータを`data/stocks/data.json`に配置する際は、`Stocks`構造体でデータの_形状_を一致させるように定義する必要があります（[quicktype](https://quicktype.io/)のようなツールを使って自動的に行うこともできます）。`serde`対応のデータ型であれば何でも使用できます。
 
 
-## Using your static data
+## 静的データの使用
 
-Use `data::stocks::get()` from anywhere to access the data which is loaded **once** for the duration of the life of your process (this will use an in-memory image of your data). You can call `get()` as many times as you want and pay no special performance fee for it.
+`data::stocks::get()`をどこからでも使用して、プロセスの存続期間中に**一度**だけ読み込まれるデータにアクセスできます（これはデータのメモリ内イメージを使用します）。`get()`は何度でも呼び出すことができ、特別なパフォーマンスコストはかかりません。
 
-Use `data::stocks::read()`  to read directly from disk (note: this will spend IO time reading for every call).
+`data::stocks::read()`を使用してディスクから直接読み取ることもできます（注意：これは呼び出しごとにIO時間を消費します）。
 
-## Updating the process data
+## プロセスデータの更新
 
-Because this data is loaded **once** for the duration of the life of your process, you need to restart your process to effectively update it. 
+このデータはプロセスの存続期間中に**一度**だけ読み込まれるため、効果的に更新するにはプロセスを再起動する必要があります。
 
-For the `data` subsystem we assume that the use cases around these types of data is massively read many more times than it is updated (but it is updated from time to time), so it is a read-heavy use case, and data that is _frequently_ updated in any case needs a different storage paradigm (cache, database, etc.). The in-memory copy of your data will have the best read access performance possible, like any other static data.
+`data`サブシステムでは、これらのタイプのデータの使用ケースは更新よりもはるかに多く読み取られることを想定しています（ただし、時々更新されます）。したがって、これは読み取り集約的な使用ケースであり、_頻繁に_更新されるデータには別のストレージパラダイム（キャッシュ、データベースなど）が必要です。データのメモリ内コピーは、他の静的データと同様に、可能な限り最高の読み取りアクセスパフォーマンスを提供します。
 
-In cases you do need to update this data, restarting a Loco process is _fast_, and is similar in concept to deploying a new version, but not deploying new code which saves time and effort.
+このデータを更新する必要がある場合、Locoプロセスの再起動は_高速_であり、概念的には新しいバージョンのデプロイに似ていますが、新しいコードをデプロイしないため時間と労力を節約できます。
 
-You can also use the `read()` function to read from disk, and cache it somewhere centrally (you can use the Loco `cache` system).
+また、`read()`関数を使用してディスクから読み取り、どこか中央にキャッシュすることもできます（Locoの`cache`システムを使用できます）。

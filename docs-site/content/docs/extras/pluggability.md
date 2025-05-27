@@ -1,5 +1,5 @@
 +++
-title = "Pluggability"
+title = "プラグイン機能"
 description = ""
 date = 2021-05-01T18:10:00+00:00
 updated = 2021-05-01T18:10:00+00:00
@@ -15,11 +15,11 @@ top = false
 flair =[]
 +++
 
-## Error levels and options
+## エラーレベルとオプション
 
-As a reminder, error levels and their logging can be controlled in your `development.yaml`:
+おさらいとして、エラーレベルとそのロギングは`development.yaml`で制御できます：
 
-### Logger
+### ロガー
 
 <!-- <snip id="configuration-logger" inject_from="code" template="yaml"> -->
 
@@ -41,14 +41,14 @@ logger:
 
 <!-- </snip> -->
 
-The most important knobs here are:
+ここで最も重要な設定は次のとおりです：
 
-- `level` - your standard logging levels. Typically `debug` or `trace` in development. In production, choose what you are used to.
-- `pretty_backtrace` - provides a clear, concise path to the line of code causing the error. Use `true` in development and turn it off in production. In cases where you are debugging things in production and need some extra hand, you can turn it on and then off when you're done.
+- `level` - 標準的なログレベル。開発環境では通常`debug`または`trace`。本番環境では、慣れ親しんだものを選択してください。
+- `pretty_backtrace` - エラーを引き起こしたコード行への明確で簡潔なパスを提供します。開発環境では`true`を使用し、本番環境ではオフにします。本番環境でデバッグが必要な場合は、一時的にオンにして、完了後にオフにすることができます。
 
-### Controller logging
+### コントローラーのロギング
 
-In `server.middlewares` you will find:
+`server.middlewares`には以下があります：
 
 ```yaml
 server:
@@ -62,11 +62,11 @@ server:
       enable: true
 ```
 
-You should enable it to get detailed request errors and a useful `request-id` that can help collate multiple request-scoped errors.
+詳細なリクエストエラーと、複数のリクエストスコープのエラーを照合するのに役立つ`request-id`を取得するために、これを有効にする必要があります。
 
-### Database
+### データベース
 
-You have the option of logging live SQL queries, in your `database` section:
+`database`セクションでライブSQLクエリのロギングオプションがあります：
 
 ```yaml
 database:
@@ -74,32 +74,32 @@ database:
   enable_logging: false
 ```
 
-### Operating around errors
+### エラーの操作
 
-You'll be mostly looking at your terminal for errors while developing your app, it can look something like this:
+アプリの開発中は主にターミナルでエラーを確認することになります。以下のように表示されます：
 
 ```bash
 2024-02-xxx DEBUG http-request: tower_http::trace::on_request: started processing request http.method=GET http.uri=/notes http.version=HTTP/1.1 http.user_agent=curl/8.1.2 environment=development request_id=8622e624-9bda-49ce-9730-876f2a8a9a46
 2024-02-xxx11T12:19:25.295954Z ERROR http-request: loco_rs::controller: controller_error error.msg=invalid type: string "foo", expected a sequence error.details=JSON(Error("invalid type: string \"foo\", expected a sequence", line: 0, column: 0)) error.chain="" http.method=GET http.uri=/notes http.version=HTTP/1.1 http.user_agent=curl/8.1.2 environment=development request_id=8622e624-9bda-49ce-9730-876f2a8a9a46
 ```
 
-Usually you can expect the following from errors:
+通常、エラーからは以下を期待できます：
 
-- `error.msg` a `to_string()` version of an error, for operators.
-- `error.detail` a debug representation of an error, for developers.
-- An error **type** e.g. `controller_error` as the primary message tailored for searching, rather than a verbal error message.
-- Errors are logged as _tracing_ events and spans, so that you can build any infrastructure you want to provide custom tracing subscribers. Check out the [prometheus](https://github.com/loco-rs/loco/blob/master/loco-extras/src/initializers/prometheus.rs) example in `loco-extras`.
+- `error.msg` オペレーター向けのエラーの`to_string()`バージョン。
+- `error.detail` 開発者向けのエラーのデバッグ表現。
+- エラー**タイプ**（例：`controller_error`）は、言葉によるエラーメッセージよりも検索に適した主要メッセージです。
+- エラーは_tracing_イベントとスパンとしてログに記録されるため、カスタムトレーシングサブスクライバーを提供するインフラストラクチャを構築できます。`loco-extras`の[prometheus](https://github.com/loco-rs/loco/blob/master/loco-extras/src/initializers/prometheus.rs)の例を参照してください。
 
-Notes:
+注意事項：
 
-- An _error chain_ was experimented with, but provides little value in practice.
-- Errors that an end user sees are a completely different thing. We strive to provide **minimal internal details** about an error for an end user when we know a user can't do anything about an error (e.g. "database offline error"), mostly it will be a generic "Internal Server Error" on purpose -- for security reasons.
+- _エラーチェーン_が実験されましたが、実際にはあまり価値がありません。
+- エンドユーザーが目にするエラーは完全に別物です。ユーザーがエラーに対して何もできないことがわかっている場合（例：「データベースオフラインエラー」）、エンドユーザーにはエラーに関する**最小限の内部詳細**を提供するよう努めています。ほとんどの場合、セキュリティ上の理由から、意図的に一般的な「Internal Server Error」になります。
 
-### Producing errors
+### エラーの生成
 
-When you build controllers, you write your handlers to return `Result<impl IntoResponse>`. The `Result` here is a Loco `Result`, which means it also associates a Loco `Error` type.
+コントローラーを構築する際、ハンドラーは`Result<impl IntoResponse>`を返すように記述します。ここでの`Result`はLocoの`Result`であり、Locoの`Error`型も関連付けられています。
 
-If you reach out for the Loco `Error` type you can use any of the following as a response:
+Locoの`Error`型を使用する場合、以下のいずれかをレスポンスとして使用できます：
 
 ```rust
 Err(Error::string("some custom message"));
@@ -111,13 +111,13 @@ Err(Error::Unauthorized("some message"))
 unauthorized("some message") // create a full response object, calling Err on a created error
 ```
 
-## Initializers
+## イニシャライザー
 
-Initializers are a way to encapsulate a piece of infrastructure "wiring" that you need to do in your app. You put initializers in `src/initializers/`.
+イニシャライザーは、アプリで必要なインフラストラクチャの「配線」をカプセル化する方法です。イニシャライザーは`src/initializers/`に配置します。
 
-### Writing initializers
+### イニシャライザーの記述
 
-Currently, an initializer is anything that implements the `Initializer` trait:
+現在、イニシャライザーは`Initializer`トレイトを実装するものであれば何でも構いません：
 
 <!-- <snip id="initializers-trait" inject_from="code" template="rust"> -->
 
@@ -144,11 +144,11 @@ pub trait Initializer: Sync + Send {
 
 <!-- </snip> -->
 
-### Example: Integrating Axum Session
+### 例：Axum Sessionの統合
 
-You might want to add sessions to your app using `axum-session`. Also, you might want to share that piece of functionality between your own projects, or grab that piece of code from someone else.
+`axum-session`を使用してアプリにセッションを追加したい場合があります。また、その機能を自分のプロジェクト間で共有したり、他の人からそのコードを取得したりしたい場合もあるでしょう。
 
-You can achieve this reuse easily, if you code the integration as an _initializer_:
+統合を_イニシャライザー_としてコーディングすれば、この再利用を簡単に実現できます：
 
 ```rust
 // place this in `src/initializers/axum_session.rs`
@@ -171,7 +171,7 @@ impl Initializer for AxumSessionInitializer {
 }
 ```
 
-And now your app structure looks like this:
+そして、アプリの構造は次のようになります：
 
 ```
 src/
@@ -187,9 +187,9 @@ src/
   app.rs   <--- register initializers here
 ```
 
-### Using initializers
+### イニシャライザーの使用
 
-After you've implemented your own initializer, you should implement the `initializers(..)` hook in your `src/app.rs` and provide a Vec of your initializers:
+独自のイニシャライザーを実装した後、`src/app.rs`で`initializers(..)`フックを実装し、イニシャライザーのVecを提供する必要があります：
 
 <!-- <snip id="app-initializers" inject_from="code" template="rust"> -->
 
@@ -207,35 +207,35 @@ After you've implemented your own initializer, you should implement the `initial
 
 <!-- </snip> -->
 
-Loco will now run your initializer stack in the correct places during the app boot process.
+Locoはアプリの起動プロセス中に、適切な場所でイニシャライザースタックを実行します。
 
-### What other things you can do?
+### 他に何ができるか？
 
-Right now initializers contain two integration points:
+現在、イニシャライザーには2つの統合ポイントがあります：
 
-- `before_run` - happens before running the app -- this is a pure "initialization" type of a hook. You can send web hooks, metric points, do cleanups, pre-flight checks, etc.
-- `after_routes` - happens after routes have been added. You have access to the Axum router and its powerful layering integration points, this is where you will spend most of your time.
+- `before_run` - アプリの実行前に発生します -- これは純粋な「初期化」タイプのフックです。Webフックの送信、メトリックポイントの送信、クリーンアップ、プリフライトチェックなどが可能です。
+- `after_routes` - ルートが追加された後に発生します。Axumルーターとその強力なレイヤリング統合ポイントにアクセスできます。ここが最も多くの時間を費やす場所です。
 
-### Compared to Rails initializers
+### Railsイニシャライザーとの比較
 
-Rails initializers, are regular scripts that run once -- for initialization and have access to everything. They get their power from being able to access a "live" Rails app, modify it as a global instance.
+Railsイニシャライザーは、初期化のために一度だけ実行され、すべてにアクセスできる通常のスクリプトです。「ライブ」Railsアプリにアクセスし、グローバルインスタンスとして変更できることから力を得ています。
 
-In Loco, accessing a global instance and mutating it is not possible in Rust (for a good reason!), and so we offer two integration points which are explicit and safe:
+Locoでは、Rustではグローバルインスタンスにアクセスして変更することはできません（正当な理由があります！）。そのため、明示的で安全な2つの統合ポイントを提供しています：
 
-1. Pure initialization (without any influence on a configured app)
-2. Integration with a running app (via Axum router)
+1. 純粋な初期化（設定されたアプリへの影響なし）
+2. 実行中のアプリとの統合（Axumルーター経由）
 
-Rails initializers need _ordering_ and _modification_. Meaning, a user should be certain that they run in a specific order (or re-order them), and a user is able to remove initializers that other people set before them.
+Railsイニシャライザーには_順序_と_変更_が必要です。つまり、ユーザーは特定の順序で実行されることを確信できる必要があり（または順序を変更できる）、他の人が以前に設定したイニシャライザーを削除できる必要があります。
 
-In Loco, we circumvent this complexity by making the user _provide a full vec_ of initializers. Vecs are ordered, and there are no implicit initializers.
+Locoでは、ユーザーに_イニシャライザーの完全なVec_を提供させることで、この複雑さを回避しています。Vecは順序付けられており、暗黙的なイニシャライザーはありません。
 
-### The global logger initializer
+### グローバルロガーイニシャライザー
 
-Some developers would like to customize their logging stack. In Loco this involves setting up tracing and tracing subscribers.
+一部の開発者はロギングスタックをカスタマイズしたいと考えています。Locoでは、これにはtracingとtracingサブスクライバーの設定が含まれます。
 
-Because at the moment tracing does not allow for re-initialization, or modification of an in-flight tracing stack, you _only get one chance to initialize and registr a global tracing stack_.
+現時点でtracingは再初期化や実行中のtracingスタックの変更を許可していないため、_グローバルtracingスタックを初期化および登録するチャンスは一度だけ_です。
 
-This is why we added a new _App level hook_, called `init_logger`, which you can use to provide your own logging stack initialization.
+このため、独自のロギングスタック初期化を提供するために使用できる`init_logger`という新しい_アプリレベルフック_を追加しました。
 
 ```rust
 // in src/app.rs
@@ -248,26 +248,17 @@ impl Hooks for App {
 }
 ```
 
-After you've set up your own logger, return `Ok(true)` to signal that you took over initialization.
+独自のロガーを設定した後、初期化を引き継いだことを示すために`Ok(true)`を返します。
 
-## Middlewares
+## ミドルウェア
 
-`Loco` is a framework that is built on top of [`axum`](https://crates.io/crates/axum)
-and [`tower`](https://crates.io/crates/tower). They provide a way to
-add [layers](https://docs.rs/tower/latest/tower/trait.Layer.html)
-and [services](https://docs.rs/tower/latest/tower/trait.Service.html) as middleware to your routes and handlers.
+`Loco`は[`axum`](https://crates.io/crates/axum)と[`tower`](https://crates.io/crates/tower)の上に構築されたフレームワークです。これらは、ルートとハンドラーにミドルウェアとして[レイヤー](https://docs.rs/tower/latest/tower/trait.Layer.html)と[サービス](https://docs.rs/tower/latest/tower/trait.Service.html)を追加する方法を提供します。
 
-Middleware is a way to add pre- and post-processing to your requests. This can be used for logging, authentication, rate
-limiting, route-specific processing, and more.
+ミドルウェアは、リクエストに前処理と後処理を追加する方法です。これは、ロギング、認証、レート制限、ルート固有の処理などに使用できます。
 
-### Source Code
+### ソースコード
 
-`Loco`'s implementation of route middleware/layer is similar
-to `axum`'s [`Router::layer`](https://github.com/tokio-rs/axum/blob/main/axum/src/routing/mod.rs#L275). You can
-find the source code for middleware in
-the [`src/controllers/routes`](https://github.com/loco-rs/loco/blob/master/src/controller/routes.rs) directory.
-This `layer` function will attach the
-middleware layer to each handler of the route.
+`Loco`のルートミドルウェア/レイヤーの実装は`axum`の[`Router::layer`](https://github.com/tokio-rs/axum/blob/main/axum/src/routing/mod.rs#L275)に似ています。ミドルウェアのソースコードは[`src/controllers/routes`](https://github.com/loco-rs/loco/blob/master/src/controller/routes.rs)ディレクトリにあります。この`layer`関数は、ルートの各ハンドラーにミドルウェアレイヤーをアタッチします。
 
 ```rust
 // src/controller/routes.rs
