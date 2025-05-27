@@ -986,12 +986,12 @@ impl PaginationResponse {
 ```
 
 
-# Testing
-When testing controllers, the goal is to call the router's controller endpoint and verify the HTTP response, including the status code, response content, headers, and more.
+# テスト
+コントローラーをテストする際の目標は、ルーターのコントローラーエンドポイントを呼び出し、ステータスコード、レスポンスコンテンツ、ヘッダーなどを含むHTTPレスポンスを検証することです。
 
-To initialize a test request, use `use loco_rs::testing::prelude::*;`, which prepares your app routers, providing the request instance and the application context.
+テストリクエストを初期化するには、`use loco_rs::testing::prelude::*;`を使用します。これにより、アプリルーターが準備され、リクエストインスタンスとアプリケーションコンテキストが提供されます。
 
-In the following example, we have a POST endpoint that returns the data sent in the POST request.
+次の例では、POSTリクエストで送信されたデータを返すPOSTエンドポイントがあります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -1013,16 +1013,16 @@ async fn can_print_echo() {
 }
 ```
 
-As you can see initialize the testing request and using `request` instance calling /example endpoing.
-the request returns a `Response` instance with the status code and the response test
+ご覧のように、テストリクエストを初期化し、`request`インスタンスを使用して/exampleエンドポイントを呼び出しています。
+リクエストは、ステータスコードとレスポンステキストを含む`Response`インスタンスを返します。
 
 
-## Async
-When writing async tests with database data, it's important to ensure that one test does not affect the data used by other tests. Since async tests can run concurrently on the same database dataset, this can lead to unstable test results.
+## 非同期
+データベースデータを使用した非同期テストを作成する際は、1つのテストが他のテストで使用されるデータに影響を与えないようにすることが重要です。非同期テストは同じデータベースデータセット上で同時に実行される可能性があるため、不安定なテスト結果につながる可能性があります。
 
-Instead of using `request`, as described in the documentation for synchronous tests, use the `request_with_create_db` function. This function generates a random database schema name and ensures that the tables are deleted once the test is completed.
+同期テストのドキュメントで説明されている`request`の代わりに、`request_with_create_db`関数を使用してください。この関数はランダムなデータベーススキーマ名を生成し、テストが完了するとテーブルが削除されることを保証します。
 
-Note: If you cancel the test run midway (e.g., by pressing `Ctrl + C`), the cleanup process will not execute, and the database tables will remain. In such cases, you will need to manually remove them.
+注意：テスト実行を途中でキャンセルした場合（例：`Ctrl + C`を押した場合）、クリーンアッププロセスは実行されず、データベーステーブルは残ります。その場合は、手動で削除する必要があります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -1043,8 +1043,8 @@ async fn can_print_echo() {
 }
 ```
 
-## Authenticated Endpoints
-The following example works for both JWT and API_KEY Authentication.
+## 認証されたエンドポイント
+次の例は、JWTとAPI_KEY認証の両方で機能します。
 ```rust
 use loco_rs::testing::prelude::*;
 use super::prepare_data;
