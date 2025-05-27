@@ -17,14 +17,14 @@ flair =[]
 
 `Loco`は[axum](https://crates.io/crates/axum)をラップしたフレームワークで、ルート、ミドルウェア、認証などを簡単に管理できる直接的なアプローチを開発箱で提供します。いつでも強力なaxum Routerを活用し、カスタムミドルウェアやルートで拡張することができます。
 
-# Controllers and Routing
+# コントローラーとルーティング
 
 
-## Adding a controller
+## コントローラーの追加
 
 プロジェクトに接続されたスターターコントローラーの作成を簡素化する便利なコードジェネレーターを提供します。さらに、テストファイルも生成され、コントローラーのテストを簡単に行うことができます。
 
-Generate a controller:
+コントローラーを生成：
 
 ```sh
 $ cargo loco generate controller [OPTIONS] <CONTROLLER_NAME>
@@ -33,7 +33,7 @@ $ cargo loco generate controller [OPTIONS] <CONTROLLER_NAME>
 コントローラーを生成した後、`src/controllers`の作成されたファイルに移動してコントローラーエンドポイントを確認してください。このコントローラーのテストについては、テスト（tests/requestsフォルダ内）のドキュメントも確認できます。
 
 
-### Displaying active routes
+### アクティブなルートの表示
 
 登録されているすべてのコントローラーのリストを表示するには、次のコマンドを実行してください：
 
@@ -56,15 +56,15 @@ $ cargo loco routes
 
 `AppRoutes`は`Loco`フレームワークの中核コンポーネントで、アプリケーションのルートを管理・整理するのに役立ちます。異なるコントローラーからルートを追加、プレフィックス付与、収集する便利な方法を提供します。
 
-### Features
+### 機能
 
-- **ルートの追加**: 異なるコントローラーからルートを簡単に追加できます。
-- **ルートのプレフィックス**: ルートのグループに共通のプレフィックスを適用できます。
-- **ルートの収集**: すべてのルートを単一のコレクションに集めて、さらなる処理を行えます。
+- **ルートの追加**：異なるコントローラーからルートを簡単に追加できます。
+- **ルートのプレフィックス**：ルートのグループに共通のプレフィックスを適用できます。
+- **ルートの収集**：すべてのルートを単一のコレクションに集めて、さらなる処理を行えます。
 
-### Examples
+### 例
 
-#### Adding Routes
+#### ルートの追加
 
 異なるコントローラーから`AppRoutes`にルートを追加できます：
 
@@ -80,7 +80,7 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-### Prefixing Routes
+### ルートへのプレフィックス付与
 
 ルートのグループに共通のプレフィックスを適用する：
 
@@ -97,7 +97,7 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-### Nesting Routes
+### ルートのネスト
 
 AppRoutesはルートのネストを可能にし、複雑なルート階層の整理と管理を簡単にします。
 共通のプレフィックスを共有する関連ルートのセットがある場合に特に便利です。
@@ -117,7 +117,7 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-## Adding state
+## 状態の追加
 
 アプリのコンテキストと状態は`AppContext`に保持され、これはLocoが提供し設定するものです。アプリが起動するときにカスタムデータ、
 ロジック、またはエンティティをロードして、すべてのコントローラーで利用できるようにしたい場合があります。
@@ -153,7 +153,7 @@ async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoRes
 }
 ```
 
-## Global app-wide state
+## グローバルなアプリ全体の状態 {#global-app-wide-state}
 
 コントローラー、ワーカー、アプリの他の領域間で共有できる状態が必要な場合があります。
 
@@ -161,11 +161,11 @@ async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoRes
 
 アプリの個々の部分でそれがどのように行われるかを以下を読んで確認してください。
 
-### Shared state in controllers
+### コントローラーでの共有状態
 
 この文書で提供されているソリューションを使用できます。実際の例は[こちら](https://github.com/loco-rs/loco/blob/master/examples/llm-candle-inference/src/app.rs#L41)にあります。
 
-### Shared state in workers
+### ワーカーでの共有状態
 
 ワーカーは[アプリフック](https://github.com/loco-rs/loco/blob/master/starters/saas/src/app.rs#L59)で意図的にそのまま初期化されます。
 
@@ -175,11 +175,11 @@ async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoRes
 
 設計上、_コントローラーとワーカー間での状態共有は意味を持たない_ことに注意してください。なぜなら、最初は同じプロセスでワーカーとコントローラーを実行することを選択する（そして状態を共有する）かもしれませんが、水平スケールする際にはキューに支えられた適切なワーカーに素早く切り替え、独立したワーカープロセスで実行したくなるからです。したがって、あなた自身のためにも、ワーカーは設計上コントローラーと共有状態を持つべきではありません。
 
-### Shared state in tasks
+### タスクでの共有状態
 
 タスクは、実行されるバイナリと同様のライフサイクルを持つため、共有状態に対して実際の価値を持ちません。プロセスが起動し、ブートし、必要なすべてのリソースを作成し（データベースへの接続など）、タスクロジックを実行してから終了します。 
 
-## Routes in Controllers
+## コントローラー内のルート
 
 コントローラーはLocoのルート機能を定義します。以下の例では、コントローラーが1つのGETエンドポイントと1つのPOSTエンドポイントを作成しています：
 
@@ -192,7 +192,7 @@ Routes::new()
 
 `prefix`関数を使用してコントローラー内のすべてのルートに`prefix`を定義することもできます。
 
-## Sending Responses
+## レスポンスの送信
 
 レスポンス送信者は`format`モジュールにあります。ルートからレスポンスを送信するいくつかの方法を以下に示します：
 
@@ -212,7 +212,7 @@ format::render()
     .json(Entity::find().all(&ctx.db).await?)
 ```
 
-### Content type aware responses
+### コンテンツタイプ対応レスポンス
 
 フォーマットタイプが検出されて渡される
 レスポンダーメカニズムにオプトインできます。
@@ -233,7 +233,7 @@ pub async fn get_one(
 }
 ```
 
-### Custom errors
+### カスタムエラー
 
 異なるフォーマットに基づいて異なるレンダリングを行い、さらに
 受け取ったエラーの種類に基づいて異なるレンダリングを行いたい場合の例です。
@@ -287,7 +287,7 @@ pub async fn get_one(
 
 処理の知識が不足している場所では、エラーをそのまま返し、フレームワークにデフォルトエラーをレンダリングさせます。
 
-## Creating a Controller Manually
+## コントローラーの手動作成
 
 #### 1. コントローラーファイルの作成
 
@@ -316,11 +316,11 @@ impl Hooks for App {
 
 ```
 
-# Middleware
+# ミドルウェア
 
 Locoは箱から出してすぐに使えるビルトインミドルウェアのセットが付属しています。一部はデフォルトで有効になっていますが、他は設定が必要です。ミドルウェアの登録は柔軟で、`*.yaml`環境設定またはコード内で直接管理できます。
 
-## The default stack
+## デフォルトスタック
 
 有効なすべてのミドルウェアを取得するには以下のコマンドを実行します
 <!-- <snip id="cli-middleware-list" inject_from="yaml" template="sh"> -->
@@ -410,7 +410,7 @@ server:
       enable: true
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config
@@ -458,14 +458,14 @@ static                 (disabled)
 secure_headers         (disabled)
 ```
 
-### Authentication
-In the `Loco` framework, middleware plays a crucial role in authentication. `Loco` supports various authentication methods, including JSON Web Token (JWT) and API Key authentication. This section outlines how to configure and use authentication middleware in your application.
+### 認証
+`Loco`フレームワークでは、ミドルウェアが認証において重要な役割を果たします。`Loco`は、JSON Web Token（JWT）とAPIキー認証を含む様々な認証方法をサポートしています。このセクションでは、アプリケーションで認証ミドルウェアを設定して使用する方法を説明します。
 
 #### JSON Web Token (JWT)
 
-##### Configuration
-By default, Loco uses Bearer authentication for JWT. However, you can customize this behavior in the configuration file under the auth.jwt section.
-* *Bearer Authentication:* Keep the configuration blank or explicitly set it as follows:
+##### 設定
+デフォルトでは、LocoはJWTにBearer認証を使用します。ただし、設定ファイルのauth.jwtセクションでこの動作をカスタマイズできます。
+* *Bearer認証：* 設定を空白のままにするか、次のように明示的に設定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -474,7 +474,7 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
       location: Bearer
   ...
   ```
-* *Cookie Authentication:* Configure the location from which to extract the token and specify the cookie name:
+* *Cookie認証：* トークンを抽出する場所を設定し、Cookieの名前を指定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -485,7 +485,7 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
         name: token
   ...
   ```
-* *Query Parameter Authentication:* Specify the location and name of the query parameter:
+* *クエリパラメータ認証：* クエリパラメータの場所と名前を指定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -497,8 +497,8 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
   ...
   ```
 
-##### Usage
-In your controller parameters, use `auth::JWT` for authentication. This triggers authentication validation based on the configured settings.
+##### 使用方法
+コントローラーのパラメータで、認証に`auth::JWT`を使用します。これにより、設定に基づいた認証検証がトリガーされます。
 ```rust
 use loco_rs::prelude::*;
 
@@ -509,10 +509,10 @@ async fn current(
     // Your implementation here
 }
 ```
-Additionally, you can fetch the current user by replacing auth::JWT with `auth::ApiToken<users::Model>`.
+さらに、auth::JWTを`auth::ApiToken<users::Model>`に置き換えることで、現在のユーザーを取得できます。
 
-#### API Key
-For API Key authentication, use auth::ApiToken. This middleware validates the API key against the user database record and loads the corresponding user into the authentication parameter.
+#### APIキー
+APIキー認証の場合は、auth::ApiTokenを使用します。このミドルウェアはAPIキーをユーザーデータベースレコードと照合し、対応するユーザーを認証パラメータにロードします。
 ```rust
 use loco_rs::prelude::*;
 
@@ -526,9 +526,9 @@ async fn current(
 
 ## Catch Panic
 
-This middleware catches panics that occur during request handling in the application. When a panic occurs, it logs the error and returns an internal server error response. This middleware helps ensure that the application can gracefully handle unexpected errors without crashing the server.
+このミドルウェアは、アプリケーションでのリクエスト処理中に発生するパニックをキャッチします。パニックが発生すると、エラーをログに記録し、内部サーバーエラーレスポンスを返します。このミドルウェアは、サーバーをクラッシュさせることなく、アプリケーションが予期しないエラーを適切に処理できるようにします。
 
-To disable the middleware edit the configuration as follows:
+ミドルウェアを無効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -540,11 +540,11 @@ To disable the middleware edit the configuration as follows:
 
 ## Limit Payload
 
-The Limit Payload middleware restricts the maximum allowed size for HTTP request payloads. By default, it is enabled and configured with a 2MB limit.
+Limit Payloadミドルウェアは、HTTPリクエストペイロードの最大許容サイズを制限します。デフォルトでは有効になっており、2MBの制限で設定されています。
 
-You can customize or disable this behavior through your configuration file.
+設定ファイルでこの動作をカスタマイズまたは無効にできます。
 
-### Set a custom limit
+### カスタム制限の設定
 ```yaml
 #...
   middlewares:
@@ -552,8 +552,8 @@ You can customize or disable this behavior through your configuration file.
       body_limit: 5mb
 ```
 
-### Disable payload size limitation
-To remove the restriction entirely, set `body_limit` to `disable`:
+### ペイロードサイズ制限の無効化
+制限を完全に削除するには、`body_limit`を`disable`に設定します：
 ```yaml
 #...
   middlewares:
@@ -562,8 +562,8 @@ To remove the restriction entirely, set `body_limit` to `disable`:
 ```
 
 
-##### Usage
-In your controller parameters, use `axum::body::Bytes`.
+##### 使用方法
+コントローラーのパラメータで`axum::body::Bytes`を使用します。
 ```rust
 use loco_rs::prelude::*;
 
@@ -574,11 +574,11 @@ async fn current(_body: axum::body::Bytes,) -> Result<Response> {
 
 ## Timeout
 
-Applies a timeout to requests processed by the application. The middleware ensures that requests do not run beyond the specified timeout period, improving the overall performance and responsiveness of the application.
+アプリケーションで処理されるリクエストにタイムアウトを適用します。このミドルウェアは、リクエストが指定されたタイムアウト期間を超えて実行されないようにし、アプリケーションの全体的なパフォーマンスと応答性を向上させます。
 
-If a request exceeds the specified timeout duration, the middleware will return a `408 Request Timeout` status code to the client, indicating that the request took too long to process.
+リクエストが指定されたタイムアウト期間を超えた場合、ミドルウェアはクライアントに`408 Request Timeout`ステータスコードを返し、リクエストの処理に時間がかかりすぎたことを示します。
 
-To enable the middleware edit the configuration as follows:
+ミドルウェアを有効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -591,9 +591,9 @@ To enable the middleware edit the configuration as follows:
 
 ## Logger
 
-Provides logging functionality for HTTP requests. Detailed information about each request, such as the HTTP method, URI, version, user agent, and an associated request ID. Additionally, it integrates the application's runtime environment into the log context, allowing environment-specific logging (e.g., "development", "production").
+HTTPリクエストのロギング機能を提供します。HTTPメソッド、URI、バージョン、ユーザーエージェント、関連するリクエストIDなど、各リクエストに関する詳細情報を記録します。さらに、アプリケーションのランタイム環境をログコンテキストに統合し、環境固有のロギング（例：「development」、「production」）を可能にします。
 
-To disable the middleware edit the configuration as follows:
+ミドルウェアを無効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -605,10 +605,9 @@ To disable the middleware edit the configuration as follows:
 
 ## Fallback
 
-When choosing the SaaS starter (or any starter that is not API-first), you get a default fallback behavior with the _Loco welcome screen_. This is a development-only mode where a `404` request shows you a nice and friendly page that tells you what happened and what to do next. This also takes preference over the static handler, so make sure to disable it if you want to have static content served.
+SaaSスターター（またはAPIファーストではないスターター）を選択すると、_Locoウェルカムスクリーン_を使用したデフォルトのフォールバック動作が得られます。これは開発専用モードで、`404`リクエストが発生すると、何が起こったか、次に何をすべきかを示す親切でフレンドリーなページが表示されます。これは静的ハンドラーよりも優先されるため、静的コンテンツを提供したい場合は無効にする必要があります。
 
-
-You can disable or customize this behavior in your `development.yaml` file. You can set a few options:
+`development.yaml`ファイルでこの動作を無効化またはカスタマイズできます。いくつかのオプションを設定できます：
 
 
 ```yaml
@@ -632,7 +631,7 @@ fallback:
     not_found: cannot find this resource
 ```
 
-For production, it's recommended to disable this.
+本番環境では、これを無効にすることを推奨します。
 
 ```yaml
 # disable. you can also remove the `fallback` section entirely to disable

@@ -708,14 +708,14 @@ impl Hooks for App {
 
 この実装により、seed関数が呼び出されたときにシードが実行されることが保証されます。アプリケーションの構造と要件に基づいて詳細を調整してください。
 
-## Managing Seed via CLI
+## CLIを使用したシードの管理
 
-- **Reset the Database**  
-  Clear all existing data before importing seed files. This is useful when you want to start with a fresh database state, ensuring no old data remains.
-- **Dump Database Tables to Files**  
-  Export the contents of your database tables to files. This feature allows you to back up the current state of your database or prepare data for reuse across environments.
+- **データベースのリセット**  
+  シードファイルをインポートする前にすべての既存データをクリアします。これは、古いデータが残らないようにして、新しいデータベース状態から始めたい場合に便利です。
+- **データベーステーブルのファイルへのダンプ**  
+  データベーステーブルの内容をファイルにエクスポートします。この機能により、データベースの現在の状態をバックアップしたり、環境間でデータを再利用するための準備ができます。
 
-To access the seed commands, use the following CLI structure:
+シードコマンドにアクセスするには、次のCLI構造を使用します：
 <!-- <snip id="seed-help-command" inject_from="yaml" action="exec" template="sh"> -->
 ```sh
 Seed your database with initial data or dump tables to files
@@ -734,11 +734,11 @@ Options:
 <!-- </snip> -->
 
 
-### Using a Test
+### テストでの使用
 
-1. Enable the testing feature (`testing`)
+1. テスト機能（`testing`）を有効にします
 
-2. In your test section, follow the example below:
+2. テストセクションで、以下の例に従います：
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -753,13 +753,13 @@ async fn handle_create_with_password_with_duplicate() {
 }
 ```
 
-# Multi-DB
+# マルチDB
 
-`Loco` enables you to work with more than one database and share instances across your application.
+`Loco`では、複数のデータベースを操作し、アプリケーション全体でインスタンスを共有できます。
 
-## Extra DB
+## 追加DB
 
-To set up an additional database, begin with database connections and configuration. The recommended approach is to navigate to your configuration file and add the following under [settings](@/docs/the-app/your-project.md#settings):
+追加のデータベースをセットアップするには、データベース接続と設定から始めます。推奨されるアプローチは、設定ファイルに移動し、[settings](@/docs/the-app/your-project.md#settings)の下に次を追加することです：
 
 ```yaml
 settings:
@@ -777,7 +777,7 @@ settings:
 
 
 
-Load this [initializer](@/docs/extras/pluggability.md#initializers) into `initializers` hook like this example
+この[イニシャライザー](@/docs/extras/pluggability.md#initializers)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -789,7 +789,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     }
 ```
 
-Now, you can use the secondary database in your controller:
+これで、コントローラーでセカンダリデータベースを使用できます：
 
 ```rust
 use sea_orm::DatabaseConnection;
@@ -803,9 +803,9 @@ pub async fn list(
 }
 ```
 
-## Multi-DB (multi-tenant)
+## マルチDB（マルチテナント）
 
-To connect more than two different databases, the database configuration should look like this:
+2つ以上の異なるデータベースに接続するには、データベース設定は次のようになります：
 ```yaml
 settings:
   multi_db: 
@@ -831,7 +831,7 @@ settings:
       dangerously_recreate: false
 ```
 
-Next load this [initializer](@/docs/extras/pluggability.md#initializers) into `initializers` hook like this example
+次に、この[イニシャライザー](@/docs/extras/pluggability.md#initializers)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -843,7 +843,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     }
 ```
 
-Now, you can use the multiple databases in your controller:
+これで、コントローラーで複数のデータベースを使用できます：
 
 ```rust
 use sea_orm::DatabaseConnection;
@@ -859,11 +859,11 @@ pub async fn list(
 }
 ```
 
-# Testing
+# テスト
 
-If you used the generator to crate a model migration, you should also have an auto generated model test in `tests/models/posts.rs` (remember we generated a model named `post`?)
+ジェネレーターを使用してモデルマイグレーションを作成した場合、`tests/models/posts.rs`に自動生成されたモデルテストもあるはずです（`post`という名前のモデルを生成したことを覚えていますか？）
 
-A typical test contains everything you need to set up test data, boot the app, and reset the database automatically before the testing code runs. It looks like this:
+典型的なテストには、テストデータのセットアップ、アプリの起動、テストコードが実行される前のデータベースの自動リセットに必要なすべてが含まれています。次のようになります：
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -888,7 +888,7 @@ async fn can_find_by_pid() {
 
 
 
-To simplify the testing process, `Loco` provides helpful functions that make writing tests more convenient. Ensure you enable the testing feature in your `Cargo.toml`:
+テストプロセスを簡素化するために、`Loco`はテストの記述をより便利にする便利な関数を提供しています。`Cargo.toml`でテスト機能を有効にしてください：
 
 ```toml
 [dev-dependencies]
@@ -896,14 +896,14 @@ loco-rs = { version = "*",  features = ["testing"] }
 ```
 
 
-## Database cleanup
+## データベースのクリーンアップ
 
-In some cases, you may want to run tests with a clean dataset, ensuring that each test is independent of others and not affected by previous data. To enable this feature, modify the `dangerously_truncate` option to true in the `config/test.yaml` file under the database section. This setting ensures that Loco truncates all data before each test that implements the boot app.
+場合によっては、クリーンなデータセットでテストを実行し、各テストが他のテストから独立し、以前のデータに影響されないようにしたいことがあります。この機能を有効にするには、`config/test.yaml`ファイルのdatabaseセクションで`dangerously_truncate`オプションをtrueに変更します。この設定により、Locoはboot appを実装する各テストの前にすべてのデータをトランケートします。
 
-> ⚠️ Caution: Be cautious when using this feature to avoid unintentional data loss, especially in a production environment.
+> ⚠️ 注意：特に本番環境では、意図しないデータ損失を避けるため、この機能を使用する際は注意してください。
 
-- When doing it recommended to run all the relevant task in with [serial](https://crates.io/crates/rstest) crate.
-- To decide which tables you want to truncate, add the entity model to the App hook:
+- これを行う場合は、[serial](https://crates.io/crates/rstest)クレートを使用してすべての関連タスクを実行することをお勧めします。
+- トランケートするテーブルを決定するには、エンティティモデルをAppフックに追加します：
 
 
 ```rust
@@ -919,12 +919,12 @@ impl Hooks for App {
 }
 ```
 
-## Async
-When writing async tests with database data, it's important to ensure that one test does not affect the data used by other tests. Since async tests can run concurrently on the same database dataset, this can lead to unstable test results.
+## 非同期
+データベースデータを使用した非同期テストを記述する場合、あるテストが他のテストで使用されるデータに影響を与えないようにすることが重要です。非同期テストは同じデータベースデータセット上で同時に実行される可能性があるため、不安定なテスト結果につながる可能性があります。
 
-Instead of using `boot_test`, as described in the documentation for synchronous tests, use the `boot_test_with_create_db` function. This function generates a random database schema name and ensures that the tables are deleted once the test is completed.
+同期テストのドキュメントで説明されている`boot_test`を使用する代わりに、`boot_test_with_create_db`関数を使用します。この関数はランダムなデータベーススキーマ名を生成し、テストが完了するとテーブルが削除されることを保証します。
 
-Note: If you cancel the test run midway (e.g., by pressing `Ctrl + C`), the cleanup process will not execute, and the database tables will remain. In such cases, you will need to manually remove them.
+注意：テスト実行を途中でキャンセルした場合（例：`Ctrl + C`を押した場合）、クリーンアッププロセスは実行されず、データベーステーブルは残ります。そのような場合は、手動で削除する必要があります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -935,7 +935,7 @@ async fn boot_test_with_create_db() {
 }
 ```
 
-## Seeding
+## シーディング
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -952,15 +952,15 @@ async fn is_user_exists() {
 }
 ```
 
-This documentation provides an in-depth guide on leveraging Loco's testing helpers, covering database cleanup, data cleanup for snapshot testing, and seeding data for tests.
+このドキュメントは、Locoのテストヘルパーを活用するための詳細なガイドを提供し、データベースのクリーンアップ、スナップショットテストのためのデータクリーンアップ、テスト用データのシーディングをカバーしています。
 
-## Snapshot test data cleanup
+## スナップショットテストデータのクリーンアップ
 
-Snapshot testing often involves comparing data structures with dynamic fields such as `created_date`, `id`, `pid`, etc. To ensure consistent snapshots, Loco defines a list of constant data with regex replacements. These replacements can replace dynamic data with placeholders.
+スナップショットテストでは、`created_date`、`id`、`pid`などの動的フィールドを持つデータ構造を比較することがよくあります。一貫したスナップショットを確保するために、Locoは正規表現置換を伴う定数データのリストを定義しています。これらの置換により、動的データをプレースホルダーに置き換えることができます。
 
-Example using [insta](https://crates.io/crates/insta) for snapshots.
+スナップショット用の[insta](https://crates.io/crates/insta)を使用した例。
 
-in the following example you can use `cleanup_user_model` which clean all user model data.
+次の例では、すべてのユーザーモデルデータをクリーンアップする`cleanup_user_model`を使用できます。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -981,11 +981,11 @@ async fn can_create_user() {
 
 ```
 
-You can also use cleanup constants directly, starting with `CLEANUP_`.
+`CLEANUP_`で始まるクリーンアップ定数を直接使用することもできます。
 
-## Customizing Entity Generation
+## エンティティ生成のカスタマイズ
 
-You can customize how `sea-orm-cli` generates entities by adding configuration to your `Cargo.toml` under the `[package.metadata.db.entity]` section. For example:
+`Cargo.toml`の`[package.metadata.db.entity]`セクションに設定を追加することで、`sea-orm-cli`がエンティティを生成する方法をカスタマイズできます。例：
 
 ```toml
 [package.metadata.db.entity]
@@ -994,6 +994,6 @@ ignore-tables = "table1,table2"
 model-extra-derives = "CustomDerive"
 ```
 
-This configuration will be passed as flags to `sea-orm-cli generate entity` when running `cargo loco db entities`.
+この設定は、`cargo loco db entities`を実行する際に`sea-orm-cli generate entity`へのフラグとして渡されます。
 
-Note that some flags like `--output-dir` and `--database-url` cannot be overridden as they are managed by Loco.
+`--output-dir`や`--database-url`のようないくつかのフラグは、Locoによって管理されているためオーバーライドできないことに注意してください。

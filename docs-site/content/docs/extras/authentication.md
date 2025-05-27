@@ -17,15 +17,15 @@ flair =[]
 
 ## User Password Authentication
 
-`Loco` simplifies the user authentication process, allowing you to set up a new website quickly. This feature not only saves time but also provides the flexibility to focus on crafting the core logic of your application.
+`Loco`はユーザー認証プロセスを簡素化し、新しいWebサイトを素早くセットアップできるようにします。この機能は時間を節約するだけでなく、アプリケーションのコアロジックの作成に集中する柔軟性も提供します。
 
 ### Authentication Configuration
 
-The `auth` feature comes as a default with the library. If desired, you can turn it off and handle authentication manually.
+`auth`機能はライブラリのデフォルトとして付属しています。必要に応じて、これをオフにして認証を手動で処理することもできます。
 
 ### Getting Started with a SaaS App
 
-Create your app using the [loco cli](/docs/getting-started/tour) and select the `SaaS app (with DB and user auth)` option.
+[loco cli](/docs/getting-started/tour)を使用してアプリを作成し、`SaaS app (with DB and user auth)`オプションを選択します。
 
 To explore the out-of-the-box auth controllers, run the following command:
 
