@@ -1,5 +1,5 @@
 +++
-title = "Processing"
+title = "プロセシング"
 description = ""
 template = "docs/section.html"
 sort_by = "weight"

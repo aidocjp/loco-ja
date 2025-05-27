@@ -1,5 +1,5 @@
 +++
-title = "Scheduler"
+title = "スケジューラー"
 description = ""
 date = 2024-11-09T18:10:00+00:00
 updated = 2024-11-09T18:10:00+00:00
@@ -16,24 +16,24 @@ flair =[]
 +++
 
 
-Loco simplifies the traditional, often cumbersome `crontab` system, making it easier and more elegant to schedule cron jobs. The scheduler job can execute either a shell script command or run a registered [task](@/docs/processing/task.md).
+Locoは従来の面倒な`crontab`システムをシンプルにし、cronジョブのスケジューリングをより簡単でエレガントにします。スケジューラージョブは、シェルスクリプトコマンドを実行するか、登録済みの[タスク](@/docs/processing/task.md)を実行できます。
 
 
-## Setting Up
-Scheduler jobs can be configured via a your YAML scheduler setup file or as part of an environment YAML file.
+## セットアップ
+スケジューラージョブは、専用のYAMLスケジューラー設定ファイル、または環境YAMLファイルの一部として設定できます。
 
 
-### 1. Your Dedicated File
-Using a dedicated file provides a centralized place to configure all your scheduler jobs, making it easier to manage and maintain. You can start by generating a template file using the Loco generator command:
+### 1. 専用ファイル
+専用ファイルを使用すると、すべてのスケジューラージョブを設定するための集中管理された場所が提供され、管理とメンテナンスが容易になります。Locoジェネレーターコマンドを使用してテンプレートファイルを生成することから始められます：
 
 ```sh
 cargo loco generate scheduler
 ```
 
-This command creates a `scheduler.yaml` file under the `config` folder. You can then configure your jobs within this file.
+このコマンドは`config`フォルダー下に`scheduler.yaml`ファイルを作成します。その後、このファイル内でジョブを設定できます。
 
-### 2. Environment Configuration File
-You can also configure scheduler jobs per environment by adding the scheduler section to your environment's YAML configuration file:
+### 2. 環境設定ファイル
+環境のYAML設定ファイルにスケジューラーセクションを追加することで、環境ごとにスケジューラージョブを設定することもできます：
 
 <!-- <snip id="configuration-scheduler" inject_from="code" template="yaml"> -->
 ```yaml
@@ -67,19 +67,19 @@ scheduler:
 <!-- </snip> -->
 
 
-## Scheduler Configuration
+## スケジューラー設定
 
-The scheduler configuration consists of the following elements:
+スケジューラー設定は以下の要素で構成されています：
 
-* `scheduler.output` (Optional): Sets the default output location for all jobs.
-    * `stdout:` Output to the console (default).
-    * `silent:` Suppress all output.
-* `scheduler.jobs:` A object of jobs to be scheduled, the object key describe the job name. Each job has:
-    * `schedule`: The cron expression that defines the job's schedule. 
-        The cron get an english that convert to cron syntax or cron syntax itself. 
+* `scheduler.output`（オプション）：すべてのジョブのデフォルト出力場所を設定します。
+    * `stdout:`コンソールに出力（デフォルト）。
+    * `silent:`すべての出力を抑制。
+* `scheduler.jobs:`スケジュールされるジョブのオブジェクト。オブジェクトキーはジョブ名を表します。各ジョブには以下があります：
+    * `schedule`：ジョブのスケジュールを定義するcron式。 
+        cronは英語からcron構文に変換されるか、cron構文そのものを受け取ります。 
 
-        ##### ***English to cron***
-        * Examples:
+        ##### ***英語からcronへ***
+        * 例：
         * every 15 seconds
         * run every minute
         * fire every day at 4:00 pm
@@ -89,34 +89,34 @@ The scheduler configuration consists of the following elements:
         * 7pm every Thursday
         * midnight on Tuesdays
 
-        ##### ***Cron Syntax format:***
-        The cronjob should be UTC based
+        ##### ***Cron構文形式：***
+        cronjobはUTCベースである必要があります
         ```sh
         sec   min   hour   day of month   month   day of week   year
         *     *     *      *              *       *             *
         ```
-  * `run_on_start`: By default, `false`. If set to `true`, the job will also run at the start of the scheduler.
-    * `shell`: by default `false` meaning executing the the `run` value as a task. if `true` execute the `run` value as shell command
-    * `run`: Cronjob command to run. 
-        * `Task:` The task name (with variables e.x `[TASK_NAME] KEY:VAl`. follow [here](@/docs/processing/task.md) to see task arguments ). Note that the `shell` field should be false.
-        * `Shell`: Run a shell command (e.x `"echo loco >> ./scheduler.txt"`). Note that the `shell` field should be true.
-    * `tags` (Optional): A list of tags to categorize and manage the job.
-    * `output` (Optional): Overrides the global `scheduler.output` for this job.
+  * `run_on_start`：デフォルトは`false`。`true`に設定すると、ジョブはスケジューラーの開始時にも実行されます。
+    * `shell`：デフォルトは`false`で、`run`値をタスクとして実行することを意味します。`true`の場合、`run`値をシェルコマンドとして実行します
+    * `run`：実行するCronjobコマンド。 
+        * `Task:`タスク名（変数付き 例：`[TASK_NAME] KEY:VAl`。タスク引数については[こちら](@/docs/processing/task.md)を参照）。`shell`フィールドはfalseである必要があります。
+        * `Shell:`シェルコマンドを実行（例：`"echo loco >> ./scheduler.txt"`）。`shell`フィールドはtrueである必要があります。
+    * `tags`（オプション）：ジョブを分類および管理するためのタグのリスト。
+    * `output`（オプション）：このジョブのグローバル`scheduler.output`を上書きします。
 
 
-## Verifying the Configuration
-After setting up your jobs, you can verify the configuration to ensure everything is correct.
+## 設定の検証
+ジョブをセットアップした後、設定が正しいことを確認するために検証できます。
 
-### 1. When using a dedicated file:
-Run the following command to list the jobs from your scheduler file:
+### 1. 専用ファイルを使用する場合：
+スケジューラーファイルからジョブをリストするには、以下のコマンドを実行します：
 <!-- <snip id="scheduler-list-from-file-command" inject_from="yaml"  template="sh"> -->
 ```sh
 cargo loco scheduler --config config/scheduler.yaml --list
 ```
 <!-- </snip> -->
 
-### 2. When using environment-based configuration:
-To list jobs from the environment configuration, run:
+### 2. 環境ベースの設定を使用する場合：
+環境設定からジョブをリストするには、以下を実行します：
 <!-- <snip id="scheduler-list-from-env-setting-command" inject_from="yaml"  template="sh"> -->
 ```sh
 LOCO_ENV=production cargo loco scheduler --list
@@ -124,27 +124,27 @@ LOCO_ENV=production cargo loco scheduler --list
 <!-- </snip> -->
 
 
-## Running the Scheduler
-Once the configuration is verified, you can remove the `--list` flag to start running the scheduler. The scheduler will continuously execute jobs based on their schedule until a shutdown signal is received. When a signal is received, it gracefully terminates all running tasks and shuts down safely.
+## スケジューラーの実行
+設定が検証されたら、`--list`フラグを削除してスケジューラーの実行を開始できます。スケジューラーは、シャットダウンシグナルを受信するまで、スケジュールに基づいてジョブを継続的に実行します。シグナルを受信すると、実行中のすべてのタスクを正常に終了し、安全にシャットダウンします。
 
-### Important Notes:
-* When a job is running, `Loco` spawns it in a new process, and all environment variables will propagate to the new job process.
-* For tasks, ensure you run the scheduler with a valid environment by using the `--environment` flag or setting the `LOCO_ENV` environment variable. This ensures the correct environment and configuration are loaded for the task.
-* You can pass variables to tasks by using the vars object in the task configuration.
+### 重要な注意事項：
+* ジョブが実行されると、`Loco`は新しいプロセスでそれを生成し、すべての環境変数が新しいジョブプロセスに伝播されます。
+* タスクの場合、`--environment`フラグを使用するか、`LOCO_ENV`環境変数を設定して、有効な環境でスケジューラーを実行するようにしてください。これにより、タスクに対して正しい環境と設定が読み込まれることが保証されます。
+* タスク設定のvarsオブジェクトを使用して、タスクに変数を渡すことができます。
 
 
-## Running a Single Scheduled Job by Name
-To run a specific scheduler job by its name, use the --name flag. This will execute a single job with the provided name.
+## 名前による単一スケジュールジョブの実行
+特定のスケジューラージョブをその名前で実行するには、--nameフラグを使用します。これにより、指定された名前の単一ジョブが実行されます。
 <!-- <snip id="scheduler-run-job-by-name-command" inject_from="yaml"  template="sh"> -->
 ```sh
 LOCO_ENV=production cargo loco scheduler --name 'JOB_NAME'
 ```
 <!-- </snip> -->
 
-This command will locate the job named `"Run command"` in your scheduler.yaml file and run it.
+このコマンドは、scheduler.yamlファイル内の`"Run command"`という名前のジョブを検索して実行します。
 
-## Running Scheduled Jobs by Tag
-You can also run multiple jobs that share the same tag. Tags are useful for grouping related jobs together. For example, you might have several jobs that perform different types of maintenance tasks—such as database cleanup, cache invalidation, and log rotation—that you want to run together. Assigning them the same tag, like `maintenance`, allows you to execute them all at once.
+## タグによるスケジュールジョブの実行
+同じタグを共有する複数のジョブを実行することもできます。タグは関連するジョブをグループ化するのに便利です。例えば、データベースのクリーンアップ、キャッシュの無効化、ログのローテーションなど、さまざまな種類のメンテナンスタスクを実行する複数のジョブがあり、それらを一緒に実行したい場合があります。これらに`maintenance`のような同じタグを割り当てることで、すべてを一度に実行できます。
 <!-- <snip id="scheduler-run-job-by-tag-command" inject_from="yaml"  template="sh"> -->
 ```sh
 LOCO_ENV=production cargo loco scheduler --tag 'maintenance'
@@ -152,4 +152,4 @@ LOCO_ENV=production cargo loco scheduler --tag 'maintenance'
 <!-- </snip> -->
 
 
-This command runs all jobs that have been tagged with `maintenance`, ensuring that all related jobs are executed in one go.
+このコマンドは、`maintenance`でタグ付けされたすべてのジョブを実行し、関連するすべてのジョブが一度に実行されることを保証します。

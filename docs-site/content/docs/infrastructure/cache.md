@@ -15,60 +15,60 @@ top = false
 flair =[]
 +++
 
-`Loco` provides a cache layer to improve application performance by storing frequently accessed data.
+`Loco`は頻繁にアクセスされるデータを保存することで、アプリケーションのパフォーマンスを向上させるキャッシュレイヤーを提供します。
 
-## Supported Cache Drivers
+## サポートされているキャッシュドライバー
 
-Loco supports several cache drivers out of the box:
+Locoは以下のキャッシュドライバーをすぐに使用できます：
 
-1. **Null Cache**: A no-op cache that doesn't actually store anything (default)
-2. **In-Memory Cache**: A local in-memory cache using the `moka` crate
-3. **Redis Cache**: A distributed cache using Redis
+1. **Nullキャッシュ**: 実際には何も保存しない無操作キャッシュ（デフォルト）
+2. **インメモリキャッシュ**: `moka`クレートを使用したローカルインメモリキャッシュ
+3. **Redisキャッシュ**: Redisを使用した分散キャッシュ
 
-## Default Behavior
+## デフォルトの動作
 
-By default, `Loco` initializes a `Null` cache driver. The Null driver implements the cache interface but doesn't actually store any data:
+デフォルトでは、`Loco`は`Null`キャッシュドライバーを初期化します。Nullドライバーはキャッシュインターフェースを実装していますが、実際にはデータを保存しません：
 
-- `get()` operations always return `None`
-- Other operations like `insert()`, `remove()`, etc. return errors with a message indicating the operation is not supported
+- `get()`操作は常に`None`を返します
+- `insert()`、`remove()`などの他の操作は、操作がサポートされていないことを示すメッセージとともにエラーを返します
 
-If you use the cache functionality without configuring a proper cache driver, many operations will result in errors. It's recommended to configure a real cache driver for production use.
+適切なキャッシュドライバーを設定せずにキャッシュ機能を使用すると、多くの操作でエラーが発生します。本番環境では実際のキャッシュドライバーを設定することをお勧めします。
 
-## Configuring Cache Drivers
+## キャッシュドライバーの設定
 
-You can configure your preferred cache driver in your application's configuration files (e.g., `config/development.yaml`).
+アプリケーションの設定ファイル（例：`config/development.yaml`）で、お好みのキャッシュドライバーを設定できます。
 
-### Configuration Examples
+### 設定例
 
-#### Null Cache (Default)
+#### Nullキャッシュ（デフォルト）
 
 ```yaml
 cache:
   kind: Null
 ```
 
-#### In-Memory Cache
-feature `cache_inmem` enable by default
+#### インメモリキャッシュ
+`cache_inmem`機能がデフォルトで有効
 ```yaml
 cache:
   kind: InMem
-  max_capacity: 33554432 # 32MiB (default if not specified)
+  max_capacity: 33554432 # 32MiB（指定しない場合のデフォルト）
 ```
 
-#### Redis Cache
-feature `cache_redis` should be enabled
+#### Redisキャッシュ
+`cache_redis`機能を有効にする必要があります
 ```yaml
 cache:
   kind: Redis
   uri: "redis://localhost:6379"
-  max_size: 10 # Maximum number of connections in the pool
+  max_size: 10 # プール内の最大接続数
 ```
 
-If no cache configuration is provided, the `Null` cache will be used by default.
+キャッシュ設定が提供されない場合、デフォルトで`Null`キャッシュが使用されます。
 
-## Using the Cache
+## キャッシュの使用
 
-All items are cached as serialized values with string keys.
+すべてのアイテムは、文字列キーを持つシリアライズされた値としてキャッシュされます。
 
 ```rust
 use std::time::Duration;
@@ -82,29 +82,29 @@ struct User {
 }
 
 async fn test_cache(ctx: AppContext) -> Result<()> {
-    // Insert a simple string value
+    // シンプルな文字列値を挿入
     ctx.cache.insert("string_key", "simple value").await?;
 
-    // Insert a structured value
+    // 構造化された値を挿入
     let user = User { name: "Alice".to_string(), age: 30 };
     ctx.cache.insert("user:1", &user).await?;
 
-    // Insert with expiration
+    // 有効期限付きで挿入
     ctx.cache.insert_with_expiry("expiring_key", "temporary value", Duration::from_secs(300)).await?;
 
-    // Retrieve a string value
+    // 文字列値を取得
     let string_value = ctx.cache.get::<String>("string_key").await?;
 
-    // Retrieve a structured value
+    // 構造化された値を取得
     let user = ctx.cache.get::<User>("user:1").await?;
 
-    // Remove a value
+    // 値を削除
     ctx.cache.remove("string_key").await?;
 
-    // Check if a key exists
+    // キーが存在するかチェック
     let exists = ctx.cache.contains_key("user:1").await?;
 
-    // Get or insert (retrieve if exists, otherwise compute and store)
+    // 取得または挿入（存在する場合は取得、存在しない場合は計算して保存）
     let lazy_value = ctx.cache.get_or_insert::<String, _>("lazy_key", async {
         Ok("computed value".to_string())
     }).await?;
@@ -113,4 +113,4 @@ async fn test_cache(ctx: AppContext) -> Result<()> {
 }
 ```
 
-See the [Cache API](https://docs.rs/loco-rs/latest/loco_rs/cache/struct.Cache.html) docs for more examples.
+詳細な例については、[Cache API](https://docs.rs/loco-rs/latest/loco_rs/cache/struct.Cache.html)ドキュメントを参照してください。

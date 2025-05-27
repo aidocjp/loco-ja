@@ -1,5 +1,5 @@
 +++
-title = "Tasks"
+title = "タスク"
 description = ""
 date = 2021-05-01T18:10:00+00:00
 updated = 2021-05-01T18:10:00+00:00
@@ -15,21 +15,21 @@ top = false
 flair =[]
 +++
 
-Tasks in `Loco` serve as ad-hoc functionalities to handle specific aspects of your application. Whether you need to fix data, send emails, delete a user, or update a customer order, creating a dedicated task for each scenario provides a flexible and efficient solution. You can run tasks manually or by [scheduling the task](@/docs/processing/scheduler.md).
+`Loco`のタスクは、アプリケーションの特定の側面を処理するためのアドホックな機能として機能します。データの修正、メール送信、ユーザーの削除、顧客注文の更新など、各シナリオに対して専用のタスクを作成することで、柔軟で効率的なソリューションを提供します。タスクは手動で実行することも、[タスクをスケジュール](@/docs/processing/scheduler.md)することもできます。
 
-Creating tasks is worthwhile for several reasons:
-- **Automation of Manual Work:** Tasks automate manual processes, streamlining repetitive actions.
-- **Utilization of Familiar Components:** Leverage your app's models, libraries, and existing logic within tasks.
-- **Elimination of UI Development:** Tasks don't require building user interfaces, focusing solely on backend operations.
-- **Potential for UI Automation:** If necessary, tasks can be automated with a UI by integrating with job-running tools like Jenkins.
+タスクを作成することには以下のような利点があります：
+- **手作業の自動化：** タスクは手動プロセスを自動化し、反復的なアクションを効率化します。
+- **既存コンポーネントの活用：** タスク内でアプリのモデル、ライブラリ、既存のロジックを活用できます。
+- **UI開発の不要：** タスクはユーザーインターフェースの構築を必要とせず、バックエンドの操作のみに焦点を当てます。
+- **UI自動化の可能性：** 必要に応じて、Jenkinsなどのジョブ実行ツールと統合することで、タスクをUIで自動化できます。
 
-Each task is designed to parse command-line arguments into flags, utilizing the yargs-parsed output of your CLI.
+各タスクは、CLIのyargs解析された出力を利用して、コマンドライン引数をフラグに解析するように設計されています。
 
-## Creating a Task with the CLI Generator
+## CLIジェネレーターを使用したタスクの作成
 
-`Loco` provides a convenient code generator to simplify the creation of a starter task connected to your project. Use the following command to generate a task:
+`Loco`は、プロジェクトに接続されたスタータータスクの作成を簡素化する便利なコードジェネレーターを提供します。タスクを生成するには、以下のコマンドを使用します：
 
-Generate the task:
+タスクの生成：
 
 <!-- <snip id="generate-task-help-command" inject_from="yaml" action="exec" template="sh"> -->
 ```sh
@@ -47,9 +47,9 @@ Options:
 ```
 <!-- </snip> -->
 
-## Running a Task
+## タスクの実行
 
-Execute the task you created in the previous step using the following command:
+前のステップで作成したタスクを実行するには、以下のコマンドを使用します：
 
 <!-- <snip id="run-task-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -57,9 +57,9 @@ cargo loco task <TASK_NAME>
 ```
 <!-- </snip> -->
 
-### Running a Task with Parameters
+### パラメーター付きでタスクを実行
 
-To pass parameters to a task, add a list of key:value to the command
+タスクにパラメーターを渡すには、コマンドにkey:valueのリストを追加します
 ```sh
 [PARAMS]...  Task params (e.g. <`my_task`> foo:bar baz:qux)`
 ```
@@ -67,7 +67,7 @@ To pass parameters to a task, add a list of key:value to the command
 cargo loco task <TASK_NAME> [PARAMS]...
 ```
 
-Then use that value using [`cli_arg`](https://docs.rs/loco-rs/latest/loco_rs/task/struct.Vars.html#method.cli_arg) in the `run` method of the task
+その後、タスクの`run`メソッドで[`cli_arg`](https://docs.rs/loco-rs/latest/loco_rs/task/struct.Vars.html#method.cli_arg)を使用してその値を使用します
 ```rust
 async fn run(&self, app_context: &AppContext, vars: &task::Vars) -> Result<()> {
     let foo = vars.cli_arg("foo");
@@ -75,9 +75,9 @@ async fn run(&self, app_context: &AppContext, vars: &task::Vars) -> Result<()> {
 }
 ```
 
-## Listing All Tasks
+## すべてのタスクの一覧表示
 
-To view a list of all tasks that have been executed, use the following command:
+実行されたすべてのタスクのリストを表示するには、以下のコマンドを使用します：
 
 <!-- <snip id="list-tasks-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -86,13 +86,13 @@ cargo loco task
 <!-- </snip> -->
 
 
-## Creating a Task manually
+## 手動でタスクを作成
 
-If you prefer a manual approach to creating tasks in `Loco`, you can follow these steps:
+`Loco`でタスクを手動で作成したい場合は、以下の手順に従ってください：
 
-#### 1. Create a Task File
+#### 1. タスクファイルの作成
 
-Start by creating a new file under the path `src/tasks`. For example, let's create a file named `example.rs`:
+`src/tasks`パス下に新しいファイルを作成することから始めます。例として、`example.rs`という名前のファイルを作成しましょう：
 
 <!-- <snip id="task-code-example" inject_from="code" template="rust"> -->
 ```rust
@@ -114,13 +114,13 @@ impl Task for Foo {
 ```
 <!-- </snip> -->
 
-#### 2. Load the File in mod.rs
+#### 2. mod.rsでファイルを読み込む
 
-Next, ensure that you load the newly created task file in the `mod.rs` file within the `src/tasks` folder.
+次に、`src/tasks`フォルダー内の`mod.rs`ファイルで、新しく作成したタスクファイルを読み込むようにしてください。
 
-#### 3. Register the Task in App Hooks
+#### 3. Appフックでタスクを登録
 
-In your App hook implementation (e.g., App struct), register the task in the register_tasks function:
+Appフックの実装（例：App構造体）で、register_tasks関数でタスクを登録します：
 
 ```rust
 // src/app.rs
@@ -138,4 +138,4 @@ impl Hooks for App {
 }
 ```
 
-These steps ensure that your manually created task, such as ExampleTask, is integrated into Loco's task management system.
+これらの手順により、ExampleTaskなどの手動で作成したタスクがLocoのタスク管理システムに統合されます。

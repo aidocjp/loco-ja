@@ -15,13 +15,13 @@ top = false
 flair =[]
 +++
 
-In `Loco`, the processing of web requests is divided between a controller, model and view.
+`Loco`では、Webリクエストの処理はコントローラー、モデル、ビューに分割されています。
 
-- **The controller** is handling requests parsing payload, and then control flows to models
-- **The model** primarily deals with communicating with the database and executing CRUD operations when required. As well as modeling all business and domain logic and operations.
-- **The view** takes on the responsibility of assembling and rendering the final response to be sent back to the client.
+- **コントローラー**はリクエストの解析とペイロードを処理し、その後モデルに制御が流れます
+- **モデル**は主にデータベースとの通信と必要に応じてCRUD操作を実行します。また、すべてのビジネスロジックとドメインロジック、操作をモデル化します。
+- **ビュー**はクライアントに送り返される最終レスポンスを組み立て、レンダリングする責任を負います。
 
-You can choose to have _JSON views_, which are JSON responses, or _Template views_ which are powered by a template view engine and eventually are HTML responses. You can also combine both.
+JSONレスポンスである_JSONビュー_、またはテンプレートビューエンジンによって動力を得て最終的にHTMLレスポンスになる_テンプレートビュー_を選択できます。両方を組み合わせることもできます。
 
 <div class="infobox">
 This is similar in spirit to Rails' `jbuilder` views which are JSON, and regular views, which are HTML, only that in LOCO we focus on being JSON-first.
@@ -29,15 +29,15 @@ This is similar in spirit to Rails' `jbuilder` views which are JSON, and regular
 
 ## JSON views
 
-As an example we have an endpoint that handles user login. When the user is valid we can pass the `user` model into the `LoginResponse` view (which is a JSON view) to return the response.
+例として、ユーザーログインを処理するエンドポイントがあります。ユーザーが有効な場合、`user`モデルを`LoginResponse`ビュー（JSONビュー）に渡してレスポンスを返すことができます。
 
-There are 3 steps:
+3つのステップがあります：
 
-1. Parse, accept the request
-2. Create domain objects: models
-3. Hand off the domain model to a view object which **shapes** the final response
+1. リクエストを解析、受け入れる
+2. ドメインオブジェクトを作成：モデル
+3. ドメインモデルを最終レスポンスを**形作る**ビューオブジェクトに渡す
 
-The following Rust code represents a controller responsible for handling user login requests, which handes off _shaping_ of the response to `LoginResponse`.
+以下のRustコードは、ユーザーログインリクエストを処理する責任を持つコントローラーを表し、レスポンスの_形作り_を`LoginResponse`に任せます。
 
 ```rust
 use crate::{views::auth::LoginResponse};
@@ -53,7 +53,7 @@ async fn login(
 }
 ```
 
-On the other hand, `LoginResponse` is a response shaping view, which is powered by `serde`:
+一方、`LoginResponse`は`serde`によって動力を得るレスポンスシェイピングビューです：
 
 ```rust
 use serde::{Deserialize, Serialize};
@@ -82,15 +82,15 @@ impl LoginResponse {
 
 ## Template views
 
-When you want to return HTML to the user, you use server-side templates. This is similar to how Ruby's `erb` works, or Node's `ejs`, or PHP for that matter.
+ユーザーにHTMLを返したい場合は、サーバーサイドテンプレートを使用します。これはRubyの`erb`やNodeの`ejs`、あるいはPHPの動作と似ています。
 
-For server-side templates rendering we provide the built in `TeraView` engine which is based on the popular [Tera](http://keats.github.io/tera/) template engine.
+サーバーサイドテンプレートレンダリングのために、人気の[Tera](http://keats.github.io/tera/)テンプレートエンジンに基づいたビルトインの`TeraView`エンジンを提供しています。
 
 <div class="infobox">
 To use this engine you need to verify that you have a <code>ViewEngineInitializer</code> in <code>initializers/view_engine.rs</code> which is also specified in your <code>app.rs</code>. If you used the SaaS Starter, this should already be configured for you.
 </div>
 
-The Tera view engine takes resources from the new `assets/` folder. Here is an example structure:
+Teraビューエンジンは新しい`assets/`フォルダーからリソースを取得します。以下は構造の例です：
 
 ```
 assets/
@@ -117,7 +117,7 @@ src/
 
 ### Creating a new view
 
-First, create a template. In this case we add a Tera template, in `assets/views/home/hello.html`. Note that **assets/** sits in the root of your project (next to `src/` and `config/`).
+まず、テンプレートを作成します。この場合、`assets/views/home/hello.html`にTeraテンプレートを追加します。**assets/**はプロジェクトのルート（`src/`と`config/`の隣）にあることに注意してください。
 
 ```html
 <html>
@@ -132,7 +132,7 @@ First, create a template. In this case we add a Tera template, in `assets/views/
 </html>
 ```
 
-Now create a strongly typed `view` to encapsulate this template in `src/views/dashboard.rs`:
+次に、`src/views/dashboard.rs`でこのテンプレートをカプセル化する強型付けされた`view`を作成します：
 
 ```rust
 // src/views/dashboard.rs
@@ -144,13 +144,13 @@ pub fn home(v: impl ViewRenderer) -> Result<impl IntoResponse> {
 
 ```
 
-And add it to `src/views/mod.rs`:
+そして、`src/views/mod.rs`に追加します：
 
 ```rust
 pub mod dashboard;
 ```
 
-Next, go to your controller and use the view:
+次に、コントローラーに移動してビューを使用します：
 
 ```rust
 // src/controllers/dashboard.rs
@@ -168,7 +168,7 @@ pub fn routes() -> Routes {
 
 ```
 
-Finally, register your new controller's routes in `src/app.rs`
+最後に、`src/app.rs`で新しいコントローラーのルートを登録します
 
 ```rust
 pub struct App;
@@ -184,7 +184,7 @@ impl Hooks for App {
     }
 ```
 
-Once you've done all the above, you should be able to see your new routes when running `cargo loco routes`
+上記のすべてを完了したら、`cargo loco routes`を実行したときに新しいルートを確認できるはずです
 
 ```
 $ cargo loco routes
@@ -199,17 +199,17 @@ $ cargo loco routes
 [GET] /home              <-- the corresponding URL for our new view
 ```
 
-### How does it work?
+### どのように動作するのか？
 
-- `ViewEngine` is an extractor that's available to you via `loco_rs::prelude::*`
-- `TeraView` is the Tera view engine that we supply with Loco also available via `loco_rs::prelude::*`
-- Controllers need to deal with getting a request, calling some model logic, and then supplying a view with **models and other data**, not caring about how the view does its thing
-- `views::dashboard::home` is an opaque call, it hides the details of how a view works, or how the bytes find their way into a browser, which is a _Good Thing_
-- Should you ever want to swap a view engine, the encapsulation here works like magic. You can change the extractor type: `ViewEngine<Foobar>` and everything works, because `v` is eventually just a `ViewRenderer` trait
+- `ViewEngine`は`loco_rs::prelude::*`経由で利用可能なエクストラクターです
+- `TeraView`はLocoで提供されるTeraビューエンジンで、これも`loco_rs::prelude::*`経由で利用可能です
+- コントローラーはリクエストを受け取り、いくつかのモデルロジックを呼び出し、その後ビューに**モデルやその他のデータ**を提供することを扱い、ビューがどのように動作するかは気にしません
+- `views::dashboard::home`は不透明な呼び出しで、ビューがどのように動作するか、またはバイトがどのようにブラウザーに達するかの詳細を隠しています。これは_良いこと_です
+- ビューエンジンを交換したい場合、ここのカプセル化は魔法のように機能します。エクストラクタータイプを変更できます：`ViewEngine<Foobar>`、そしてすべてが機能します。なぜなら`v`は最終的にただの`ViewRenderer`トレイトだからです
 
 ### Static assets
 
-If you want to serve static assets and reference those in your view templates, you can use the _Static Middleware_, configure it this way:
+静的アセットを提供し、ビューテンプレートでそれらを参照したい場合は、_Static Middleware_を使用し、次のように設定します：
 
 ```yaml
 static:
@@ -222,13 +222,13 @@ static:
   fallback: "assets/static/404.html"
 ```
 
-In your templates you can refer to static resources in this way:
+テンプレートでは、静的リソースを次のように参照できます：
 
 ```html
 <img src="/static/image.png" />
 ```
 
-However, for the static middleware to work, ensure that the default fallback is disabled:
+ただし、静的ミドルウェアが機能するためには、デフォルトのフォールバックが無効になっていることを確認してください：
 
 ```yaml
 fallback:
@@ -237,25 +237,25 @@ fallback:
 
 ### Customizing the Tera view engine
 
-The Tera view engine comes with the following configuration:
+Teraビューエンジンは以下の設定で提供されます：
 
-- Template loading and location: `assets/**/*.html`
-- Internationalization (i18n) configured into the Tera view engine, you get the translation function: `t(..)` to use in your templates
+- テンプレートのロードと場所： `assets/**/*.html`
+- Teraビューエンジンに設定された国際化（i18n）、テンプレートで使用する翻訳関数を利用できます： `t(..)`
 
-If you want to change any configuration detail for the `i18n` library, you can go and edit `src/initializers/view_engine.rs`.
+`i18n`ライブラリの設定詳細を変更したい場合は、`src/initializers/view_engine.rs`を編集できます。
 
-By editing the initializer you can:
+初期化子を編集することで、以下ができます：
 
-- Add custom Tera functions
-- Remove the `i18n` library
-- Change configuration for Tera or the `i18n` library
-- Provide a new or custom, Tera (maybe a different version) instance
+- カスタムTera関数を追加
+- `i18n`ライブラリを削除
+- Teraまたは`i18n`ライブラリの設定を変更
+- 新しいまたはカスタムのTera（おそらく異なるバージョン）インスタンスを提供
 
 ### Using your own view engine
 
-If you do not like Tera as a view engine, or want to use Handlebars, or others you can create your own custom view engine very easily.
+ビューエンジンとしてTeraが気に入らない、またはHandlebarsやその他を使用したい場合は、独自のカスタムビューエンジンを非常に簡単に作成できます。
 
-Here's an example for a dummy "Hello" view engine. It's a view engine that always returns the word _hello_.
+以下はダミーの「Hello」ビューエンジンの例です。これは常に_hello_という単語を返すビューエンジンです。
 
 ```rust
 // src/initializers/hello_view_engine.rs
@@ -289,7 +289,7 @@ impl Initializer for HelloViewEngineInitializer {
 }
 ```
 
-To use it, you need to add it to your `src/app.rs` hooks:
+これを使用するには、`src/app.rs`フックに追加する必要があります：
 
 ```rust
 // src/app.rs
@@ -307,39 +307,39 @@ impl Hooks for App {
 
 ### Tera Built-ins
 
-Loco includes Tera with its [built-ins](https://keats.github.io/tera/docs/#built-ins) functions. In addition, Loco introduces the following custom built-in functions:
+Locoは[built-ins](https://keats.github.io/tera/docs/#built-ins)関数とともにTeraを含んでいます。さらに、Locoは以下のカスタムビルトイン関数を導入しています：
 
-To see Loco built-in function:
+Locoビルトイン関数を見るには：
 
 - [numbers](https://docs.rs/loco-rs/latest/loco_rs/controller/views/tera_builtins/filters/number/index.html)
 
 ## Embedded Assets Feature
 
-The Embedded Assets feature in Loco allows you to bundle all your static assets directly into your application binary. This means that everything under the `assets` folder, including CSS, images, PDFs, and more, becomes part of a single executable file.
+LocoのEmbedded Assets機能を使用すると、すべての静的アセットをアプリケーションバイナリに直接バンドルできます。つまり、CSS、画像、PDFなどを含む`assets`フォルダー以下のすべてが、単一の実行ファイルの一部になります。
 
-To use this feature, you need to enable the `embedded_assets` feature when importing `loco-rs` in your `Cargo.toml`:
+この機能を使用するには、`Cargo.toml`で`loco-rs`をインポートするときに`embedded_assets`機能を有効にする必要があります：
 
 ```toml
 [dependencies]
 loco-rs = { version = "...", features = ["embedded_assets"] }
 ```
 
-### Benefits
+### メリット
 
-- **Single Binary Deployment:** Simplifies deployment as you only need to distribute a single file. No need to worry about separate asset directories or CDN configurations for simpler deployments.
-- **Atomic Updates:** When you update your application, the assets are updated atomically with the code, reducing the chances of mismatches between code and assets.
-- **Potentially Faster Load Times:** Assets are loaded directly from memory, which can be faster than reading from the filesystem, especially in environments with slow disk I/O.
+- **単一バイナリデプロイ**: 単一ファイルを配布するだけでよいため、デプロイを簡素化します。よりシンプルなデプロイでは、別々のアセットディレクトリやCDN設定を心配する必要がありません。
+- **原子更新**: アプリケーションを更新するとき、アセットはコードと原子的に更新され、コードとアセット間の不一致の可能性を減らします。
+- **潜在的に高速なロード時間**: アセットはメモリから直接ロードされ、特にディスクI/Oが遅い環境ではファイルシステムから読み取るよりも高速になる可能性があります。
 
-### Considerations
+### 考慮事項
 
-- **Increased Binary Size:** Embedding assets will naturally increase the size of your application binary.
-- **Recompilation for Asset Changes:** Any change to an asset requires recompiling the application. This might slow down development workflows if assets are changed frequently.
+- **バイナリサイズの増加**: アセットを埋め込むと、アプリケーションバイナリのサイズが自然に大きくなります。
+- **アセット変更による再コンパイル**: アセットへのいかなる変更もアプリケーションの再コンパイルを必要とします。アセットが頻繁に変更される場合、これは開発ワークフローを遅くする可能性があります。
 
 ### Seamlessly Switching Modes
 
-You can easily switch between using embedded assets and serving assets from the filesystem without any code changes in your controllers or views. The switch is handled by the presence or absence of the `embedded_assets` feature flag.
+コントローラーやビューでのコード変更なしに、埋め込みアセットの使用とファイルシステムからのアセット提供を簡単に切り替えることができます。切り替えは`embedded_assets`機能フラグの有無によって処理されます。
 
-However, to ensure Tera functions correctly when _not_ using embedded assets (i.e., serving from the filesystem), you need to ensure that your `src/initializers/view_engine.rs` file only contains the necessary Tera function registration if you had customized it previously. Specifically, for the translation function `t`, ensure your initializer looks like this if you are not using `loco_rs::tera_helpers::FluentLoader`:
+ただし、埋め込みアセットを使用_しない_場合（つまり、ファイルシステムから提供する場合）にTeraが正しく機能することを保証するために、以前にカスタマイズした場合、`src/initializers/view_engine.rs`ファイルに必要なTera関数登録のみが含まれていることを確認する必要があります。特に、翻訳関数`t`については、`loco_rs::tera_helpers::FluentLoader`を使用していない場合、初期化子が次のようになっていることを確認してください：
 
 ```rust
 tera_engine
@@ -347,11 +347,11 @@ tera_engine
     .register_function("t", FluentLoader::new(arc));
 ```
 
-Alternatively, you can introduce an internal feature flag within your application to toggle how assets are loaded or how Tera is configured, providing more granular control.
+あるいは、アプリケーション内で内部機能フラグを導入して、アセットのロード方法やTeraの設定方法を切り替え、より細かい制御を提供することもできます。
 
 ### Build Time Logs
 
-When you build your application with the `embedded_assets` feature enabled, Loco will scan your `assets` directory and embed the discovered files. You will see logs similar to the following during the build process, indicating which assets are being included:
+`embedded_assets`機能を有効にしてアプリケーションをビルドすると、Locoは`assets`ディレクトリをスキャンし、発見されたファイルを埋め込みます。ビルドプロセス中に以下のようなログが表示され、どのアセットが含まれているかを示します：
 
 ```
 warning: loco-rs@0.15.0: Assets will only be loaded from the application directory
@@ -371,4 +371,4 @@ warning: loco-rs@0.15.0: Found 13 asset files
 warning: loco-rs@0.15.0: Generated code for 6 static assets and 7 templates
 ```
 
-This output confirms that Loco has found your asset files (like CSS, PDFs, HTML templates) and has generated the necessary code to embed them into the binary. The paths will reflect your project's structure.
+この出力は、Locoがアセットファイル（CSS、PDF、HTMLテンプレートなど）を発見し、それらをバイナリに埋め込むための必要なコードを生成したことを確認します。パスはプロジェクトの構造を反映します。

@@ -1,6 +1,6 @@
 +++
-title = "Authors"
-description = "The authurs of the blog articles."
+title = "著者"
+description = "ブログ記事の著者。"
 draft = false
 
 # If add a new author page in this section, please add a new item,
@@ -14,4 +14,4 @@ draft = false
 "limpidcrypto" = "authors/limpidcrypto.md"
 +++
 
-The authors of the blog articles.
+ブログ記事の著者。

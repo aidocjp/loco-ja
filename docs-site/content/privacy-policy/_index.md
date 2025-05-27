@@ -1,25 +1,25 @@
 +++
-title = "Privacy Policy"
-description = "We do not use cookies and we do not collect any personal data."
+title = "プライバシーポリシー"
+description = "当サイトはクッキーを使用せず、個人データを収集しません。"
 draft = false
 
 [extra]
 class = "page single"
 +++
 
-__TLDR__: We do not use cookies and we do not collect any personal data.
+__要約__: 当サイトはクッキーを使用せず、個人データを収集しません。
 
-## Website visitors
+## ウェブサイト訪問者
 
-- No personal information is collected.
-- No information is stored in the browser.
-- No information is shared with, sent to or sold to third-parties.
-- No information is shared with advertising companies.
-- No information is mined and harvested for personal and behavioral trends.
-- No information is monetized.
+- 個人情報は収集されません。
+- ブラウザに情報は保存されません。
+- 第三者と情報を共有、送信、または販売することはありません。
+- 広告会社と情報を共有することはありません。
+- 個人的および行動的傾向のために情報をマイニングまたは収集することはありません。
+- 情報を収益化することはありません。
 
-## Contact us
+## お問い合わせ
 
-[Contact us](https://github.com/aaranxu/adidoks) if you have any questions.
+ご質問がございましたら、[お問い合わせください](https://github.com/aaranxu/adidoks)。
 
-Effective Date: _1st May 2021_
+効力発生日: _2021年5月1日_

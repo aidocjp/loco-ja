@@ -15,21 +15,21 @@ top = false
 flair =[]
 +++
 
-In Loco Storage, we facilitate working with files through multiple operations. Storage can be in-memory, on disk, or use cloud services such as AWS S3, GCP, and Azure.
+Loco Storageでは、複数の操作を通じてファイルの操作を容易にします。ストレージはメモリ内、ディスク上、またはAWS S3、GCP、Azureなどのクラウドサービスを使用できます。
 
-Loco supports simple storage operations and advanced features like mirroring data or backup strategies with different failure modes.
+Locoは、シンプルなストレージ操作と、異なる障害モードを持つデータのミラーリングやバックアップ戦略などの高度な機能をサポートしています。
 
-By default, in-memory and disk storage come out of the box. To work with cloud providers, you should specify the following features:
+デフォルトでは、メモリ内およびディスクストレージがすぐに使用できます。クラウドプロバイダーと連携するには、以下の機能を指定する必要があります：
 - `storage_aws_s3`
 - `storage_azure`
 - `storage_gcp`
 - `all_storage`
 
-By default loco initialize a `Null` provider, meaning any work with the storage will return an error. 
+デフォルトでlocoは`Null`プロバイダーを初期化します。これは、ストレージに関する作業がエラーを返すことを意味します。 
 
-## Setup
+## セットアップ
 
-Add the `after_context` function as a Hook in the `app.rs` file and import the `storage` module from `loco_rs`.
+`app.rs`ファイルにフックとして`after_context`関数を追加し、`loco_rs`から`storage`モジュールをインポートします。
 
 ```rust
 use loco_rs::storage;
@@ -39,23 +39,23 @@ async fn after_context(ctx: AppContext) -> Result<AppContext> {
 }
 ```
 
-This hook returns a Storage instance that holds all storage configurations, covered in the next sections. This Storage instance is stored as part of the application context and is available in controllers, endpoints, task workers, and more.
+このフックは、次のセクションで説明するすべてのストレージ設定を保持するStorageインスタンスを返します。このStorageインスタンスは、アプリケーションコンテキストの一部として保存され、コントローラー、エンドポイント、タスクワーカーなどで利用できます。
 
-## Glossary
+## 用語集
 |          |   |
 | -        | - |
-| `StorageDriver` | Trait implementation something that does storage  |
-| `Storage`| Abstraction implementation for managing one or more storage drivers. |
-| `Strategy`| Trait implementing various strategies for Storage, such as mirror or backup. |
-| `FailureMode`| Implemented within each Strategy, determining how to handle operations in case of failures. |
+| `StorageDriver` | ストレージを実行するトレイト実装  |
+| `Storage`| 1つ以上のストレージドライバーを管理するための抽象化実装 |
+| `Strategy`| ミラーやバックアップなど、ストレージのさまざまな戦略を実装するトレイト |
+| `FailureMode`| 各戦略内で実装され、失敗時の操作の処理方法を決定する |
 
-### Initialize Storage
+### ストレージの初期化
 
-Storage can be configured with a single driver or multiple drivers.
+ストレージは、単一のドライバーまたは複数のドライバーで構成できます。
 
-#### Single Store
+#### シングルストア
 
-In this example, we initialize the in-memory driver and create a new storage with the single function.
+この例では、メモリ内ドライバーを初期化し、single関数で新しいストレージを作成します。
 
 ```rust
 use loco_rs::storage;
@@ -68,11 +68,11 @@ async fn after_context(ctx: AppContext) -> Result<AppContext> {
 }
 ```
 
-### Multiple Drivers
+### 複数のドライバー
 
-For advanced usage, you can set up multiple drivers and apply smart strategies that come out of the box. Each strategy has its own set of failure modes that you can decide how to handle.
+高度な使用法として、複数のドライバーを設定し、組み込みのスマートな戦略を適用できます。各戦略には、処理方法を決定できる独自の障害モードのセットがあります。
 
-Creating multiple drivers:
+複数のドライバーの作成：
 
 ```rust
 use crate::storage::{drivers, Storage};
@@ -82,28 +82,28 @@ let azure = drivers::azure::new("users");
 let aws_2 = drivers::aws::new("users-mirror");
 ```
 
-#### Mirror Strategy:
-You can keep multiple services in sync by defining a mirror service. A mirror service **replicates** uploads, deletes, rename and copy across two or more subordinate services. The download behavior redundantly retrieves data, meaning if the file retrieval fails from the primary, the first file found in the secondaries is returned.
+#### ミラー戦略：
+ミラーサービスを定義することで、複数のサービスを同期させることができます。ミラーサービスは、アップロード、削除、名前変更、コピーを2つ以上の従属サービス全体に**複製**します。ダウンロード動作は冗長的にデータを取得します。つまり、プライマリからのファイル取得が失敗した場合、セカンダリで見つかった最初のファイルが返されます。
 
-#### Behaviour
+#### 動作
 
-After creating the three store instances, we need to create the mirror strategy instance and define the failure mode. The mirror strategy expects the primary store and a list of secondary stores, along with failure mode options:
-- `MirrorAll`: All secondary storages must succeed. If one fails, the operation continues to the rest but returns an error.
-- `AllowMirrorFailure`: The operation does not return an error when one or more mirror operations fail.
+3つのストアインスタンスを作成した後、ミラー戦略インスタンスを作成し、障害モードを定義する必要があります。ミラー戦略は、プライマリストアとセカンダリストアのリスト、および障害モードオプションを期待します：
+- `MirrorAll`：すべてのセカンダリストレージが成功する必要があります。1つが失敗しても、操作は残りに継続しますが、エラーを返します。
+- `AllowMirrorFailure`：1つ以上のミラー操作が失敗しても、操作はエラーを返しません。
 
-The failure mode is relevant for upload, delete, move, and copy.
+障害モードは、アップロード、削除、移動、コピーに関連します。
 
-Example:
+例：
 ```rust
 
-// Define the mirror strategy by setting the primary store and secondary stores by names.
+// 名前でプライマリストアとセカンダリストアを設定して、ミラー戦略を定義します。
 let strategy = Box::new(MirrorStrategy::new(
     "store_1",
     Some(vec!["store_2".to_string(), "store_3".to_string()]),
     FailureMode::MirrorAll,
 )) as Box<dyn StorageStrategy>;
 
-// Create the storage with the store mapping and the strategy.
+// ストアマッピングと戦略を使用してストレージを作成します。
  let storage = Storage::new(
     BTreeMap::from([
         ("store_1".to_string(), aws_1),
@@ -114,22 +114,22 @@ let strategy = Box::new(MirrorStrategy::new(
 );
 ```
 
-### Backup Strategy:
+### バックアップ戦略：
 
-You can back up your operations across multiple storages and control the failure mode policy.
+複数のストレージ間で操作をバックアップし、障害モードポリシーを制御できます。
 
-After creating the three store instances, we need to create the backup strategy instance and define the failure mode. The backup strategy expects the primary store and a list of secondary stores, along with failure mode options:
-- `BackupAll`: All secondary storages must succeed. If one fails, the operation continues to the rest but returns an error.
-- `AllowBackupFailure`: The operation does not return an error when one or more backup operations fail.
-- `AtLeastOneFailure`: At least one operation should pass.
-- `CountFailure`: The given number of backups should pass.
+3つのストアインスタンスを作成した後、バックアップ戦略インスタンスを作成し、障害モードを定義する必要があります。バックアップ戦略は、プライマリストアとセカンダリストアのリスト、および障害モードオプションを期待します：
+- `BackupAll`：すべてのセカンダリストレージが成功する必要があります。1つが失敗しても、操作は残りに継続しますが、エラーを返します。
+- `AllowBackupFailure`：1つ以上のバックアップ操作が失敗しても、操作はエラーを返しません。
+- `AtLeastOneFailure`：少なくとも1つの操作が成功する必要があります。
+- `CountFailure`：指定された数のバックアップが成功する必要があります。
 
-The failure mode is relevant for upload, delete, move, and copy. The download always retrieves the file from the primary.
+障害モードは、アップロード、削除、移動、コピーに関連します。ダウンロードは常にプライマリからファイルを取得します。
 
-Example:
+例：
 ```rust
 
-// Define the backup strategy by setting the primary store and secondary stores by names.
+// 名前でプライマリストアとセカンダリストアを設定して、バックアップ戦略を定義します。
 let strategy: Box<dyn StorageStrategy> = Box::new(BackupStrategy::new(
     "store_1",
     Some(vec!["store_2".to_string(), "store_3".to_string()]),
@@ -146,13 +146,13 @@ let storage = Storage::new(
 );
 ```
 
-## Create Your Own Strategy
+## 独自の戦略を作成する
 
-In case you have a specific strategy, you can easily create it by implementing the StorageStrategy and implementing all store functionality.
+特定の戦略がある場合は、StorageStrategyを実装し、すべてのストア機能を実装することで簡単に作成できます。
 
-## Usage In Controller
+## コントローラーでの使用
 
-Follow this example, make sure you enable `multipart` feature in axum crate.
+この例に従ってください。axumクレートで`multipart`機能を有効にしてください。
 
 ```rust
 async fn upload_file(
@@ -185,9 +185,9 @@ async fn upload_file(
     })
 }
 ```
-# Testing
+# テスト
 
-By testing file storage in your controller you can follow this example:
+コントローラーでファイルストレージをテストするには、この例に従ってください：
 
 ```rust
 use loco_rs::testing::prelude::*;

@@ -16,7 +16,7 @@ flair =[]
 +++
 
 
-Check out Loco resources and links from around the Web.
+Web上のLocoリソースとリンクをチェックしてください。
 
 
 ## Blogs
@@ -34,10 +34,10 @@ Check out Loco resources and links from around the Web.
 
 ## Ecosystem
 
-- [rhai-loco](https://docs.rs/rhai-loco/latest/rhai_loco/) - This crate adds [Rhai](https://rhai.rs) script support to [Loco](https://loco.rs)
-- [loco-oauth2](https://github.com/yinho999/loco-oauth2) - Loco OAuth2 is a simple OAuth2 initializer for the Loco API. It is designed to be a tiny and easy-to-use library for implementing OAuth2 in your application.
+- [rhai-loco](https://docs.rs/rhai-loco/latest/rhai_loco/) - このクレートは[Loco](https://loco.rs)に[Rhai](https://rhai.rs)スクリプトのサポートを追加します
+- [loco-oauth2](https://github.com/yinho999/loco-oauth2) - Loco OAuth2は、Loco API用のシンプルなOAuth2イニシャライザーです。アプリケーションにOAuth2を実装するための小さくて使いやすいライブラリとして設計されています。
 
 ## App Examples
 
-* [Chat rooms](https://github.com/loco-rs/chat-rooms) - With opening a web socket 
-* [Todo list](https://github.com/loco-rs/todo-list) - working with rest API
+* [Chat rooms](https://github.com/loco-rs/chat-rooms) - WebSocketを開いてチャットルームを実装 
+* [Todo list](https://github.com/loco-rs/todo-list) - REST APIを使用したTodoリストの実装

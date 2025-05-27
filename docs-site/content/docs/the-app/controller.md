@@ -15,27 +15,27 @@ top = false
 flair =[]
 +++
 
-`Loco` is a framework that wraps around [axum](https://crates.io/crates/axum), offering a straightforward approach to manage routes, middlewares, authentication, and more right out of the box. At any point, you can leverage the powerful axum Router and extend it with your custom middlewares and routes.
+`Loco`は[axum](https://crates.io/crates/axum)をラップしたフレームワークで、ルート、ミドルウェア、認証などを簡単に管理できる直接的なアプローチを開発箱で提供します。いつでも強力なaxum Routerを活用し、カスタムミドルウェアやルートで拡張することができます。
 
-# Controllers and Routing
+# コントローラーとルーティング
 
 
-## Adding a controller
+## コントローラーの追加
 
-Provides a convenient code generator to simplify the creation of a starter controller connected to your project. Additionally, a test file is generated, enabling easy testing of your controller.
+プロジェクトに接続されたスターターコントローラーの作成を簡素化する便利なコードジェネレーターを提供します。さらに、テストファイルも生成され、コントローラーのテストを簡単に行うことができます。
 
-Generate a controller:
+コントローラーを生成：
 
 ```sh
 $ cargo loco generate controller [OPTIONS] <CONTROLLER_NAME>
 ```
 
-After generating the controller, navigate to the created file in `src/controllers` to view the controller endpoints. You can also check the testing (in folder tests/requests) documentation for testing this controller.
+コントローラーを生成した後、`src/controllers`の作成されたファイルに移動してコントローラーエンドポイントを確認してください。このコントローラーのテストについては、テスト（tests/requestsフォルダ内）のドキュメントも確認できます。
 
 
-### Displaying active routes
+### アクティブなルートの表示
 
-To view a list of all your registered controllers, execute the following command:
+登録されているすべてのコントローラーのリストを表示するには、次のコマンドを実行してください：
 
 ```sh
 $ cargo loco routes
@@ -50,23 +50,23 @@ $ cargo loco routes
 [GET] /auth/current
 ```
 
-This command will provide you with a comprehensive overview of the controllers currently registered in your system.
+このコマンドは、システムに現在登録されているコントローラーの包括的な概要を提供します。
 
 ## AppRoutes
 
-`AppRoutes` is a core component of the `Loco` framework that helps you manage and organize your application's routes. It provides a convenient way to add, prefix, and collect routes from different controllers.
+`AppRoutes`は`Loco`フレームワークの中核コンポーネントで、アプリケーションのルートを管理・整理するのに役立ちます。異なるコントローラーからルートを追加、プレフィックス付与、収集する便利な方法を提供します。
 
-### Features
+### 機能
 
-- **Add Routes**: Easily add routes from different controllers.
-- **Prefix Routes**: Apply a common prefix to a group of routes.
-- **Collect Routes**: Gather all routes into a single collection for further processing.
+- **ルートの追加**：異なるコントローラーからルートを簡単に追加できます。
+- **ルートのプレフィックス**：ルートのグループに共通のプレフィックスを適用できます。
+- **ルートの収集**：すべてのルートを単一のコレクションに集めて、さらなる処理を行えます。
 
-### Examples
+### 例
 
-#### Adding Routes
+#### ルートの追加
 
-You can add routes from different controllers to `AppRoutes`:
+異なるコントローラーから`AppRoutes`にルートを追加できます：
 
 ```rust
 use loco_rs::controller::AppRoutes;
@@ -80,9 +80,9 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-### Prefixing Routes
+### ルートへのプレフィックス付与
 
-Apply a common prefix to a group of routes:
+ルートのグループに共通のプレフィックスを適用する：
 
 ```rust
 use loco_rs::controller::AppRoutes;
@@ -97,10 +97,10 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-### Nesting Routes
+### ルートのネスト
 
-AppRoutes allows you to nest routes, making it easier to organize and manage complex route hierarchies. 
-This is particularly useful when you have a set of related routes that share a common prefix.
+AppRoutesはルートのネストを可能にし、複雑なルート階層の整理と管理を簡単にします。
+共通のプレフィックスを共有する関連ルートのセットがある場合に特に便利です。
 
 ```rust
  use loco_rs::controller::AppRoutes;
@@ -117,14 +117,14 @@ fn routes(_ctx: &AppContext) -> AppRoutes {
 }
 ```
 
-## Adding state
+## 状態の追加
 
-Your app context and state is held in `AppContext` and is what Loco provides and sets up for you. There are cases where you'd want to load custom data,
-logic, or entities when the app starts and be available to use in all controllers.
+アプリのコンテキストと状態は`AppContext`に保持され、これはLocoが提供し設定するものです。アプリが起動するときにカスタムデータ、
+ロジック、またはエンティティをロードして、すべてのコントローラーで利用できるようにしたい場合があります。
 
-You could do that by using Axum's `Extension`. Here's an example for loading an LLM model, which is a time consuming task, and then providing it to a controller endpoint, where its already loaded, and fresh for use.
+これはAxumの`Extension`を使用して実現できます。以下は時間のかかるタスクであるLLMモデルをロードし、それをコントローラーエンドポイントに提供する例で、モデルは既にロードされて使用可能な状態になっています。
 
-First, add a lifecycle hook in `src/app.rs`:
+まず、`src/app.rs`にライフサイクルフックを追加します：
 
 ```rust
     // in src/app.rs, in your Hooks trait impl override the `after_routes` hook:
@@ -143,7 +143,7 @@ First, add a lifecycle hook in `src/app.rs`:
     }
 ```
 
-Next, consume this state extension anywhere you like. Here's an example controller endpoint:
+次に、好きな場所でこの状態拡張を使用します。以下はコントローラーエンドポイントの例です：
 
 ```rust
 async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoResponse {
@@ -153,35 +153,35 @@ async fn candle_llm(Extension(m): Extension<Arc<RwLock<Llama>>>) -> impl IntoRes
 }
 ```
 
-## Global app-wide state
+## グローバルなアプリ全体の状態 {#global-app-wide-state}
 
-Sometimes you might want state that can be shared between controllers, workers, and other areas of your app.
+コントローラー、ワーカー、アプリの他の領域間で共有できる状態が必要な場合があります。
 
-You can review the example [shared-global-state](https://github.com/loco-rs/shared-global-state) app to see how to integrate `libvips`, which is a C based image manipulation library. `libvips` requires an odd thing from the developer: to keep a single instance of it loaded per app process. We do this by keeping a [single `lazy_static` field](https://github.com/loco-rs/shared-global-state/blob/main/src/app.rs#L27-L34), and referring to it from different places in the app.
+[shared-global-state](https://github.com/loco-rs/shared-global-state)アプリの例を参照して、C言語ベースの画像操作ライブラリである`libvips`を統合する方法を確認できます。`libvips`は開発者に奇妙な要求をします：アプリプロセス毎に単一のインスタンスをロードしたままにすることです。これは[単一の`lazy_static`フィールド](https://github.com/loco-rs/shared-global-state/blob/main/src/app.rs#L27-L34)を保持し、アプリの異なる場所から参照することで実現しています。
 
-Read the following to see how it's done in each individual part of the app.
+アプリの個々の部分でそれがどのように行われるかを以下を読んで確認してください。
 
-### Shared state in controllers
+### コントローラーでの共有状態
 
-You can use the solution provided in this document. A live example [is here](https://github.com/loco-rs/loco/blob/master/examples/llm-candle-inference/src/app.rs#L41).
+この文書で提供されているソリューションを使用できます。実際の例は[こちら](https://github.com/loco-rs/loco/blob/master/examples/llm-candle-inference/src/app.rs#L41)にあります。
 
-### Shared state in workers
+### ワーカーでの共有状態
 
-Workers are intentionally verbatim initialized in [app hooks](https://github.com/loco-rs/loco/blob/master/starters/saas/src/app.rs#L59).
+ワーカーは[アプリフック](https://github.com/loco-rs/loco/blob/master/starters/saas/src/app.rs#L59)で意図的にそのまま初期化されます。
 
-This means you can shape them as a "regular" Rust struct that takes a state as a field. Then refer to that field in perform.
+これは、状態をフィールドとして受け取る「通常の」Rustの構造体として形作ることができることを意味します。そして、performでそのフィールドを参照します。
 
-[Here's how the worker is initialized](https://github.com/loco-rs/shared-global-state/blob/main/src/workers/downloader.rs#L19) with the global `vips` instance in the `shared-global-state` example.
+`shared-global-state`例でグローバル`vips`インスタンスを使用して[ワーカーがどのように初期化される](https://github.com/loco-rs/shared-global-state/blob/main/src/workers/downloader.rs#L19)かを示しています。
 
-Note that by-design _sharing state between controllers and workers have no meaning_, because even though you may choose to run workers in the same process as controllers initially (and share state) -- you'd want to quickly switch to proper workers backed by queue and running in a standalone workers process as you scale horizontally, and so workers should by-design have no shared state with controllers, for your own good.
+設計上、_コントローラーとワーカー間での状態共有は意味を持たない_ことに注意してください。なぜなら、最初は同じプロセスでワーカーとコントローラーを実行することを選択する（そして状態を共有する）かもしれませんが、水平スケールする際にはキューに支えられた適切なワーカーに素早く切り替え、独立したワーカープロセスで実行したくなるからです。したがって、あなた自身のためにも、ワーカーは設計上コントローラーと共有状態を持つべきではありません。
 
-### Shared state in tasks
+### タスクでの共有状態
 
-Tasks don't really have a value for shared state, as they have a similar life as any exec'd binary. The process fires up, boots, creates all resources needed (connects to db, etc.), performs the task logic, and then the 
+タスクは、実行されるバイナリと同様のライフサイクルを持つため、共有状態に対して実際の価値を持ちません。プロセスが起動し、ブートし、必要なすべてのリソースを作成し（データベースへの接続など）、タスクロジックを実行してから終了します。 
 
-## Routes in Controllers
+## コントローラー内のルート
 
-Controllers define Loco routes capabilities. In the example below, a controller creates one GET endpoint and one POST endpoint:
+コントローラーはLocoのルート機能を定義します。以下の例では、コントローラーが1つのGETエンドポイントと1つのPOSTエンドポイントを作成しています：
 
 ```rust
 use axum::routing::{get, post};
@@ -190,11 +190,11 @@ Routes::new()
     .add("/echo", post(echo))
 ```
 
-You can also define a `prefix` for all routes in a controller using the `prefix` function.
+`prefix`関数を使用してコントローラー内のすべてのルートに`prefix`を定義することもできます。
 
-## Sending Responses
+## レスポンスの送信
 
-Response senders are in the `format` module. Here are a few ways to send responses from your routes:
+レスポンス送信者は`format`モジュールにあります。ルートからレスポンスを送信するいくつかの方法を以下に示します：
 
 ```rust
 
@@ -212,12 +212,12 @@ format::render()
     .json(Entity::find().all(&ctx.db).await?)
 ```
 
-### Content type aware responses
+### コンテンツタイプ対応レスポンス
 
-You can opt-in into the responders mechanism, where a format type is detected
-and handed to you.
+フォーマットタイプが検出されて渡される
+レスポンダーメカニズムにオプトインできます。
 
-Use the `Format` extractor for this:
+これには`Format`エクストラクターを使用します：
 
 ```rust
 pub async fn get_one(
@@ -233,10 +233,10 @@ pub async fn get_one(
 }
 ```
 
-### Custom errors
+### カスタムエラー
 
-Here is a case where you might want to both render differently based on
-different formats AND ALSO, render differently based on kinds of errors you got.
+異なるフォーマットに基づいて異なるレンダリングを行い、さらに
+受け取ったエラーの種類に基づいて異なるレンダリングを行いたい場合の例です。
 
 
 ```rust
@@ -278,28 +278,28 @@ pub async fn get_one(
 }
 ```
 
-Here, we also "centralize" our error handling by first wrapping the workflow in a function, and grabbing the result type.
+ここでは、ワークフローをまず関数でラップし、結果タイプを取得することでエラーハンドリングも「集中化」しています。
 
-Next we create a 2 level match to:
+次に、2レベルのマッチを作成します：
 
-1. Match the result type
-2. Match the format type
+1. 結果タイプをマッチ
+2. フォーマットタイプをマッチ
 
-Where we lack the knowledge for handling, we just return the error as-is and let the framework render out default errors.
+処理の知識が不足している場所では、エラーをそのまま返し、フレームワークにデフォルトエラーをレンダリングさせます。
 
-## Creating a Controller Manually
+## コントローラーの手動作成
 
-#### 1. Create a Controller File
+#### 1. コントローラーファイルの作成
 
-Start by creating a new file under the path `src/controllers`. For example, let's create a file named `example.rs`.
+`src/controllers`パスの下に新しいファイルを作成することから始めます。例えば、`example.rs`という名前のファイルを作成しましょう。
 
-#### 2. Load the File in mod.rs
+#### 2. mod.rsでファイルをロード
 
-Ensure that you load the newly created controller file in the `mod.rs` file within the `src/controllers` folder.
+`src/controllers`フォルダー内の`mod.rs`ファイルで新しく作成したコントローラーファイルをロードすることを確認してください。
 
-#### 3. Register the Controller in App Hooks
+#### 3. App Hooksでコントローラーを登録
 
-In your App hook implementation (e.g., App struct), add your controller's `Routes` to `AppRoutes`:
+Appフックの実装（例：App構造体）で、コントローラーの`Routes`を`AppRoutes`に追加します：
 
 ```rust
 // src/app.rs
@@ -316,20 +316,20 @@ impl Hooks for App {
 
 ```
 
-# Middleware
+# ミドルウェア
 
-Loco comes with a set of built-in middleware out of the box. Some are enabled by default, while others need to be configured. Middleware registration is flexible and can be managed either through the `*.yaml` environment configuration or directly in the code.
+Locoは箱から出してすぐに使えるビルトインミドルウェアのセットが付属しています。一部はデフォルトで有効になっていますが、他は設定が必要です。ミドルウェアの登録は柔軟で、`*.yaml`環境設定またはコード内で直接管理できます。
 
-## The default stack
+## デフォルトスタック
 
-You get all the enabled middlewares run the following command
+有効なすべてのミドルウェアを取得するには以下のコマンドを実行します
 <!-- <snip id="cli-middleware-list" inject_from="yaml" template="sh"> -->
 ```sh
 cargo loco middleware --config
 ```
 <!-- </snip> -->
 
-This is the stack in `development` mode:
+これは`development`モードでのスタックです：
 
 ```sh
 $ cargo loco middleware --config
@@ -351,9 +351,9 @@ static_assets          (disabled)
 secure_headers         (disabled)
 ```
 
-### Example: disable all middleware
+### 例：すべてのミドルウェアを無効化
 
-Take what ever is enabled, and use `enable: false` with the relevant field. If `middlewares:` section in `server` is missing, add it.
+有効になっているものを取り、関連するフィールドで`enable: false`を使用します。`server`内の`middlewares:`セクションがない場合は、追加してください。
 
 ```yaml
 server:
@@ -372,7 +372,7 @@ server:
       enable: false
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config
@@ -392,16 +392,16 @@ request_id             (disabled)
 fallback               (disabled)
 ```
 
-You can control the `powered_by` middleware by changing the value for `server.ident`:
+`server.ident`の値を変更することで`powered_by`ミドルウェアを制御できます：
 
 ```yaml
 server:
     ident: my-server #(or empty string to disable)
 ```
 
-### Example: add a non-default middleware
+### 例：デフォルト以外のミドルウェアを追加
 
-Lets add the _Remote IP_ middleware to the stack. This is done just by configuration:
+_Remote IP_ミドルウェアをスタックに追加しましょう。これは設定だけで行えます：
 
 ```yaml
 server:
@@ -410,7 +410,7 @@ server:
       enable: true
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config
@@ -426,9 +426,9 @@ fallback               {"enable":true,"code":200,"file":null,"not_found":null}
 powered_by             {"ident":"loco.rs"}
 ```
 
-### Example: change a configuration for an enabled middleware
+### 例：有効なミドルウェアの設定を変更
 
-Let's change the request body limit to `5mb`. When overriding a middleware configuration, rememeber to keep an `enable: true`:
+リクエストボディの制限を`5mb`に変更しましょう。ミドルウェアの設定をオーバーライドするときは、`enable: true`を保持することを忘れないでください：
 
 ```yaml
   middlewares:
@@ -436,7 +436,7 @@ Let's change the request body limit to `5mb`. When overriding a middleware confi
       body_limit: 5mb
 ```
 
-The result:
+結果：
 
 ```sh
 $ cargo loco middleware --config
@@ -458,14 +458,14 @@ static                 (disabled)
 secure_headers         (disabled)
 ```
 
-### Authentication
-In the `Loco` framework, middleware plays a crucial role in authentication. `Loco` supports various authentication methods, including JSON Web Token (JWT) and API Key authentication. This section outlines how to configure and use authentication middleware in your application.
+### 認証
+`Loco`フレームワークでは、ミドルウェアが認証において重要な役割を果たします。`Loco`は、JSON Web Token（JWT）とAPIキー認証を含む様々な認証方法をサポートしています。このセクションでは、アプリケーションで認証ミドルウェアを設定して使用する方法を説明します。
 
 #### JSON Web Token (JWT)
 
-##### Configuration
-By default, Loco uses Bearer authentication for JWT. However, you can customize this behavior in the configuration file under the auth.jwt section.
-* *Bearer Authentication:* Keep the configuration blank or explicitly set it as follows:
+##### 設定
+デフォルトでは、LocoはJWTにBearer認証を使用します。ただし、設定ファイルのauth.jwtセクションでこの動作をカスタマイズできます。
+* *Bearer認証：* 設定を空白のままにするか、次のように明示的に設定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -474,7 +474,7 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
       location: Bearer
   ...
   ```
-* *Cookie Authentication:* Configure the location from which to extract the token and specify the cookie name:
+* *Cookie認証：* トークンを抽出する場所を設定し、Cookieの名前を指定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -485,7 +485,7 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
         name: token
   ...
   ```
-* *Query Parameter Authentication:* Specify the location and name of the query parameter:
+* *クエリパラメータ認証：* クエリパラメータの場所と名前を指定します：
   ```yaml
   # Authentication Configuration
   auth:
@@ -497,8 +497,8 @@ By default, Loco uses Bearer authentication for JWT. However, you can customize 
   ...
   ```
 
-##### Usage
-In your controller parameters, use `auth::JWT` for authentication. This triggers authentication validation based on the configured settings.
+##### 使用方法
+コントローラーのパラメータで、認証に`auth::JWT`を使用します。これにより、設定に基づいた認証検証がトリガーされます。
 ```rust
 use loco_rs::prelude::*;
 
@@ -509,10 +509,10 @@ async fn current(
     // Your implementation here
 }
 ```
-Additionally, you can fetch the current user by replacing auth::JWT with `auth::ApiToken<users::Model>`.
+さらに、auth::JWTを`auth::ApiToken<users::Model>`に置き換えることで、現在のユーザーを取得できます。
 
-#### API Key
-For API Key authentication, use auth::ApiToken. This middleware validates the API key against the user database record and loads the corresponding user into the authentication parameter.
+#### APIキー
+APIキー認証の場合は、auth::ApiTokenを使用します。このミドルウェアはAPIキーをユーザーデータベースレコードと照合し、対応するユーザーを認証パラメータにロードします。
 ```rust
 use loco_rs::prelude::*;
 
@@ -526,9 +526,9 @@ async fn current(
 
 ## Catch Panic
 
-This middleware catches panics that occur during request handling in the application. When a panic occurs, it logs the error and returns an internal server error response. This middleware helps ensure that the application can gracefully handle unexpected errors without crashing the server.
+このミドルウェアは、アプリケーションでのリクエスト処理中に発生するパニックをキャッチします。パニックが発生すると、エラーをログに記録し、内部サーバーエラーレスポンスを返します。このミドルウェアは、サーバーをクラッシュさせることなく、アプリケーションが予期しないエラーを適切に処理できるようにします。
 
-To disable the middleware edit the configuration as follows:
+ミドルウェアを無効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -540,11 +540,11 @@ To disable the middleware edit the configuration as follows:
 
 ## Limit Payload
 
-The Limit Payload middleware restricts the maximum allowed size for HTTP request payloads. By default, it is enabled and configured with a 2MB limit.
+Limit Payloadミドルウェアは、HTTPリクエストペイロードの最大許容サイズを制限します。デフォルトでは有効になっており、2MBの制限で設定されています。
 
-You can customize or disable this behavior through your configuration file.
+設定ファイルでこの動作をカスタマイズまたは無効にできます。
 
-### Set a custom limit
+### カスタム制限の設定
 ```yaml
 #...
   middlewares:
@@ -552,8 +552,8 @@ You can customize or disable this behavior through your configuration file.
       body_limit: 5mb
 ```
 
-### Disable payload size limitation
-To remove the restriction entirely, set `body_limit` to `disable`:
+### ペイロードサイズ制限の無効化
+制限を完全に削除するには、`body_limit`を`disable`に設定します：
 ```yaml
 #...
   middlewares:
@@ -562,8 +562,8 @@ To remove the restriction entirely, set `body_limit` to `disable`:
 ```
 
 
-##### Usage
-In your controller parameters, use `axum::body::Bytes`.
+##### 使用方法
+コントローラーのパラメータで`axum::body::Bytes`を使用します。
 ```rust
 use loco_rs::prelude::*;
 
@@ -574,11 +574,11 @@ async fn current(_body: axum::body::Bytes,) -> Result<Response> {
 
 ## Timeout
 
-Applies a timeout to requests processed by the application. The middleware ensures that requests do not run beyond the specified timeout period, improving the overall performance and responsiveness of the application.
+アプリケーションで処理されるリクエストにタイムアウトを適用します。このミドルウェアは、リクエストが指定されたタイムアウト期間を超えて実行されないようにし、アプリケーションの全体的なパフォーマンスと応答性を向上させます。
 
-If a request exceeds the specified timeout duration, the middleware will return a `408 Request Timeout` status code to the client, indicating that the request took too long to process.
+リクエストが指定されたタイムアウト期間を超えた場合、ミドルウェアはクライアントに`408 Request Timeout`ステータスコードを返し、リクエストの処理に時間がかかりすぎたことを示します。
 
-To enable the middleware edit the configuration as follows:
+ミドルウェアを有効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -591,9 +591,9 @@ To enable the middleware edit the configuration as follows:
 
 ## Logger
 
-Provides logging functionality for HTTP requests. Detailed information about each request, such as the HTTP method, URI, version, user agent, and an associated request ID. Additionally, it integrates the application's runtime environment into the log context, allowing environment-specific logging (e.g., "development", "production").
+HTTPリクエストのロギング機能を提供します。HTTPメソッド、URI、バージョン、ユーザーエージェント、関連するリクエストIDなど、各リクエストに関する詳細情報を記録します。さらに、アプリケーションのランタイム環境をログコンテキストに統合し、環境固有のロギング（例：「development」、「production」）を可能にします。
 
-To disable the middleware edit the configuration as follows:
+ミドルウェアを無効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -605,10 +605,9 @@ To disable the middleware edit the configuration as follows:
 
 ## Fallback
 
-When choosing the SaaS starter (or any starter that is not API-first), you get a default fallback behavior with the _Loco welcome screen_. This is a development-only mode where a `404` request shows you a nice and friendly page that tells you what happened and what to do next. This also takes preference over the static handler, so make sure to disable it if you want to have static content served.
+SaaSスターター（またはAPIファーストではないスターター）を選択すると、_Locoウェルカムスクリーン_を使用したデフォルトのフォールバック動作が得られます。これは開発専用モードで、`404`リクエストが発生すると、何が起こったか、次に何をすべきかを示す親切でフレンドリーなページが表示されます。これは静的ハンドラーよりも優先されるため、静的コンテンツを提供したい場合は無効にする必要があります。
 
-
-You can disable or customize this behavior in your `development.yaml` file. You can set a few options:
+`development.yaml`ファイルでこの動作を無効化またはカスタマイズできます。いくつかのオプションを設定できます：
 
 
 ```yaml
@@ -632,7 +631,7 @@ fallback:
     not_found: cannot find this resource
 ```
 
-For production, it's recommended to disable this.
+本番環境では、これを無効にすることを推奨します。
 
 ```yaml
 # disable. you can also remove the `fallback` section entirely to disable
@@ -642,13 +641,13 @@ fallback:
 
 ## Remote IP
 
-When your app is under a proxy or a load balancer (e.g. Nginx, ELB, etc.), it does not face the internet directly, which is why if you want to find out the connecting client IP, you'll get a socket which indicates an IP that is actually your load balancer instead.
+アプリがプロキシやロードバランサー（Nginx、ELBなど）の背後にある場合、インターネットに直接面していません。そのため、接続しているクライアントIPを調べようとすると、実際にはロードバランサーのIPを示すソケットを取得することになります。
 
-The load balancer or proxy is responsible for doing the socket work against the real client IP, and then giving your app the load via the proxy back connection to your app.
+ロードバランサーまたはプロキシは、実際のクライアントIPに対してソケット作業を行い、プロキシバック接続を介してアプリに負荷を与える責任があります。
 
-This is why when your app has a concrete business need for getting the real client IP you need to use the de-facto standard proxies and load balancers use for handing you this information: the `X-Forwarded-For` header.
+そのため、アプリが実際のクライアントIPを取得する具体的なビジネスニーズがある場合、プロキシとロードバランサーがこの情報を提供するために使用するデファクトスタンダードである`X-Forwarded-For`ヘッダーを使用する必要があります。
 
-Loco provides the `remote_ip` section for configuring the `RemoteIP` middleware:
+Locoは`RemoteIP`ミドルウェアを設定するための`remote_ip`セクションを提供します：
 
 ```yaml
 server:
@@ -669,7 +668,7 @@ server:
     # Generating a unique request ID and enhancing logging with additional information such as the start and completion of request processing, latency, status code, and other request details.
 ```
 
-Then, use the `RemoteIP` extractor to get the IP:
+次に、`RemoteIP`エクストラクターを使用してIPを取得します：
 
 ```rust
 #[debug_handler]
@@ -679,16 +678,16 @@ pub async fn list(ip: RemoteIP, State(ctx): State<AppContext>) -> Result<Respons
 }
 ```
 
-When using the `RemoteIP` middleware, take note of the security implications vs. your current architecture (as noted in the documentation and in the configuration section): if your app is NOT under a proxy, you can be prone to IP spoofing vulnerability because anyone can set headers to arbitrary values, and specifically, anyone can set the `X-Forwarded-For` header.
+`RemoteIP`ミドルウェアを使用する際は、現在のアーキテクチャに対するセキュリティへの影響に注意してください（ドキュメントと設定セクションに記載されています）：アプリがプロキシの背後にない場合、誰でもヘッダーを任意の値に設定でき、特に`X-Forwarded-For`ヘッダーを設定できるため、IPスプーフィングの脆弱性の影響を受けやすくなります。
 
-This middleware is not enabled by default. Usually, you *will know* if you need this middleware and you will be aware of the security aspects of using it in the correct architecture. If you're not sure -- don't use it (keep `enable` to `false`).
+このミドルウェアはデフォルトでは有効になっていません。通常、このミドルウェアが必要かどうかは*わかる*はずで、正しいアーキテクチャで使用する際のセキュリティ面も認識しているはずです。確信が持てない場合は使用しないでください（`enable`を`false`のままにしてください）。
 
 
 ## Secure Headers
 
-Loco comes with default secure headers applied by the `secure_headers` middleware. This is similar to what is done in the Rails ecosystem with [secure_headers](https://github.com/github/secure_headers).
+Locoには、`secure_headers`ミドルウェアによって適用されるデフォルトの安全なヘッダーが付属しています。これは、Railsエコシステムで[secure_headers](https://github.com/github/secure_headers)を使用して行われることと同様です。
 
-In your `server.middleware` YAML section you will find the `github` preset by default (which is what Github and Twitter recommend for secure headers).
+`server.middleware`のYAMLセクションには、デフォルトで`github`プリセットがあります（これはGithubとTwitterが安全なヘッダーとして推奨するものです）。
 
 ```yaml
 server:
@@ -698,7 +697,7 @@ server:
       preset: github
 ```
 
-You can also override select headers:
+特定のヘッダーをオーバーライドすることもできます：
 
 ```yaml
 server:
@@ -710,7 +709,7 @@ server:
         foo: bar
 ```
 
-Or start from scratch:
+またはゼロから始めることもできます：
 
 ```yaml
 server:
@@ -722,7 +721,7 @@ server:
         foo: bar
 ```
 
-To support `htmx`, You can add the following override, to allow some inline running of scripts:
+`htmx`をサポートするために、次のオーバーライドを追加して、一部のスクリプトのインライン実行を許可できます：
 
 ```yaml
 secure_headers:
@@ -734,9 +733,9 @@ secure_headers:
 
 ## Compression
 
-`Loco` leverages [CompressionLayer](https://docs.rs/tower-http/0.5.0/tower_http/compression/index.html) to enable a `one click` solution.
+`Loco`は[CompressionLayer](https://docs.rs/tower-http/0.5.0/tower_http/compression/index.html)を活用して、`ワンクリック`ソリューションを可能にします。
 
-To enable response compression, based on `accept-encoding` request header, simply edit the configuration as follows:
+`accept-encoding`リクエストヘッダーに基づいてレスポンス圧縮を有効にするには、次のように設定を編集します：
 
 ```yaml
 #...
@@ -745,14 +744,14 @@ To enable response compression, based on `accept-encoding` request header, simpl
       enable: true
 ```
 
-Doing so will compress each response and set `content-encoding` response header accordingly.
+これにより、各レスポンスが圧縮され、それに応じて`content-encoding`レスポンスヘッダーが設定されます。
 
-## Precompressed assets
+## 事前圧縮されたアセット
 
 
-`Loco` leverages [ServeDir::precompressed_gzip](https://docs.rs/tower-http/latest/tower_http/services/struct.ServeDir.html#method.precompressed_gzip) to enable a `one click` solution of serving pre compressed assets.
+`Loco`は[ServeDir::precompressed_gzip](https://docs.rs/tower-http/latest/tower_http/services/struct.ServeDir.html#method.precompressed_gzip)を活用して、事前圧縮されたアセットを提供する`ワンクリック`ソリューションを可能にします。
 
-If a static assets exists on the disk as a `.gz` file, `Loco` will serve it instead of compressing it on the fly.
+静的アセットがディスク上に`.gz`ファイルとして存在する場合、`Loco`はその場で圧縮する代わりにそれを提供します。
 
 ```yaml
 #...
@@ -764,8 +763,8 @@ middlewares:
 ```
 
 ## CORS
-This middleware enables Cross-Origin Resource Sharing (CORS) by allowing configurable origins, methods, and headers in HTTP requests. 
-It can be tailored to fit various application requirements, supporting permissive CORS or specific rules as defined in the middleware configuration.
+このミドルウェアは、HTTPリクエストで設定可能なオリジン、メソッド、ヘッダーを許可することで、Cross-Origin Resource Sharing（CORS）を有効にします。
+ミドルウェア設定で定義されているように、寛容なCORSまたは特定のルールをサポートし、様々なアプリケーション要件に合わせて調整できます。
 
 ```yaml
 #...
@@ -787,17 +786,15 @@ middlewares:
 
 ```
 
-## Handler and Route based middleware
+## ハンドラーとルートベースのミドルウェア
 
-`Loco` also allow us to apply [layers](https://docs.rs/tower/latest/tower/trait.Layer.html) to specific handlers or
-routes.
-For more information on handler and route based middleware, refer to the [middleware](/docs/the-app/controller/#middleware)
-documentation.
+`Loco`では、特定のハンドラーやルートに[レイヤー](https://docs.rs/tower/latest/tower/trait.Layer.html)を適用することもできます。
+ハンドラーとルートベースのミドルウェアの詳細については、[ミドルウェア](/docs/the-app/controller/#middleware)のドキュメントを参照してください。
 
 
-### Handler based middleware:
+### ハンドラーベースのミドルウェア：
 
-Apply a layer to a specific handler using `layer` method.
+`layer`メソッドを使用して特定のハンドラーにレイヤーを適用します。
 
 ```rust
 // src/controllers/auth.rs
@@ -808,9 +805,9 @@ pub fn routes() -> Routes {
 }
 ```
 
-### Route based middleware:
+### ルートベースのミドルウェア：
 
-Apply a layer to a specific route using `layer` method.
+`layer`メソッドを使用して特定のルートにレイヤーを適用します。
 
 ```rust
 // src/main.rs
@@ -828,10 +825,10 @@ impl Hooks for App {
 }
 ```
 
-# Request Validation
-`JsonValidate` extractor simplifies input [validation](https://github.com/Keats/validator) by integrating with the validator crate. Here's an example of how to validate incoming request data:
+# リクエスト検証
+`JsonValidate`エクストラクターは、validatorクレートと統合することで入力[検証](https://github.com/Keats/validator)を簡素化します。受信リクエストデータを検証する方法の例を示します：
 
-### Define Your Validation Rules
+### 検証ルールの定義
 ```rust
 use axum::debug_handler;
 use loco_rs::prelude::*;
@@ -846,7 +843,7 @@ pub struct DataParams {
     pub email: String,
 }
 ```
-### Create a Handler with Validation
+### 検証付きハンドラーの作成
 ```rust
 use axum::debug_handler;
 use loco_rs::prelude::*;
@@ -859,12 +856,12 @@ pub async fn index(
     format::empty()
 }
 ```
-Using the `JsonValidate` extractor, Loco automatically performs validation on the DataParams struct:
-* If validation passes, the handler continues execution with params.
-* If validation fails, a 400 Bad Request response is returned.
+`JsonValidate`エクストラクターを使用すると、LocoはDataParams構造体に対して自動的に検証を実行します：
+* 検証に合格した場合、ハンドラーはparamsを使用して実行を継続します。
+* 検証に失敗した場合、400 Bad Requestレスポンスが返されます。
 
-### Returning Validation Errors as JSON
-If you'd like to return validation errors in a structured JSON format, use `JsonValidateWithMessage` instead of `JsonValidate`. The response format will look like this:
+### 検証エラーのJSONとして返却
+検証エラーを構造化されたJSON形式で返したい場合は、`JsonValidate`の代わりに`JsonValidateWithMessage`を使用します。レスポンス形式は次のようになります：
 
 ```json
 {
@@ -892,13 +889,13 @@ If you'd like to return validation errors in a structured JSON format, use `Json
 }
 ```  
 
-# Pagination
+# ページネーション
 
-In many scenarios, when querying data and returning responses to users, pagination is crucial. In `Loco`, we provide a straightforward method to paginate your data and maintain a consistent pagination response schema for your API responses.
+多くのシナリオでは、データをクエリしてユーザーにレスポンスを返す際、ページネーションが重要です。`Loco`では、データをページネートし、APIレスポンスに一貫したページネーションレスポンススキーマを維持する簡単な方法を提供します。
 
-We assume you have a `notes` entity and/or scaffold (replace this with any entity you like).
+`notes`エンティティおよび/またはスキャフォールドがあると仮定します（任意のエンティティに置き換えてください）。
 
-## Using pagination
+## ページネーションの使用
 
 ```rust
 use loco_rs::prelude::*;
@@ -907,7 +904,7 @@ let res = query::fetch_page(&ctx.db, notes::Entity::find(), &query::PaginationQu
 ```
 
 
-## Using pagination With Filter
+## フィルター付きページネーションの使用
 ```rust
 use loco_rs::prelude::*;
 
@@ -926,18 +923,18 @@ let paginated_notes = query::paginate(
 .await?;
 ```
 
-- Start by defining the entity you want to retrieve.
-- Create your query condition (in this case, filtering rows that contain "loco" in the title column).
-- Define the pagination parameters.
-- Call the paginate function.
+- 取得したいエンティティを定義することから始めます。
+- クエリ条件を作成します（この場合、タイトル列に「loco」を含む行をフィルタリング）。
+- ページネーションパラメータを定義します。
+- paginate関数を呼び出します。
 
-### Pagination view
-After creating getting the `paginated_notes` in the previous example, you can choose which fields from the model you want to return and keep the same pagination response in all your different data responses.
+### ページネーションビュー
+前の例で`paginated_notes`を取得した後、モデルから返したいフィールドを選択し、すべての異なるデータレスポンスで同じページネーションレスポンスを維持できます。
 
-Define the data you're returning to the user in Loco views. If you're not familiar with views, refer to the [documentation](@/docs/the-app/views.md) for more context.
+Locoビューでユーザーに返すデータを定義します。ビューに慣れていない場合は、詳細なコンテキストについて[ドキュメント](@/docs/the-app/views.md)を参照してください。
 
 
-Create a notes view file in `src/view/notes` with the following code:
+`src/view/notes`にノートビューファイルを作成し、次のコードを記述します：
 
 ```rust
 use loco_rs::{
@@ -989,12 +986,12 @@ impl PaginationResponse {
 ```
 
 
-# Testing
-When testing controllers, the goal is to call the router's controller endpoint and verify the HTTP response, including the status code, response content, headers, and more.
+# テスト
+コントローラーをテストする際の目標は、ルーターのコントローラーエンドポイントを呼び出し、ステータスコード、レスポンスコンテンツ、ヘッダーなどを含むHTTPレスポンスを検証することです。
 
-To initialize a test request, use `use loco_rs::testing::prelude::*;`, which prepares your app routers, providing the request instance and the application context.
+テストリクエストを初期化するには、`use loco_rs::testing::prelude::*;`を使用します。これにより、アプリルーターが準備され、リクエストインスタンスとアプリケーションコンテキストが提供されます。
 
-In the following example, we have a POST endpoint that returns the data sent in the POST request.
+次の例では、POSTリクエストで送信されたデータを返すPOSTエンドポイントがあります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -1016,16 +1013,16 @@ async fn can_print_echo() {
 }
 ```
 
-As you can see initialize the testing request and using `request` instance calling /example endpoing.
-the request returns a `Response` instance with the status code and the response test
+ご覧のように、テストリクエストを初期化し、`request`インスタンスを使用して/exampleエンドポイントを呼び出しています。
+リクエストは、ステータスコードとレスポンステキストを含む`Response`インスタンスを返します。
 
 
-## Async
-When writing async tests with database data, it's important to ensure that one test does not affect the data used by other tests. Since async tests can run concurrently on the same database dataset, this can lead to unstable test results.
+## 非同期
+データベースデータを使用した非同期テストを作成する際は、1つのテストが他のテストで使用されるデータに影響を与えないようにすることが重要です。非同期テストは同じデータベースデータセット上で同時に実行される可能性があるため、不安定なテスト結果につながる可能性があります。
 
-Instead of using `request`, as described in the documentation for synchronous tests, use the `request_with_create_db` function. This function generates a random database schema name and ensures that the tables are deleted once the test is completed.
+同期テストのドキュメントで説明されている`request`の代わりに、`request_with_create_db`関数を使用してください。この関数はランダムなデータベーススキーマ名を生成し、テストが完了するとテーブルが削除されることを保証します。
 
-Note: If you cancel the test run midway (e.g., by pressing `Ctrl + C`), the cleanup process will not execute, and the database tables will remain. In such cases, you will need to manually remove them.
+注意：テスト実行を途中でキャンセルした場合（例：`Ctrl + C`を押した場合）、クリーンアッププロセスは実行されず、データベーステーブルは残ります。その場合は、手動で削除する必要があります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -1046,8 +1043,8 @@ async fn can_print_echo() {
 }
 ```
 
-## Authenticated Endpoints
-The following example works for both JWT and API_KEY Authentication.
+## 認証されたエンドポイント
+次の例は、JWTとAPI_KEY認証の両方で機能します。
 ```rust
 use loco_rs::testing::prelude::*;
 use super::prepare_data;

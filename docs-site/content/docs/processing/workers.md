@@ -15,25 +15,25 @@ top = false
 flair =[]
 +++
 
-Loco provides the following options for background jobs:
+Locoは以下のバックグラウンドジョブのオプションを提供します：
 
-- Redis backed
-- Postgres backed
-- SQLite backed
-- Tokio-async based (same-process, evented thread based background jobs)
+- Redisベース
+- Postgresベース
+- SQLiteベース
+- Tokio-asyncベース（同一プロセス、イベント駆動スレッドベースのバックグラウンドジョブ）
 
-You enqueue and perform jobs without knowledge of the actual background queue implementation, similar to Rails' _ActiveJob_, so you can switch with a simple change of configuration and no code change.
+Railsの_ActiveJob_と同様に、実際のバックグラウンドキューの実装を意識することなくジョブをエンキューして実行できます。そのため、設定を変更するだけでコードを変更することなく切り替えることができます。
 
-## Async vs Queue
+## 非同期 vs キュー
 
-When you generated a new app, you might have selected the default `async` configuration for workers. This means workers spin off jobs in Tokio's async pool, which gives you proper background processes in the same running server.
+新しいアプリを生成した際、ワーカーにデフォルトの`async`設定を選択したかもしれません。これは、ワーカーがTokioの非同期プール内でジョブをスピンオフし、同じ実行中のサーバー内で適切なバックグラウンドプロセスを提供することを意味します。
 
-You might want to configure jobs to run in a separate process backed by a queue, in order to distribute the load across servers.
+サーバー間で負荷を分散するために、キューに支えられた別のプロセスでジョブを実行するよう設定したい場合があります。
 
-First, switch to `BackgroundQueue`:
+まず、`BackgroundQueue`に切り替えます：
 
 ```yaml
-# Worker Configuration
+# ワーカーの設定
 workers:
   # specifies the worker mode. Options:
   #   - BackgroundQueue - Workers operate asynchronously in the background, processing queued.
@@ -42,7 +42,7 @@ workers:
   mode: BackgroundQueue
 ```
 
-Then, configure a Redis based queue backend:
+次に、Redisベースのキューバックエンドを設定します：
 
 ```yaml
 queue:
@@ -55,7 +55,7 @@ queue:
   num_workers: 2
 ```
 
-Or a Postgres based queue backend:
+またはPostgresベースのキューバックエンド：
 
 ```yaml
 queue:
@@ -68,7 +68,7 @@ queue:
   num_workers: 2
 ```
 
-Or a SQLite based queue backend:
+またはSQLiteベースのキューバックエンド：
 
 ```yaml
 queue:
@@ -82,9 +82,9 @@ queue:
   num_workers: 2
 ```
 
-## Running the worker process
+## ワーカープロセスの実行
 
-You can run in two ways, depending on which setting you chose for background workers:
+バックグラウンドワーカーに選択した設定に応じて、2つの方法で実行できます：
 
 ```
 Usage: demo_app start [OPTIONS]
@@ -94,48 +94,48 @@ Options:
   -s, --server-and-worker          start same-process server and worker
 ```
 
-Choose `--worker` when you configured a real Redis queue and you want a process for doing just background jobs. You can use a single process per server. In this case, you can run your main Web or API server using just `cargo loco start`.
+実際のRedisキューを設定し、バックグラウンドジョブだけを実行するプロセスが必要な場合は`--worker`を選択します。サーバーごとに単一のプロセスを使用できます。この場合、メインのWebまたはAPIサーバーは単に`cargo loco start`を使用して実行できます。
 
 ```sh
 $ cargo loco start --worker # starts a standalone worker job executing process
 $ cargo loco start # starts a standalone API service or Web server, no workers
 ```
 
-Choose `-s` when you configured `async` background workers, and jobs will execute as part of the current running server process.
+`async`バックグラウンドワーカーを設定した場合は`-s`を選択し、ジョブは現在実行中のサーバープロセスの一部として実行されます。
 
-For example, running `--server-and-worker`:
+例えば、`--server-and-worker`を実行する場合：
 
 ```sh
 $ cargo loco start --server-and-worker # both API service and workers will execute
 ```
 
-### Worker Tag Filtering
+### ワーカータグフィルタリング
 
-Loco supports tag-based job filtering, allowing you to create specialized workers that only process specific types of jobs. This is particularly useful for distributing workloads or creating dedicated workers for resource-intensive tasks.
+Locoはタグベースのジョブフィルタリングをサポートしており、特定のタイプのジョブのみを処理する専門的なワーカーを作成できます。これは、ワークロードを分散したり、リソース集約的なタスク用の専用ワーカーを作成したりする場合に特に便利です。
 
-When starting a worker, you can specify which tags it should process:
+ワーカーを起動する際、処理すべきタグを指定できます：
 
 ```sh
-# Start a worker that only processes jobs with no tags
+# タグを持たないジョブのみを処理するワーカーを開始
 $ cargo loco start --worker
 
-# Start a worker that only processes jobs with the "email" tag
+# "email"タグを持つジョブのみを処理するワーカーを開始
 $ cargo loco start --worker email
 
-# Start a worker that processes jobs with either "report" or "analytics" tags
+# "report"または"analytics"タグのいずれかを持つジョブを処理するワーカーを開始
 $ cargo loco start --worker report,analytics
 ```
 
-Important notes about tag-based processing:
+タグベースの処理に関する重要な注意事項：
 
-1. Workers with no tags (`cargo loco start --worker`) will only process jobs that have no tags
-2. Workers with tags will only process jobs that have at least one matching tag
-3. The `--all` and `--server-and-worker` modes don't support filtering by tags and will only process untagged jobs
-4. Tags are case-sensitive
+1. タグを持たないワーカー（`cargo loco start --worker`）は、タグを持たないジョブのみを処理します
+2. タグを持つワーカーは、少なくとも1つの一致するタグを持つジョブのみを処理します
+3. `--all`および`--server-and-worker`モードはタグによるフィルタリングをサポートしておらず、タグなしのジョブのみを処理します
+4. タグは大文字小文字を区別します
 
-## Creating background jobs in code
+## コードでバックグラウンドジョブを作成
 
-To use a worker, we mainly think about adding a job to the queue, so you `use` the worker and perform later:
+ワーカーを使用するには、主にキューにジョブを追加することを考えます。ワーカーを`use`して後で実行します：
 
 ```rust
     // .. in your controller ..
@@ -148,41 +148,41 @@ To use a worker, we mainly think about adding a job to the queue, so you `use` t
     .await
 ```
 
-Unlike Rails and Ruby, with Rust you can enjoy _strongly typed_ job arguments which gets serialized and pushed into the queue.
+RailsとRubyとは異なり、Rustでは_強型付け_されたジョブ引数を使用でき、これはシリアライズされてキューにプッシュされます。
 
-### Assigning Tags to Jobs
+### ジョブへのタグ割り当て
 
-When enqueueing a job, you can optionally assign tags to it. The job will then only be processed by workers that match at least one of its tags:
+ジョブをエンキューする際、オプションでタグを割り当てることができます。ジョブは、そのタグの少なくとも1つと一致するワーカーによってのみ処理されます：
 
 ```rust
-    // To create a job with a tag, define the tags in your worker:
+    // タグ付きジョブを作成するには、ワーカーでタグを定義します：
     struct DownloadWorker;
 
     #[async_trait]
     impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
-        // Define tags for this worker
+        // このワーカーのタグを定義
         fn tags() -> Vec<String> {
             vec!["download".to_string(), "network".to_string()]
         }
 
-        // ... other implementation details
+        // ... その他の実装詳細
     }
 
-    // When you call perform_later, the job will automatically be tagged
+    // perform_laterを呼び出すと、ジョブは自動的にタグ付けされます
     DownloadWorker::perform_later(&ctx, args).await?;
 ```
 
-### Using shared state from a worker
+### ワーカーから共有状態を使用
 
-See [How to have global state](@/docs/the-app/controller.md#global-app-wide-state), but generally you use a single shared state by using something like `lazy_static` and then simply refer to it from the worker.
+[グローバル状態の使い方](@/docs/the-app/controller.md#global-app-wide-state)を参照してくださいが、一般的には`lazy_static`のようなものを使用して単一の共有状態を使用し、ワーカーから単純に参照します。
 
-If this state can be serializable, _strongly prefer_ to pass it through the `WorkerArgs`.
+この状態がシリアライズ可能な場合は、`WorkerArgs`を通じて渡すことを_強く推奨_します。
 
-## Creating a new worker
+## 新しいワーカーの作成
 
-Adding a worker meaning coding the background job logic to take the _arguments_ and perform a job. We also need to let `loco` know about it and register it into the global job processor.
+ワーカーを追加するということは、_引数_を受け取ってジョブを実行するバックグラウンドジョブロジックをコーディングすることを意味します。また、`loco`にそれを知らせ、グローバルジョブプロセッサに登録する必要があります。
 
-Add a worker to `workers/`:
+`workers/`にワーカーを追加します：
 
 ```rust
 #[async_trait]
@@ -191,7 +191,7 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
         Self { ctx: ctx.clone() }
     }
 
-    // Optional: Define tags for this worker
+    // オプション：このワーカーのタグを定義
     fn tags() -> Vec<String> {
         vec!["download".to_string()]
     }
@@ -200,7 +200,7 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
         println!("================================================");
         println!("Sending payment report to user {}", args.user_guid);
 
-        // TODO: Some actual work goes here...
+        // TODO: 実際の作業をここに記述...
 
         println!("================================================");
         Ok(())
@@ -208,7 +208,7 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
 }
 ```
 
-And register it in `app.rs`:
+そして`app.rs`に登録します：
 
 ```rust
 #[async_trait]
@@ -222,35 +222,35 @@ impl Hooks for App {
 }
 ```
 
-### The `BackgroundWorker` Trait
+### `BackgroundWorker`トレイト
 
-The `BackgroundWorker` trait is the core interface for defining background workers in Loco. It provides several methods:
+`BackgroundWorker`トレイトは、Locoでバックグラウンドワーカーを定義するためのコアインターフェースです。いくつかのメソッドを提供します：
 
-- `build(ctx: &AppContext) -> Self`: Creates a new instance of the worker with the provided application context.
-- `perform(&self, args: A) -> Result<()>`: The main method that executes the job's logic with the provided arguments.
-- `queue() -> Option<String>`: Optional method to specify a custom queue for the worker (returns `None` by default).
-- `tags() -> Vec<String>`: Optional method to specify tags for this worker (returns an empty vector by default).
-- `class_name() -> String`: Returns the worker's class name (automatically derived from the struct name).
-- `perform_later(ctx: &AppContext, args: A) -> Result<()>`: Static method to enqueue a job to be performed later.
+- `build(ctx: &AppContext) -> Self`：提供されたアプリケーションコンテキストでワーカーの新しいインスタンスを作成します。
+- `perform(&self, args: A) -> Result<()>`：提供された引数でジョブのロジックを実行するメインメソッドです。
+- `queue() -> Option<String>`：ワーカーのカスタムキューを指定するオプションメソッド（デフォルトで`None`を返します）。
+- `tags() -> Vec<String>`：このワーカーのタグを指定するオプションメソッド（デフォルトで空のベクターを返します）。
+- `class_name() -> String`：ワーカーのクラス名を返します（構造体名から自動的に派生されます）。
+- `perform_later(ctx: &AppContext, args: A) -> Result<()>`：後で実行するジョブをエンキューする静的メソッドです。
 
-### Generate a Worker
+### ワーカーの生成
 
-To automatically add a worker using `loco generate`, execute the following command:
+`loco generate`を使用してワーカーを自動的に追加するには、以下のコマンドを実行します：
 
 ```sh
 cargo loco generate worker report_worker
 ```
 
-The worker generator creates a worker file associated with your app and generates a test template file, enabling you to verify your worker.
+ワーカージェネレーターは、アプリに関連付けられたワーカーファイルを作成し、テストテンプレートファイルを生成して、ワーカーを検証できるようにします。
 
-## Configuring Workers
+## ワーカーの設定
 
-In your `config/<environment>.yaml` you can specify the worker mode. BackgroundAsync and BackgroundQueue will process jobs in a non-blocking manner, while ForegroundBlocking will process jobs in a blocking manner.
+`config/<environment>.yaml`でワーカーモードを指定できます。BackgroundAsyncとBackgroundQueueはノンブロッキング方式でジョブを処理し、ForegroundBlockingはブロッキング方式でジョブを処理します。
 
-The main difference between BackgroundAsync and BackgroundQueue is that the latter will use Redis/Postgres/SQLite to store the jobs, while the former does not require Redis/Postgres/SQLite and will use async in memory within the same process.
+BackgroundAsyncとBackgroundQueueの主な違いは、後者がRedis/Postgres/SQLiteを使用してジョブを保存するのに対し、前者はRedis/Postgres/SQLiteを必要とせず、同じプロセス内でインメモリ非同期を使用することです。
 
 ```yaml
-# Worker Configuration
+# ワーカーの設定
 workers:
   # specifies the worker mode. Options:
   #   - BackgroundQueue - Workers operate asynchronously in the background, processing queued.
@@ -259,30 +259,30 @@ workers:
   mode: BackgroundQueue
 ```
 
-## Manage a Workers From UI
+## UIからワーカーを管理
 
-You can manage the jobs queue with the [Loco admin job project](https://github.com/loco-rs/admin-jobs).
+[Loco admin jobプロジェクト](https://github.com/loco-rs/admin-jobs)でジョブキューを管理できます。
 ![<img style="width:100%; max-width:640px" src="tour.png"/>](https://github.com/loco-rs/admin-jobs/raw/main/media/screenshot.png)
 
-### Managing Job Queues via CLI
+### CLIによるジョブキューの管理
 
-The job queue management feature provides a powerful and flexible way to handle the lifecycle of jobs in your application. It allows you to cancel, clean up, remove outdated jobs, export job details, and import jobs, ensuring efficient and organized job processing.
+ジョブキュー管理機能は、アプリケーション内のジョブのライフサイクルを処理するための強力で柔軟な方法を提供します。ジョブのキャンセル、クリーンアップ、古いジョブの削除、ジョブ詳細のエクスポート、ジョブのインポートが可能で、効率的で組織化されたジョブ処理を確保します。
 
-## Features Overview
+## 機能概要
 
-- **Cancel Jobs**  
-  Provides the ability to cancel specific jobs by name, updating their status to `cancelled`. This is useful for stopping jobs that are no longer needed, relevant, or if you want to prevent them from being processed when a bug is detected.
-- **Clean Up Jobs**  
-  Enables the removal of jobs that have already been completed or cancelled. This helps maintain a clean and efficient job queue by eliminating unnecessary entries.
-- **Purge Outdated Jobs**  
-  Allows you to delete jobs based on their age, measured in days. This is particularly useful for maintaining a lean job queue by removing older, irrelevant jobs.  
-  **Note**: You can use the `--dump` option to export job details to a file, manually modify the job parameters in the exported file, and then use the `import` feature to reintroduce the updated jobs into the system.
-- **Export Job Details**  
-  Supports exporting the details of all jobs to a specified location in file format. This feature is valuable for backups, audits, or further analysis.
-- **Import Jobs**  
-  Facilitates importing jobs from external files, making it easy to restore or add new jobs to the system. This ensures seamless integration of external job data into your application's workflow.
+- **ジョブのキャンセル**  
+  名前で特定のジョブをキャンセルし、ステータスを`cancelled`に更新する機能を提供します。これは、もはや不要、関連性がない、またはバグが検出された場合に処理を防止したいジョブを停止するのに便利です。
+- **ジョブのクリーンアップ**  
+  すでに完了またはキャンセルされたジョブの削除を可能にします。これにより、不要なエントリを排除してクリーンで効率的なジョブキューを維持できます。
+- **古いジョブのパージ**  
+  日数で測定される経過時間に基づいてジョブを削除できます。これは、古い関連性のないジョブを削除してスリムなジョブキューを維持するのに特に便利です。  
+  **注意**：`--dump`オプションを使用してジョブ詳細をファイルにエクスポートし、エクスポートされたファイル内のジョブパラメータを手動で変更してから、`import`機能を使用して更新されたジョブをシステムに再導入できます。
+- **ジョブ詳細のエクスポート**  
+  すべてのジョブの詳細を指定された場所にファイル形式でエクスポートすることをサポートします。この機能は、バックアップ、監査、またはさらなる分析に価値があります。
+- **ジョブのインポート**  
+  外部ファイルからのジョブのインポートを促進し、システムへの新しいジョブの復元または追加を簡単にします。これにより、外部ジョブデータのアプリケーションワークフローへのシームレスな統合が保証されます。
 
-To access the job management commands, use the following CLI structure:
+ジョブ管理コマンドにアクセスするには、以下のCLI構造を使用します：
 
 <!-- <snip id="jobs-help-command" inject_from="yaml" action="exec" template="sh"> -->
 
@@ -307,15 +307,15 @@ Options:
 
 <!-- </snip> -->
 
-## Testing a Worker
+## ワーカーのテスト
 
-You can easily test your worker background jobs using `Loco`. Ensure that your worker is set to the `ForegroundBlocking` mode, which blocks the job, ensuring it runs synchronously. When testing the worker, the test will wait until your worker is completed, allowing you to verify if the worker accomplished its intended tasks.
+`Loco`を使用してワーカーのバックグラウンドジョブを簡単にテストできます。ワーカーが`ForegroundBlocking`モードに設定されていることを確認してください。このモードはジョブをブロックし、同期的に実行されることを保証します。ワーカーをテストする際、テストはワーカーが完了するまで待機し、ワーカーが意図したタスクを達成したかどうかを検証できます。
 
-It's recommended to implement tests in the `tests/workers` directory to consolidate all your worker tests in one place.
+すべてのワーカーテストを一箇所にまとめるため、`tests/workers`ディレクトリにテストを実装することをお勧めします。
 
-Additionally, you can leverage the [worker generator](@/docs/processing/workers.md#generate-a-worker), which automatically creates tests, saving you time on configuring tests in the library.
+さらに、自動的にテストを作成するワーカージェネレーターを活用でき、ライブラリでのテスト設定にかかる時間を節約できます。
 
-Here's an example of how the test should be structured:
+テストの構造化方法の例は以下の通りです：
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -323,41 +323,41 @@ use loco_rs::testing::prelude::*;
 #[tokio::test]
 #[serial]
 async fn test_run_report_worker_worker() {
-    // Set up the test environment
+    // テスト環境をセットアップ
     let boot = boot_test::<App, Migrator>().await.unwrap();
 
-    // Execute the worker in 'ForegroundBlocking' mode, preventing it from running asynchronously
+    // ワーカーを'ForegroundBlocking'モードで実行し、非同期実行を防ぐ
     assert!(
         ReportWorkerWorker::perform_later(&boot.app_context, ReportWorkerWorkerArgs {})
             .await
             .is_ok()
     );
 
-    // Include additional assert validations after the execution of the worker
+    // ワーカーの実行後に追加のアサート検証を含める
 }
 
 ```
 
-### Understanding `class_name()`
+### `class_name()`の理解
 
-The `class_name()` function in the `BackgroundWorker` trait is used to determine the unique identifier for your worker in the job queue. By default, it:
+`BackgroundWorker`トレイトの`class_name()`関数は、ジョブキュー内のワーカーの一意識別子を決定するために使用されます。デフォルトでは以下のことを行います：
 
-1. Takes the struct name (e.g., `DownloadWorker`)
-2. Strips any module paths (e.g., `my_app::workers::DownloadWorker` becomes just `DownloadWorker`)
-3. Converts it to UpperCamelCase format
+1. 構造体名を取得（例：`DownloadWorker`）
+2. モジュールパスを除去（例：`my_app::workers::DownloadWorker`は単に`DownloadWorker`になります）
+3. UpperCamelCase形式に変換
 
-This is important because when a job is enqueued, it needs a string identifier to match with the appropriate worker when it's time for processing. This function automatically generates that identifier for you, but you can override it if you need a custom naming scheme.
+これは重要です。なぜなら、ジョブがエンキューされる際、処理時に適切なワーカーと一致させるための文字列識別子が必要だからです。この関数は自動的にその識別子を生成しますが、カスタムネーミングスキームが必要な場合はオーバーライドできます。
 
 ```rust
-// Example of how class_name works:
+// class_nameの動作例：
 struct download_worker;
 impl BackgroundWorker<Args> for download_worker {
-    // class_name() would return "DownloadWorker"
-    // No need to override this unless you need custom naming
+    // class_name()は"DownloadWorker"を返します
+    // カスタムネーミングが必要でない限り、これをオーバーライドする必要はありません
 }
 ```
 
-And register it in `app.rs`:
+そして`app.rs`に登録します：
 
 ```rust
 #[async_trait]

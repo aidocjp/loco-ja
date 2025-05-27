@@ -1,5 +1,5 @@
 +++
-title = "Infrastructure"
+title = "インフラ"
 description = ""
 template = "docs/section.html"
 sort_by = "weight"

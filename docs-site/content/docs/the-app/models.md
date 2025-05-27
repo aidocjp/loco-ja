@@ -16,15 +16,15 @@ flair =[]
 +++
 
 
-Models in `loco` mean entity classes that allow for easy database querying and writes, but also migrations and seeding.
+`loco`のモデルは、データベースのクエリと書き込みを簡単に行うためのエンティティクラスを意味しますが、マイグレーションやシーディングも含みます。
 
 ## Sqlite vs Postgres 
 
-You might have selected `sqlite` which is the default when you created your new app. Loco allows you to _seamlessly_ move between `sqlite` and `postgres`.
+新しいアプリを作成するときにデフォルトである`sqlite`を選択した可能性があります。Locoは`sqlite`と`postgres`間で_シームレス_に移行することができます。
 
-It is typical that you could use `sqlite` for development, and `postgres` for production. Some people prefer `postgres` all the way for both development and production because they use `pg` specific features. Some people use `sqlite` for production too, these days. Either way -- all valid choices.
+開発には`sqlite`を使用し、本番には`postgres`を使用するのが一般的です。`pg`固有の機能を使用するため、開発と本番の両方で`postgres`を一貫して好む人もいます。最近では本番でも`sqlite`を使用する人もいます。いずれにしても、すべて有効な選択です。
 
-To configure `postgres` instead of `sqlite`, go into your `config/development.yaml` (or `production.yaml`) and set this, assuming your app is named `myapp`:
+`sqlite`の代わりに`postgres`を設定するには、`config/development.yaml`（または`production.yaml`）に移動し、アプリ名が`myapp`であると仮定して、以下を設定します：
 
 ```yaml
 database:
@@ -32,10 +32,10 @@ database:
 ```
 
 <div class="infobox">
-Your local postgres database should be with <code>loco:loco</code> and a db named <code>myapp_development</code>. For test and production, your DB should be named <code>myapp_test</code> and <code>myapp_production</code> respectively.
+ローカルのPostgresデータベースは <code>loco:loco</code> で、データベース名は <code>myapp_development</code> である必要があります。テストと本番環境では、データベース名はそれぞれ <code>myapp_test</code> と <code>myapp_production</code> である必要があります。
 </div>
 
-For your convenience, here is a docker command to start up a Postgresql database server:
+便宜上、PostgreSQLデータベースサーバーを起動するdockerコマンドを以下に示します：
 
 <!-- <snip id="postgres-run-docker-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -49,7 +49,7 @@ docker run -d -p 5432:5432 \
 
 
 
-Finally you can also use the doctor command to validate your connection:
+最後に、doctorコマンドを使用して接続を検証することもできます：
 
 <!-- <snip id="doctor-command" inject_from="yaml template="sh"> -->
 ```sh
@@ -64,25 +64,25 @@ $ cargo loco doctor
 
 ## Fat models, slim controllers
 
-`loco` models **are designed after active record**. This means they're a central point in your universe, and every logic or operation your app has should be there.
+`loco`のモデルは**active recordに倣って設計されています**。これは、モデルがあなたの世界の中心点であり、アプリが持つすべてのロジックや操作がそこにあるべきことを意味します。
 
-It means that `User::create` creates a user **but also** `user.buy(product)` will buy a product.
+これは`User::create`がユーザーを作成することを意味しますが、**同時に**`user.buy(product)`が商品を購入することも意味します。
 
-If you agree with that direction you'll get these for free:
+この方向性に同意する場合、以下のメリットを無料で得ることができます：
 
-- **Time-effective testing**, because testing your model tests most if not all of your logic and moving parts.
-- Ability to run complete app workflows **from _tasks_, or from workers and other places**.
-- Effectively **compose features** and use cases by combining models, and nothing else.
-- Essentially, **models become your app** and controllers are just one way to expose your app to the world.
+- **時間効率的なテスト**：モデルをテストすることで、ロジックと可動部分のほとんど、またはすべてをテストできるため。
+- **_タスク_、ワーカー、その他の場所から**完全なアプリワークフローを実行する能力。
+- モデルを組み合わせることで、機能とユースケースを効果的に**組み合わせる**ことができ、他には何も必要ありません。
+- 本質的に、**モデルがあなたのアプリになり**、コントローラーはアプリを世界に公開する単なる一つの方法です。
 
-We use [`SeaORM`](https://www.sea-ql.org/SeaORM/) as the main ORM behind our ActiveRecord abstraction.
+ActiveRecord抽象化の背後にあるメインのORMとして[`SeaORM`](https://www.sea-ql.org/SeaORM/)を使用しています。
 
-- _Why not Diesel?_ - although Diesel has better performance, its macros, and general approach felt incompatible with what we were trying to do
-- _Why not sqlx_ - SeaORM uses sqlx under the hood, so the plumbing is there for you to use `sqlx` raw if you wish.
+- _なぜDieselではないのか？_ - Dieselはより優れたパフォーマンスを持っていますが、そのマクロと一般的なアプローチは、私たちが実現しようとしていることと互換性がないと感じました
+- _なぜsqlxではないのか_ - SeaORMは内部でsqlxを使用しているため、必要に応じて生の`sqlx`を使用するための配管はそこにあります。
 
 ## Example model
 
-The life of a `loco` model starts with a _migration_, then an _entity_ Rust code is generated for you automatically from the database structure:
+`loco`モデルのライフサイクルは_migration_から始まり、その後データベース構造から_entity_ Rustコードが自動的に生成されます：
 
 ```
 src/
@@ -92,9 +92,9 @@ src/
     users.rs  <--- your custom activerecord code
 ```
 
-Using the `users` activerecord would be just as you use it under SeaORM [see examples here](https://www.sea-ql.org/SeaORM/docs/next/basic-crud/select/)
+`users` activerecordの使用は、SeaORMで使用するのと同じです[例はこちらを参照](https://www.sea-ql.org/SeaORM/docs/next/basic-crud/select/)
 
-Adding functionality to the `users` activerecord is by _extension_:
+`users` activerecordに機能を追加するには_拡張_を使用します：
 
 ```rust
 impl super::_entities::users::ActiveModel {
@@ -113,32 +113,32 @@ impl super::_entities::users::ActiveModel {
 
 ## The model generator
 
-To add a new model the model generator creates a migration, runs it, and then triggers an entities sync from your database schema which will hydrate and create your model entities.
+新しいモデルを追加するために、モデルジェネレーターはマイグレーションを作成し、それを実行し、その後データベーススキーマからエンティティ同期をトリガーして、モデルエンティティを作成し構築します。
 
 ```
 $ cargo loco generate model posts title:string! content:text user:references
 ```
 
-When a model is added via migration, the following default fields are provided:
+マイグレーション経由でモデルが追加されると、以下のデフォルトフィールドが提供されます：
 
-- `created_at` (ts!): This is a timestamp indicating when your model was created.
-- `updated_at` (ts!): This is a timestamp indicating when your model was updated.
+- `created_at` (ts!): これはモデルが作成された時刻を示すタイムスタンプです。
+- `updated_at` (ts!): これはモデルが更新された時刻を示すタイムスタンプです。
 
-These fields are ignored if you provide them in your migration command.
+これらのフィールドは、マイグレーションコマンドで提供した場合は無視されます。
 
 ### Field syntax
 
-Each field type may include either the `!` or `^` suffix:
+各フィールドタイプには`!`または`^`のサフィックスを含めることができます：
 
-- `!` indicates that the field is **required** (i.e. `NOT NULL` in the database),
-- `^` indicates that the field must be **unique**.
+- `!`はフィールドが**必須**であることを示します（つまり、データベースで`NOT NULL`）
+- `^`はフィールドが**ユニーク**でなければならないことを示します。
 
-If no suffix is used, then the field can be null.
+サフィックスが使用されない場合、フィールドはnullにできます。
 
 
 ### Data types
 
-For schema data types, you can use the following mapping to understand the schema:
+スキーマデータタイプについて、スキーマを理解するために以下のマッピングを使用できます：
 
 ```rust
 ("uuid^", "uuid_uniq"),
@@ -210,37 +210,37 @@ For schema data types, you can use the following mapping to understand the schem
 (" array^", "array"),
 ```
 
-Loco makes used of `references` type to define foreign-key relations between the model being generated and the model we wish to refer to. Do note, however, that there are two ways to use this special type:
+Locoは、生成されるモデルと参照したいモデルの間の外部キー関係を定義するために`references`タイプを使用します。ただし、この特別なタイプを使用する方法は2つあることに注意してください：
 
 1. `<other_model>:references`
 2. `<other_model>:references:<column_name>`
 
-The first one (`<other_model>:references`) is used to, as already clear by the semantics, create a foreign-key relation to an already existing model (`other_model` in this case). However, the **field name is implied**.
+最初のもの（`<other_model>:references`）は、セマンティクスから既に明らかなように、既存のモデル（この場合は`other_model`）への外部キー関係を作成するために使用されます。ただし、**フィールド名は暗黙的**です。
 
-e.g. If we wish to create a new model named `post`, and it must have a field/column referring to the `users` table which already exists (in new loco project with migrations applied), we will use the following command:
+例えば、`post`という名前の新しいモデルを作成し、既に存在する`users`テーブル（マイグレーションが適用された新しいlocoプロジェクト内）を参照するフィールド/カラムを持たせたい場合、以下のコマンドを使用します：
 
 ```
 cargo loco g model post title:string user:references
 ```
 
-Using `user:references` uses the special `<other_model>:references` type, which will create a relationship between the `post` (our new model) and a `user` (pre-existing model), adding a `user_id` (implied field name) reference field to the `posts` table.
+`user:references`を使用すると、特別な`<other_model>:references`タイプを使用し、`post`（新しいモデル）と`user`（既存のモデル）の間に関係を作成し、`posts`テーブルに`user_id`（暗黙的フィールド名）参照フィールドを追加します。
 
-On the other hand, using the second approach (`<other_model>:references:<column_name>`) gives us the luxury of being able to name the field/column as per our liking. Therefore, taking the previous example itself, if we wish to create a `post` table having a title, and a foreign key that points to, perhaps the author, we will use the same previous command, but with a nimble modification:
+一方、2番目のアプローチ（`<other_model>:references:<column_name>`）を使用すると、好みに応じてフィールド/カラムに名前を付けることができる贅沢を得られます。したがって、前の例を取り上げて、タイトルとおそらく著者を指す外部キーを持つ`post`テーブルを作成したい場合、同じ前のコマンドを使用しますが、少し変更します：
 
 ```
 cargo loco g model post title:string user:references:authored_by
 ```
 
-Using `user:references:authored_by` uses the special `<other_model>:references:<column_name>` type, which will create a relationship between the `post` and the `user`, adding an `authored_by` (explicit field name) reference field to the `posts` table, instead of `user_id`.
+`user:references:authored_by`を使用すると、特別な`<other_model>:references:<column_name>`タイプを使用し、`post`と`user`の間に関係を作成し、`user_id`の代わりに`authored_by`（明示的フィールド名）参照フィールドを`posts`テーブルに追加します。
 
-You can generate an empty model:
+空のモデルを生成できます：
 
 ```
 $ cargo loco generate model posts
 ```
 
 
-Or a data model, without any references:
+または、参照のないデータモデル：
 
 ```
 $ cargo loco generate model posts title:string! content:text
@@ -248,90 +248,90 @@ $ cargo loco generate model posts title:string! content:text
 
 ## Migrations
 
-Other than using the model generator, you drive your schema by *creating migrations*.
+モデルジェネレーターを使用する以外に、*マイグレーションを作成*することでスキーマを駆動します。
 
 ```
 $ cargo loco generate migration <name of migration> [name:type, name:type ...]
 ```
 
-This creates a migration in the root of your project in `migration/`.
+これはプロジェクトのルートの`migration/`にマイグレーションを作成します。
 
-You can apply it:
+適用できます：
 
 ```
 $ cargo loco db migrate
 ```
 
-And generate back entities (Rust code) from it:
+そしてそこからエンティティ（Rustコード）を生成し直します：
 
 ```
 $ cargo loco db entities
 ```
 
-Loco is a migration-first framework, similar to Rails. Which means that when you want to add models, data fields, or model oriented changes - you start with a migration that describes it, and then you apply the migration to get back generated entities in `model/_entities`.
+LocoはRailsと同様にマイグレーションファーストのフレームワークです。これは、モデル、データフィールド、またはモデル指向の変更を追加したいときに、それを説明するマイグレーションから始め、その後マイグレーションを適用して`model/_entities`で生成されたエンティティを取得することを意味します。
 
-This enforces _everything-as-code_, _reproducibility_ and _atomicity_, where no knowledge of the schema goes missing. 
+これは_everything-as-code_、_再現性_、_原子性_を強制し、スキーマの知識が失われることがありません。 
 
-**Naming the migration is important**, the type of migration that is being generated is inferred from the migration name.
+**マイグレーションの命名は重要**で、生成されるマイグレーションのタイプはマイグレーション名から推測されます。
 
-### Create a new table
+### 新しいテーブルを作成
 
-* Name template: `Create___`
-* Example: `CreatePosts`
+* 名前テンプレート: `Create___`
+* 例: `CreatePosts`
 
 ```
 $ cargo loco g migration CreatePosts title:string content:string
 ```
 
-### Add columns
+### カラムを追加
 
-* Name template: `Add___To___`
-* Example: `AddNameAndAgeToUsers` (the string `NameAndAge` does not matter, you specify columns individually, however `Users` does matter because this will be the name of the table)
+* 名前テンプレート: `Add___To___`
+* 例: `AddNameAndAgeToUsers`（文字列`NameAndAge`は関係ありません、カラムは個別に指定しますが、`Users`はテーブル名になるため重要です）
 
 ```
 $ cargo loco g migration AddNameAndAgeToUsers name:string age:int
 ```
 
-### Remove columns
+### カラムを削除
 
-* Name template: `Remove___From___`
-* Example: `RemoveNameAndAgeFromUsers` (same note exists as in _add columns_)
+* 名前テンプレート: `Remove___From___`
+* 例: `RemoveNameAndAgeFromUsers`（_カラム追加_と同じ注意があります）
 
 ```
 $ cargo logo g migration RemoveNameAndAgeFromUsers name:string age:int
 ```
 
-### Add references
+### 参照を追加
 
-* Name template: `Add___RefTo___`
-* Example: `AddUserRefToPosts` (`User` does not matter, as you specify one or many references individually, `Posts` does matter as it will be the table name in the migration)
+* 名前テンプレート: `Add___RefTo___`
+* 例: `AddUserRefToPosts`（`User`は関係ありません、参照は個別に1つまたは複数指定します。`Posts`はマイグレーションでテーブル名になるため重要です）
 
 ```
 $ cargo loco g migration AddUserRefToPosts user:references
 ```
 
-### Create a join table
+### 結合テーブルを作成
 
-* Name template: `CreateJoinTable___And___` (supported between 2 tables)
-* Example: `CreateJoinTableUsersAndGroups`
+* 名前テンプレート: `CreateJoinTable___And___`（2つのテーブル間でサポート）
+* 例: `CreateJoinTableUsersAndGroups`
 
 ```
 $ cargo loco g migration CreateJoinTableUsersAndGroups count:int
 ```
 
-You can also add some state columns regarding the relationship (such as `count` here).
+関係に関するいくつかの状態カラム（ここでは`count`など）を追加することもできます。
 
-### Create an empty migration
+### 空のマイグレーションを作成
 
-Use any descriptive name for a migration that does not fall into one of the above patterns to create an empty migration.
+上記のパターンのいずれにも当てはまらないマイグレーションには、説明的な名前を使用して空のマイグレーションを作成します。
 
 ```
 $ cargo loco g migration FixUsersTable
 ```
 
-### Down Migrations
+### ダウンマイグレーション
 
-If you realize that you made a mistake, you can always undo the migration. This will undo the changes made by the migration (assuming that you added the appropriate code for `down` in the migration).
+間違いを犯したことに気づいた場合、いつでもマイグレーションを元に戻すことができます。これはマイグレーションによって行われた変更を元に戻します（マイグレーションに`down`の適切なコードを追加したと仮定します）。
 
 <!-- <snip id="migrate-down-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -339,7 +339,7 @@ cargo loco db down
 ```
 <!-- </snip> -->
 
-The `down` command on its own will rollback only the last migration. If you want to rollback multiple migrations, you can specify the number of migrations to rollback.
+`down`コマンド単体では最後のマイグレーションのみをロールバックします。複数のマイグレーションをロールバックしたい場合は、ロールバックするマイグレーションの数を指定できます。
 
 <!-- <snip id="migrate-down-n-command" inject_from="yaml" template="sh"> -->
 ```sh
@@ -347,48 +347,48 @@ cargo loco db down 2
 ```
 <!-- </snip> -->
 
-### Verbs, singular and plural
+### 動詞、単数形と複数形
 
-- **references**: use **singular** for the table name, and a `<other_model>:references` type. `user:references` (references `Users`), `vote:references` (references `Votes`). `<other_model>:references:<column_name>` is also available `train:references:departing_train` (references `Trains`).
-- **column names**: anything you like. Prefer `snake_case`.
-- **table names**: **plural, snake case**. `users`, `draft_posts`.
-- **migration names**: anything that can be a file name, prefer snake case. `create_table_users`, `add_vote_id_to_movies`.
-- **model names**: generated automatically for you. Usually the generated name is pascal case, plural. `Users`, `UsersVotes`.
+- **references**: テーブル名には**単数形**を使用し、`<other_model>:references`タイプを使用します。`user:references`（`Users`を参照）、`vote:references`（`Votes`を参照）。`<other_model>:references:<column_name>`も利用可能です。`train:references:departing_train`（`Trains`を参照）。
+- **カラム名**: 任意の名前。`snake_case`を推奨します。
+- **テーブル名**: **複数形、スネークケース**。`users`、`draft_posts`。
+- **マイグレーション名**: ファイル名として使用できるもの、スネークケースを推奨。`create_table_users`、`add_vote_id_to_movies`。
+- **モデル名**: 自動的に生成されます。通常、生成される名前はパスカルケース、複数形です。`Users`、`UsersVotes`。
 
-Here are some examples showcasing the naming conventions:
+以下は命名規則を示す例です：
 
 ```sh
 $ cargo loco generate model movies long_title:string user:references:added_by director:references
 ```
 
-- model name in plural: `movies`
-- reference director is in singular: `director:references`
-- reference added_by is an explicit name in singular, the referenced model remains singular: `user:references:added_by`
-- column name in snake case: `long_title:string`
+- モデル名は複数形: `movies`
+- reference directorは単数形: `director:references`
+- reference added_byは単数形の明示的な名前、参照されるモデルは単数形のまま: `user:references:added_by`
+- カラム名はスネークケース: `long_title:string`
 
-### Authoring migrations
+### マイグレーションの作成
 
-To use the migrations DSL, make sure you have the following `loco_rs::schema::*` import and SeaORM `prelude`.
+マイグレーションDSLを使用するには、以下の`loco_rs::schema::*`インポートとSeaORMの`prelude`が必要です。
 
 ```rust
 use loco_rs::schema::*;
 use sea_orm_migration::prelude::*;
 ```
 
-Then, create a struct:
+次に、構造体を作成します：
 
 ```rust
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 ```
 
-And then implement your migration (see below).
+そして、マイグレーションを実装します（以下を参照）。
 
-**Create a table**
+**テーブルの作成**
 
-Create a table, provide two arrays: (1) columns (2) references.
+テーブルを作成する際は、2つの配列を提供します：(1) カラム (2) 参照。
 
-Leave references empty to not create any reference fields.
+参照フィールドを作成しない場合は、参照を空のままにします。
 
 ```rust
 impl MigrationTrait for Migration {
@@ -411,11 +411,11 @@ impl MigrationTrait for Migration {
 }
 ```
 
-**Create a join table**
+**結合テーブルの作成**
 
-Provide the references to the second array argument. Use an empty string `""` to indicate you want us to generate a reference column name for you (e.g. a `user` reference will imply connecting the `users` table through a `user_id` column in `group_users`).
+参照を2番目の配列引数に提供します。空の文字列`""`を使用して、参照カラム名を自動生成したいことを示します（例：`user`参照は、`group_users`内の`user_id`カラムを通じて`users`テーブルに接続することを意味します）。
 
-Provide a non-empty string to indicate a specific name for the reference column name.
+参照カラム名に特定の名前を指定したい場合は、空でない文字列を提供します。
 
 ```rust
 impl MigrationTrait for Migration {
@@ -429,9 +429,9 @@ impl MigrationTrait for Migration {
 }
 ```
 
-**Add a column**
+**カラムの追加**
 
-Add a single column. You can use as many such statements as you like in a single migration (to add multiple columns).
+単一のカラムを追加します。単一のマイグレーション内で、必要な数だけこのような文を使用できます（複数のカラムを追加するため）。
 
 
 ```rust
@@ -449,11 +449,11 @@ impl MigrationTrait for Migration {
 ```
 
 
-### Authoring advanced migrations
+### 高度なマイグレーションの作成
 
-Using the `manager` directly lets you access more advanced operations while authoring your migrations.
+`manager`を直接使用することで、マイグレーションを作成する際により高度な操作にアクセスできます。
 
-**Add a column**
+**カラムの追加**
 
 ```rust
   manager
@@ -466,7 +466,7 @@ Using the `manager` directly lets you access more advanced operations while auth
     .await
 ```
 
-**Drop a column**
+**カラムの削除**
 
 ```rust
   manager
@@ -479,9 +479,9 @@ Using the `manager` directly lets you access more advanced operations while auth
     .await
 ```
 
-**Add index**
+**インデックスの追加**
 
-You can copy some of this code for adding an index
+インデックスを追加するためのコードをコピーできます
 
 ```rust
   manager
@@ -495,9 +495,9 @@ You can copy some of this code for adding an index
     .await;
 ```
 
-**Create a data fix**
+**データ修正の作成**
 
-Creating a data fix in a migration is easy - just use SQL statements as you like:
+マイグレーション内でデータ修正を作成するのは簡単です - 好きなようにSQL文を使用してください：
 
 ```rust
   async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -511,16 +511,16 @@ Creating a data fix in a migration is easy - just use SQL statements as you like
   }
 ```
 
-Having said that, it's up to you to code your data fixes in:
+とはいえ、データ修正をコーディングする場所は以下から選択できます：
 
-* `task` - where you can use high level models
-* `migration` - where you can both change structure and fix data stemming from it with raw SQL
-* or an ad-hoc `playground` - where you can use high level models or experiment with things
+* `task` - 高レベルのモデルを使用できる場所
+* `migration` - 構造を変更し、生のSQLでそれに起因するデータを修正できる場所
+* またはアドホックな`playground` - 高レベルのモデルを使用したり、実験したりできる場所
 
 
-## Validation
+## バリデーション
 
-We use the [validator](https://docs.rs/validator) library under the hood. First, build your validator with the constraints you need, and then implement `Validatable` for your `ActiveModel`.
+内部では[validator](https://docs.rs/validator)ライブラリを使用しています。まず、必要な制約でバリデーターを構築し、次に`ActiveModel`に`Validatable`を実装します。
 
 
 <!-- <snip id="model-validation" inject_from="code" template="rust"> -->
@@ -545,35 +545,35 @@ impl Validatable for super::_entities::users::ActiveModel {
 <!-- </snip> -->
 
 
-Note that `Validatable` is how you instruct Loco which `Validator` to provide and how to build it from a model.
+`Validatable`は、Locoにどの`Validator`を提供し、モデルからそれを構築する方法を指示する方法であることに注意してください。
 
-Now you can use `user.validate()` seamlessly in your code, when it is `Ok` the model is valid, otherwise you'll find validation errors in `Err(...)` available for inspection.
+これで、コード内で`user.validate()`をシームレスに使用できます。`Ok`の場合、モデルは有効であり、そうでない場合は`Err(...)`に検査可能なバリデーションエラーが見つかります。
 
 
-## Relationships
+## リレーションシップ
 
-### One to many
+### 一対多
 
-Here is how to associate a `Company` with an existing `User` model.
+既存の`User`モデルに`Company`を関連付ける方法は次のとおりです。
 
 ```
 $ cargo loco generate model company name:string user:references
 ```
 
-This will create a migration with a `user_id` field in `Company` which will reference a `User`.
+これにより、`Company`に`User`を参照する`user_id`フィールドを持つマイグレーションが作成されます。
 
 
-### Many to many
+### 多対多
 
-Here is how to create a typical "votes" table, which links a `User` and a `Movie` with a many-to-many link table. Note that it uses the special `--link` flag in the model generator.
+ここでは、多対多リンクテーブルで`User`と`Movie`をリンクする典型的な「投票」テーブルを作成する方法を示します。モデルジェネレーターで特別な`--link`フラグを使用することに注意してください。
 
-Let's create a new `Movie` entity:
+新しい`Movie`エンティティを作成しましょう：
 
 ```
 $ cargo loco generate model movies title:string
 ```
 
-And now the link table between `User` (which we already have) and `Movie` (which we just generated) to record votes:
+そして今度は、投票を記録するために`User`（既にある）と`Movie`（今生成した）の間のリンクテーブルを作成します：
 
 ```
 $ cargo loco generate model --link users_votes user:references movie:references vote:int
@@ -586,7 +586,7 @@ Writing src/models/_entities/prelude.rs
 ... Done.
 ```
 
-This will create a many-to-many link table named `UsersVotes` with a composite primary key containing both `user_id` and `movie_id`. Because it has precisely 2 IDs, SeaORM will identify it as a many-to-many link table, and generate entities with the appropriate `via()` relationship:
+これにより、`user_id`と`movie_id`の両方を含む複合主キーを持つ`UsersVotes`という名前の多対多リンクテーブルが作成されます。正確に2つのIDを持つため、SeaORMはそれを多対多リンクテーブルとして識別し、適切な`via()`関係を持つエンティティを生成します：
 
 
 ```rust
@@ -603,14 +603,14 @@ impl Related<super::movies::Entity> for Entity {
 }
 ```
 
-Using `via()` will cause `find_related` to walk through the link table without you needing to know the details of the link table.
+`via()`を使用すると、リンクテーブルの詳細を知る必要なく、`find_related`がリンクテーブルを通過します。
 
 
 
 
-## Configuration
+## 設定
 
-Model configuration that's available to you is exciting because it controls all aspects of development, testing, and production, with a ton of goodies, coming from production experience.
+利用可能なモデル設定は、開発、テスト、本番のすべての側面を制御し、本番経験から得られた多くの便利な機能を提供するため、非常にエキサイティングです。
 
 <!-- <snip id="configuration-database" inject_from="code" template="yaml"> -->
 ```yaml
@@ -637,19 +637,19 @@ database:
 <!-- </snip>-->
 
 
-By combining these flags, you can create different experiences to help you be more productive.
+これらのフラグを組み合わせることで、生産性を向上させるための異なる体験を作成できます。
 
-You can truncate before an app starts -- which is useful for running tests, or you can recreate the entire DB when the app starts -- which is useful for integration tests or setting up a new environment. In production, you want these turned off (hence the "dangerously" part).
+アプリ起動前にトランケートできます -- これはテストの実行に役立ちます。または、アプリ起動時にDB全体を再作成できます -- これは統合テストや新しい環境のセットアップに役立ちます。本番環境では、これらをオフにしたいでしょう（そのため「dangerously」という部分があります）。
 
-# Seeding
+# シーディング
 
-`Loco` comes equipped with a convenient `seeds` feature, streamlining the process for quick and easy database reloading. This functionality proves especially invaluable during frequent resets in development and test environments. Let's explore how to get started with this feature:
+`Loco`には便利な`seeds`機能が搭載されており、素早く簡単なデータベースの再読み込みプロセスを効率化します。この機能は、開発環境やテスト環境での頻繁なリセット時に特に有用です。この機能の使い方を見てみましょう：
 
-## Creating a new seed
+## 新しいシードの作成
 
-### 1. Creating a new seed file
+### 1. 新しいシードファイルの作成
 
-Navigate to `src/fixtures` and create a new seed file. For instance:
+`src/fixtures`に移動し、新しいシードファイルを作成します。例えば：
 
 ```
 src/
@@ -657,7 +657,7 @@ src/
     users.yaml
 ```
 
-In this yaml file, enlist a set of database records for insertion. Each record should encompass the mandatory database fields, based on your database constraints. Optional values are at your discretion. Suppose you have a database DDL like this:
+このyamlファイルには、挿入するデータベースレコードのセットを記載します。各レコードは、データベースの制約に基づいて必須のデータベースフィールドを含む必要があります。オプションの値は任意です。次のようなデータベースDDLがあるとします：
 
 ```sql
 CREATE TABLE public.users (
@@ -671,7 +671,7 @@ CREATE TABLE public.users (
 );
 ```
 
-The mandatory fields include `id`, `password`, `email`, and `created_at`. The reset token can be left empty. Your migration content file should resemble the following:
+必須フィールドには`id`、`password`、`email`、`created_at`が含まれます。リセットトークンは空のままにできます。マイグレーションコンテンツファイルは次のようになります：
 
 ```yaml
 ---
@@ -687,12 +687,12 @@ The mandatory fields include `id`, `password`, `email`, and `created_at`. The re
   created_at: "2023-11-12T12:34:56.789"
 ```
 
-### Connect the seed
+### シードの接続
 
-Integrate your seed into the app's Hook implementations by following these steps:
+以下の手順に従って、シードをアプリのHook実装に統合します：
 
-1. Navigate to your app's Hook implementations.
-2. Add the seed within the seed function implementation. Here's an example in Rust:
+1. アプリのHook実装に移動します。
+2. seed関数の実装内にシードを追加します。Rustでの例は次のとおりです：
 
 ```rs
 impl Hooks for App {
@@ -706,16 +706,16 @@ impl Hooks for App {
 
 ```
 
-This implementation ensures that the seed is executed when the seed function is called. Adjust the specifics based on your application's structure and requirements.
+この実装により、seed関数が呼び出されたときにシードが実行されることが保証されます。アプリケーションの構造と要件に基づいて詳細を調整してください。
 
-## Managing Seed via CLI
+## CLIを使用したシードの管理
 
-- **Reset the Database**  
-  Clear all existing data before importing seed files. This is useful when you want to start with a fresh database state, ensuring no old data remains.
-- **Dump Database Tables to Files**  
-  Export the contents of your database tables to files. This feature allows you to back up the current state of your database or prepare data for reuse across environments.
+- **データベースのリセット**  
+  シードファイルをインポートする前にすべての既存データをクリアします。これは、古いデータが残らないようにして、新しいデータベース状態から始めたい場合に便利です。
+- **データベーステーブルのファイルへのダンプ**  
+  データベーステーブルの内容をファイルにエクスポートします。この機能により、データベースの現在の状態をバックアップしたり、環境間でデータを再利用するための準備ができます。
 
-To access the seed commands, use the following CLI structure:
+シードコマンドにアクセスするには、次のCLI構造を使用します：
 <!-- <snip id="seed-help-command" inject_from="yaml" action="exec" template="sh"> -->
 ```sh
 Seed your database with initial data or dump tables to files
@@ -734,11 +734,11 @@ Options:
 <!-- </snip> -->
 
 
-### Using a Test
+### テストでの使用
 
-1. Enable the testing feature (`testing`)
+1. テスト機能（`testing`）を有効にします
 
-2. In your test section, follow the example below:
+2. テストセクションで、以下の例に従います：
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -753,13 +753,13 @@ async fn handle_create_with_password_with_duplicate() {
 }
 ```
 
-# Multi-DB
+# マルチDB
 
-`Loco` enables you to work with more than one database and share instances across your application.
+`Loco`では、複数のデータベースを操作し、アプリケーション全体でインスタンスを共有できます。
 
-## Extra DB
+## 追加DB
 
-To set up an additional database, begin with database connections and configuration. The recommended approach is to navigate to your configuration file and add the following under [settings](@/docs/the-app/your-project.md#settings):
+追加のデータベースをセットアップするには、データベース接続と設定から始めます。推奨されるアプローチは、設定ファイルに移動し、[settings](@/docs/the-app/your-project.md#settings)の下に次を追加することです：
 
 ```yaml
 settings:
@@ -777,7 +777,7 @@ settings:
 
 
 
-Load this [initializer](@/docs/extras/pluggability.md#initializers) into `initializers` hook like this example
+この[イニシャライザー](@/docs/extras/pluggability.md)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -789,7 +789,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     }
 ```
 
-Now, you can use the secondary database in your controller:
+これで、コントローラーでセカンダリデータベースを使用できます：
 
 ```rust
 use sea_orm::DatabaseConnection;
@@ -803,9 +803,9 @@ pub async fn list(
 }
 ```
 
-## Multi-DB (multi-tenant)
+## マルチDB（マルチテナント）
 
-To connect more than two different databases, the database configuration should look like this:
+2つ以上の異なるデータベースに接続するには、データベース設定は次のようになります：
 ```yaml
 settings:
   multi_db: 
@@ -831,7 +831,7 @@ settings:
       dangerously_recreate: false
 ```
 
-Next load this [initializer](@/docs/extras/pluggability.md#initializers) into `initializers` hook like this example
+次に、この[イニシャライザー](@/docs/extras/pluggability.md)を`initializers`フックにこの例のようにロードします
 
 ```rs
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -843,7 +843,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     }
 ```
 
-Now, you can use the multiple databases in your controller:
+これで、コントローラーで複数のデータベースを使用できます：
 
 ```rust
 use sea_orm::DatabaseConnection;
@@ -859,11 +859,11 @@ pub async fn list(
 }
 ```
 
-# Testing
+# テスト
 
-If you used the generator to crate a model migration, you should also have an auto generated model test in `tests/models/posts.rs` (remember we generated a model named `post`?)
+ジェネレーターを使用してモデルマイグレーションを作成した場合、`tests/models/posts.rs`に自動生成されたモデルテストもあるはずです（`post`という名前のモデルを生成したことを覚えていますか？）
 
-A typical test contains everything you need to set up test data, boot the app, and reset the database automatically before the testing code runs. It looks like this:
+典型的なテストには、テストデータのセットアップ、アプリの起動、テストコードが実行される前のデータベースの自動リセットに必要なすべてが含まれています。次のようになります：
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -888,7 +888,7 @@ async fn can_find_by_pid() {
 
 
 
-To simplify the testing process, `Loco` provides helpful functions that make writing tests more convenient. Ensure you enable the testing feature in your `Cargo.toml`:
+テストプロセスを簡素化するために、`Loco`はテストの記述をより便利にする便利な関数を提供しています。`Cargo.toml`でテスト機能を有効にしてください：
 
 ```toml
 [dev-dependencies]
@@ -896,14 +896,14 @@ loco-rs = { version = "*",  features = ["testing"] }
 ```
 
 
-## Database cleanup
+## データベースのクリーンアップ
 
-In some cases, you may want to run tests with a clean dataset, ensuring that each test is independent of others and not affected by previous data. To enable this feature, modify the `dangerously_truncate` option to true in the `config/test.yaml` file under the database section. This setting ensures that Loco truncates all data before each test that implements the boot app.
+場合によっては、クリーンなデータセットでテストを実行し、各テストが他のテストから独立し、以前のデータに影響されないようにしたいことがあります。この機能を有効にするには、`config/test.yaml`ファイルのdatabaseセクションで`dangerously_truncate`オプションをtrueに変更します。この設定により、Locoはboot appを実装する各テストの前にすべてのデータをトランケートします。
 
-> ⚠️ Caution: Be cautious when using this feature to avoid unintentional data loss, especially in a production environment.
+> ⚠️ 注意：特に本番環境では、意図しないデータ損失を避けるため、この機能を使用する際は注意してください。
 
-- When doing it recommended to run all the relevant task in with [serial](https://crates.io/crates/rstest) crate.
-- To decide which tables you want to truncate, add the entity model to the App hook:
+- これを行う場合は、[serial](https://crates.io/crates/rstest)クレートを使用してすべての関連タスクを実行することをお勧めします。
+- トランケートするテーブルを決定するには、エンティティモデルをAppフックに追加します：
 
 
 ```rust
@@ -919,12 +919,12 @@ impl Hooks for App {
 }
 ```
 
-## Async
-When writing async tests with database data, it's important to ensure that one test does not affect the data used by other tests. Since async tests can run concurrently on the same database dataset, this can lead to unstable test results.
+## 非同期
+データベースデータを使用した非同期テストを記述する場合、あるテストが他のテストで使用されるデータに影響を与えないようにすることが重要です。非同期テストは同じデータベースデータセット上で同時に実行される可能性があるため、不安定なテスト結果につながる可能性があります。
 
-Instead of using `boot_test`, as described in the documentation for synchronous tests, use the `boot_test_with_create_db` function. This function generates a random database schema name and ensures that the tables are deleted once the test is completed.
+同期テストのドキュメントで説明されている`boot_test`を使用する代わりに、`boot_test_with_create_db`関数を使用します。この関数はランダムなデータベーススキーマ名を生成し、テストが完了するとテーブルが削除されることを保証します。
 
-Note: If you cancel the test run midway (e.g., by pressing `Ctrl + C`), the cleanup process will not execute, and the database tables will remain. In such cases, you will need to manually remove them.
+注意：テスト実行を途中でキャンセルした場合（例：`Ctrl + C`を押した場合）、クリーンアッププロセスは実行されず、データベーステーブルは残ります。そのような場合は、手動で削除する必要があります。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -935,7 +935,7 @@ async fn boot_test_with_create_db() {
 }
 ```
 
-## Seeding
+## シーディング
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -952,15 +952,15 @@ async fn is_user_exists() {
 }
 ```
 
-This documentation provides an in-depth guide on leveraging Loco's testing helpers, covering database cleanup, data cleanup for snapshot testing, and seeding data for tests.
+このドキュメントは、Locoのテストヘルパーを活用するための詳細なガイドを提供し、データベースのクリーンアップ、スナップショットテストのためのデータクリーンアップ、テスト用データのシーディングをカバーしています。
 
-## Snapshot test data cleanup
+## スナップショットテストデータのクリーンアップ
 
-Snapshot testing often involves comparing data structures with dynamic fields such as `created_date`, `id`, `pid`, etc. To ensure consistent snapshots, Loco defines a list of constant data with regex replacements. These replacements can replace dynamic data with placeholders.
+スナップショットテストでは、`created_date`、`id`、`pid`などの動的フィールドを持つデータ構造を比較することがよくあります。一貫したスナップショットを確保するために、Locoは正規表現置換を伴う定数データのリストを定義しています。これらの置換により、動的データをプレースホルダーに置き換えることができます。
 
-Example using [insta](https://crates.io/crates/insta) for snapshots.
+スナップショット用の[insta](https://crates.io/crates/insta)を使用した例。
 
-in the following example you can use `cleanup_user_model` which clean all user model data.
+次の例では、すべてのユーザーモデルデータをクリーンアップする`cleanup_user_model`を使用できます。
 
 ```rust
 use loco_rs::testing::prelude::*;
@@ -981,11 +981,11 @@ async fn can_create_user() {
 
 ```
 
-You can also use cleanup constants directly, starting with `CLEANUP_`.
+`CLEANUP_`で始まるクリーンアップ定数を直接使用することもできます。
 
-## Customizing Entity Generation
+## エンティティ生成のカスタマイズ
 
-You can customize how `sea-orm-cli` generates entities by adding configuration to your `Cargo.toml` under the `[package.metadata.db.entity]` section. For example:
+`Cargo.toml`の`[package.metadata.db.entity]`セクションに設定を追加することで、`sea-orm-cli`がエンティティを生成する方法をカスタマイズできます。例：
 
 ```toml
 [package.metadata.db.entity]
@@ -994,6 +994,6 @@ ignore-tables = "table1,table2"
 model-extra-derives = "CustomDerive"
 ```
 
-This configuration will be passed as flags to `sea-orm-cli generate entity` when running `cargo loco db entities`.
+この設定は、`cargo loco db entities`を実行する際に`sea-orm-cli generate entity`へのフラグとして渡されます。
 
-Note that some flags like `--output-dir` and `--database-url` cannot be overridden as they are managed by Loco.
+`--output-dir`や`--database-url`のようないくつかのフラグは、Locoによって管理されているためオーバーライドできないことに注意してください。
